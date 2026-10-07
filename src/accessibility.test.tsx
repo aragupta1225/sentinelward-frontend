@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom'
 import App from './App'
 import { WardGrid } from './components/WardGrid'
 import { BED_FIXTURES } from './mocks/fixtures'
+import { useSessionStore } from './store/sessionStore'
 
 afterEach(() => {
   cleanup()
@@ -28,6 +29,8 @@ describe('accessibility foundations', () => {
     ['/security', 'security'],
     ['/incident/B08/report', 'report'],
   ])('has no detectable structural axe violations on the %s route', async (path) => {
+    if (path === '/' || path === '/login') useSessionStore.getState().signOut()
+    else useSessionStore.getState().signIn('operator')
     const { container } = render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
     await expectNoAxeViolations(container)
   })

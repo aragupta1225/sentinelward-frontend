@@ -2,6 +2,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import App from './App'
+import { useSessionStore } from './store/sessionStore'
 
 afterEach(cleanup)
 
@@ -19,6 +20,8 @@ describe('screen routes', () => {
     ['/demo', 'Demo control'],
     ['/telegram', 'Telegram message templates'],
   ])('renders %s', (path, heading) => {
+    if (path === '/' || path === '/login') useSessionStore.getState().signOut()
+    else useSessionStore.getState().signIn('operator')
     render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
     expect(screen.getByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
   })
