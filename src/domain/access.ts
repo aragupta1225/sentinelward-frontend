@@ -1,6 +1,14 @@
 export const ROLES = ['nurse', 'doctor', 'it', 'biomedical', 'operator'] as const
 export type Role = (typeof ROLES)[number]
-export type Permission = 'acknowledge_alert' | 'confirm_bedside_status' | 'isolate_device' | 'undo_isolation'
+export type Permission =
+  | 'acknowledge_alert'
+  | 'confirm_bedside_status'
+  | 'isolate_device'
+  | 'undo_isolation'
+  | 'capture_incident_evidence'
+  | 'contain_incident'
+  | 'resolve_incident'
+  | 'review_report'
 export type ScreenId = 'ward' | 'census' | 'security' | 'tickets' | 'briefing' | 'log' | 'demo' | 'telegram'
 
 export const ROLE_LABELS: Record<Role, string> = {
@@ -12,9 +20,9 @@ export const ROLE_LABELS: Record<Role, string> = {
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   nurse: ['acknowledge_alert', 'confirm_bedside_status'],
   doctor: ['acknowledge_alert', 'confirm_bedside_status'],
-  it: ['acknowledge_alert', 'isolate_device', 'undo_isolation'],
+  it: ['acknowledge_alert', 'isolate_device', 'undo_isolation', 'capture_incident_evidence', 'contain_incident', 'resolve_incident', 'review_report'],
   biomedical: ['acknowledge_alert'],
-  operator: ['acknowledge_alert', 'isolate_device', 'undo_isolation'],
+  operator: ['acknowledge_alert', 'isolate_device', 'undo_isolation', 'capture_incident_evidence', 'contain_incident', 'resolve_incident', 'review_report'],
 }
 
 export const ROLE_SCREENS: Record<Role, readonly ScreenId[]> = {
