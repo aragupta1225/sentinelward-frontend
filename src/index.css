@@ -261,3 +261,50 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
   .bed-tile--compact .vitals strong { font-size: 23px; }
   .detail-panel dl > div { grid-template-columns: 1fr; gap: 5px; }
 }
+
+.bed-detail-page--functional { max-width: 1420px; }
+.role-selector { display: grid; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.role-selector select { min-width: 210px; min-height: 44px; border: 1px solid #31566e; border-radius: 8px; padding: 0 36px 0 12px; color: var(--text); background: #10283a; }
+.detail-tabs { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.detail-tabs button { min-width: 110px; min-height: 44px; border: 0; border-bottom: 3px solid transparent; color: var(--muted); background: transparent; cursor: pointer; text-transform: capitalize; }
+.detail-tabs button[aria-current='page'] { border-bottom-color: var(--cyan); color: #e8f7fc; }
+.detail-overview { display: grid; grid-template-columns: minmax(440px, 590px) minmax(360px, 1fr); align-items: start; gap: 18px; }
+.detail-workflows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.workflow-card { min-height: 210px; border: 1px solid var(--line); border-radius: 12px; padding: 18px; background: var(--surface); }
+.workflow-card:last-child { grid-column: 1 / -1; min-height: 170px; }
+.workflow-card h2 { margin: 0 0 8px; font-size: 17px; }
+.workflow-card > p:not(.eyebrow) { min-height: 44px; margin-bottom: 15px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.workflow-card button { min-height: 44px; border: 1px solid #37627b; border-radius: 8px; padding: 0 14px; background: #123249; cursor: pointer; }
+.workflow-card button:disabled { opacity: .45; cursor: not-allowed; }
+.workflow-card small { display: block; margin-top: 10px; color: #d3bc73; font-size: 10px; }
+.bedside-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bedside-actions .danger-action { border-color: #813e46; color: #ffdadd; background: #421f26; }
+.bedside-result { display: block; margin-top: 14px; color: #a8bdca; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; }
+.bedside-result--patient_ok { color: #75dcb6; }
+.bedside-result--patient_not_ok { color: #ff9da2; }
+.trend-panel, .action-panel { border: 1px solid var(--line); border-radius: 12px; padding: 22px; background: var(--surface); }
+.trend-panel > div:first-child, .action-panel > div:first-child { margin-bottom: 18px; }
+.trend-panel h2, .action-panel h2 { margin: 0 0 5px; font-size: 20px; }
+.trend-panel p, .action-panel p { margin: 0; color: var(--muted); font-size: 11px; }
+.trend-chart { width: 100%; min-height: 230px; overflow: hidden; }
+.trend-chart .uplot { font-family: 'DM Mono', monospace; }
+.trend-chart .u-legend { color: #c7d7e1; }
+.action-table-wrap { overflow-x: auto; }
+.action-panel table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.action-panel th { padding: 10px; border-bottom: 1px solid #3b5b70; color: #8da7b7; text-align: left; text-transform: uppercase; letter-spacing: .07em; }
+.action-panel td { padding: 12px 10px; border-bottom: 1px solid var(--line); color: #cedce4; vertical-align: top; }
+.action-panel td small { display: block; margin-top: 3px; color: #718a99; text-transform: capitalize; }
+.empty-state { padding: 36px; text-align: center; }
+.treatment-boundary { margin: 16px 0 0; border: 1px solid #31566e; border-radius: 8px; padding: 12px 14px; color: #a6bdca; background: #0b1d2a; font-size: 11px; text-align: center; }
+
+@media (max-width: 980px) {
+  .detail-overview { grid-template-columns: 1fr; }
+  .detail-overview > .bed-tile { max-width: none; }
+}
+@media (max-width: 620px) {
+  .role-selector select { width: 100%; min-width: 0; }
+  .detail-tabs button { flex: 1; min-width: 0; }
+  .detail-workflows { grid-template-columns: 1fr; }
+  .workflow-card:last-child { grid-column: auto; }
+  .trend-panel, .action-panel { padding: 15px; }
+}
