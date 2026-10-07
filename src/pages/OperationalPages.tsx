@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { type FormEvent, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ROLE_LABELS, ROLES, type Role } from '../domain/access'
 import type { ScenarioId } from '../domain/scenarios'
@@ -6,6 +6,7 @@ import { VERDICT_PRESENTATION } from '../domain/ward'
 import { DEMO_SCENARIOS } from '../mocks/scenarios'
 import { useBedDetailStore } from '../store/bedDetailStore'
 import { useDemoScenarioStore } from '../store/demoScenarioStore'
+import { useOperationsStore } from '../store/operationsStore'
 import { useWardDashboardStore } from '../store/wardDashboardStore'
 
 const formatTime = (time: number) => new Intl.DateTimeFormat('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(time)
@@ -37,15 +38,16 @@ export function IncidentPage() {
 }
 
 export function ReportPage() {
-  const { id } = useParams(); const [reviewed, setReviewed] = useState(false); const bed = useWardDashboardStore((s) => s.beds.find((b) => b.id === id))
+  const { id } = useParams(); const bed = useWardDashboardStore((s) => s.beds.find((b) => b.id === id)); const review = useOperationsStore((s) => id ? s.reportReviews[id] : undefined); const markReportReviewed = useOperationsStore((s) => s.markReportReviewed)
   if (!bed) return <Navigate to="/security" replace />
-  return <Page title="CERT-In report draft" eyebrow="S8 · Human submission required"><article className="report-draft"><header><strong>{reviewed ? 'Reviewed draft' : 'Draft · not submitted'}</strong><span>Incident {bed.id}-{REPORT_YEAR}</span></header><h2>Executive summary</h2><p>SentinelWard detected {VERDICT_PRESENTATION[bed.verdict].label.toLowerCase()} affecting {bed.label}. Signal trust was {bed.trust}%. {bed.isolated ? 'The affected device was isolated.' : 'Device isolation was not active.'}</p><h2>Safety boundary</h2><p>No automated action modified patient treatment. Clinical staff retained decision authority.</p></article><button className="primary-action" type="button" onClick={() => setReviewed(true)} disabled={reviewed}>{reviewed ? 'Marked reviewed' : 'Mark draft reviewed'}</button><p className="scope-note">Official reports are drafted automatically but sent only by an authorized person.</p></Page>
+  const reviewed = review?.status === 'reviewed'
+  return <Page title="CERT-In report draft" eyebrow="S8 · Human submission required"><article className="report-draft"><header><strong>{reviewed ? 'Reviewed draft' : 'Draft · not submitted'}</strong><span>Incident {bed.id}-{REPORT_YEAR}</span></header><h2>Executive summary</h2><p>SentinelWard detected {VERDICT_PRESENTATION[bed.verdict].label.toLowerCase()} affecting {bed.label}. Signal trust was {bed.trust}%. {bed.isolated ? 'The affected device was isolated.' : 'Device isolation was not active.'}</p><h2>Safety boundary</h2><p>No automated action modified patient treatment. Clinical staff retained decision authority.</p>{reviewed && <p>Reviewed by {review.reviewedBy} at {formatTime(review.reviewedAt as number)}.</p>}</article><button className="primary-action" type="button" onClick={() => markReportReviewed(bed.id, 'Antara Gupta')} disabled={reviewed}>{reviewed ? 'Marked reviewed' : 'Mark draft reviewed'}</button><p className="scope-note">Official reports are drafted automatically but sent only by an authorized person.</p></Page>
 }
 
 export function TicketsPage() {
-  const [tickets, setTickets] = useState([{ id: 'BIO-104', bed: 'B04', issue: 'Reseat ECG leads', status: 'Open' }, { id: 'BIO-101', bed: 'B05', issue: 'Inspect drifting SpO₂ sensor', status: 'Assigned' }])
-  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const data = new FormData(event.currentTarget); setTickets((items) => [{ id: `BIO-${105 + items.length}`, bed: String(data.get('bed')), issue: String(data.get('issue')), status: 'Open' }, ...items]); event.currentTarget.reset() }
-  return <Page title="Biomedical tickets" eyebrow="S9"><form className="inline-form" onSubmit={submit}><label>Bed<input name="bed" required placeholder="B04" /></label><label>Issue<input name="issue" required placeholder="Describe equipment issue" /></label><button type="submit">Create ticket</button></form><DataTable headers={['Ticket', 'Bed', 'Issue', 'Status', 'Update']}>{tickets.map((t) => <tr key={t.id}><td>{t.id}</td><td>{t.bed}</td><td>{t.issue}</td><td>{t.status}</td><td><button onClick={() => setTickets((items) => items.map((item) => item.id === t.id ? { ...item, status: 'Resolved' } : item))}>Resolve</button></td></tr>)}</DataTable></Page>
+  const tickets = useOperationsStore((s) => s.tickets); const createTicket = useOperationsStore((s) => s.createTicket); const setTicketStatus = useOperationsStore((s) => s.setTicketStatus)
+  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const data = new FormData(event.currentTarget); createTicket(String(data.get('bed')).toUpperCase(), String(data.get('issue'))); event.currentTarget.reset() }
+  return <Page title="Biomedical tickets" eyebrow="S9"><form className="inline-form" onSubmit={submit}><label>Bed<input name="bed" required pattern="B[0-9]{2}" placeholder="B04" /></label><label>Issue<input name="issue" required minLength={5} placeholder="Describe equipment issue" /></label><button type="submit">Create ticket</button></form><DataTable headers={['Ticket', 'Bed', 'Issue', 'Status', 'Update']}>{tickets.map((t) => <tr key={t.id}><td>{t.id}</td><td>{t.bedId}</td><td>{t.issue}</td><td>{t.status}</td><td><button disabled={t.status === 'resolved'} onClick={() => setTicketStatus(t.id, 'resolved')}>{t.status === 'resolved' ? 'Resolved' : 'Resolve'}</button></td></tr>)}</DataTable></Page>
 }
 
 export function BriefingPage() {
