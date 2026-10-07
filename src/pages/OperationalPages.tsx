@@ -1,8 +1,11 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ROLE_LABELS, ROLES, type Role } from '../domain/access'
+import type { ScenarioId } from '../domain/scenarios'
 import { VERDICT_PRESENTATION } from '../domain/ward'
+import { DEMO_SCENARIOS } from '../mocks/scenarios'
 import { useBedDetailStore } from '../store/bedDetailStore'
+import { useDemoScenarioStore } from '../store/demoScenarioStore'
 import { useWardDashboardStore } from '../store/wardDashboardStore'
 
 const formatTime = (time: number) => new Intl.DateTimeFormat('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(time)
@@ -52,13 +55,23 @@ export function BriefingPage() {
 
 export function ActionLogPage() {
   const actions = useBedDetailStore((s) => s.actions)
-  return <Page title="Action log" eyebrow="S11 · Append-only"><DataTable headers={['Time', 'Bed', 'Action', 'Actor', 'Reference']}>{actions.map((a) => <tr key={a.id}><td>{formatTime(a.occurredAt)}</td><td>{a.bedId}</td><td>{a.description}</td><td>{a.actor}</td><td>{a.referencesActionId ?? '—'}</td></tr>)}</DataTable></Page>
+  const activities = useWardDashboardStore((s) => s.activities)
+  return <Page title="Action log" eyebrow="S11 · Append-only"><h2>Explicit and automatic actions</h2><DataTable headers={['Time', 'Bed', 'Action', 'Actor', 'Reference']}>{actions.map((a) => <tr key={a.id}><td>{formatTime(a.occurredAt)}</td><td>{a.bedId}</td><td>{a.description}</td><td>{a.actor}</td><td>{a.referencesActionId ?? '—'}</td></tr>)}</DataTable><h2>Ward event stream</h2><DataTable headers={['Time', 'Bed', 'Event', 'Kind', 'Priority']}>{activities.map((a) => <tr key={a.id}><td>{formatTime(a.occurredAt)}</td><td>{a.bedId ?? 'Ward'}</td><td>{a.message}</td><td>{a.kind}</td><td>{a.priority}</td></tr>)}</DataTable></Page>
 }
 
 export function DemoPage() {
-  const navigate = useNavigate(); const connection = useWardDashboardStore((s) => s.connection); const setConnection = useWardDashboardStore((s) => s.setConnection)
-  const scenarios = [['B03', 'Real emergency'], ['B04', 'Loose sensor'], ['B05', 'Drifting sensor'], ['B07', 'Fake flatline / tampering'], ['B08', 'BOTH emergency + attack']]
-  return <Page title="Demo control" eyebrow="S12"><div className="record-grid">{scenarios.map(([bed, name]) => <button className="scenario-card" key={bed} onClick={() => navigate(`/bed/${bed}`)}><strong>{name}</strong><span>Open {bed}</span></button>)}</div><div className="page-actions"><button onClick={() => setConnection(connection === 'live' ? 'disconnected' : 'live')}>{connection === 'live' ? 'Run connection-loss scenario' : 'Restore ward connection'}</button></div></Page>
+  const navigate = useNavigate()
+  const activeScenarioId = useDemoScenarioStore((s) => s.activeScenarioId)
+  const status = useDemoScenarioStore((s) => s.status)
+  const elapsedSeconds = useDemoScenarioStore((s) => s.elapsedSeconds)
+  const timeline = useDemoScenarioStore((s) => s.timeline)
+  const startScenario = useDemoScenarioStore((s) => s.startScenario)
+  const reset = useDemoScenarioStore((s) => s.reset)
+
+  return <Page title="Demo control" eyebrow="S12 · deterministic playback">
+    <div className="scenario-grid">{Object.values(DEMO_SCENARIOS).map((scenario) => <article className={`scenario-runner ${activeScenarioId === scenario.id ? 'scenario-runner--active' : ''}`} key={scenario.id}><div><strong>{scenario.title}</strong><span>{scenario.durationSeconds}s · {scenario.steps.length} timed events</span></div><button type="button" onClick={() => startScenario(scenario.id as ScenarioId)}>Run scenario</button>{scenario.targetBedId && <button type="button" onClick={() => navigate(`/bed/${scenario.targetBedId}`)}>Open {scenario.targetBedId}</button>}</article>)}</div>
+    <section className="scenario-console" aria-live="polite"><header><div><p className="eyebrow">Playback</p><h2>{activeScenarioId ? DEMO_SCENARIOS[activeScenarioId].title : 'No scenario selected'}</h2></div><strong>{status.toUpperCase()} · {elapsedSeconds}s</strong></header><ol>{timeline.map((entry) => <li key={entry.id}><time>+{entry.atSecond}s</time><span>{entry.label}</span></li>)}</ol><button type="button" onClick={reset}>Reset all fixtures</button></section>
+  </Page>
 }
 
 export function TelegramPage() {

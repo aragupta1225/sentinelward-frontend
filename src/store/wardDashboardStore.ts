@@ -72,9 +72,18 @@ export const useWardDashboardStore = create<WardDashboardState>((set, get) => ({
   },
   setConnection: (connection) => {
     const source = get().source
-    if (!source) return
-    if (connection === 'live') source.connect()
-    else source.disconnect()
+    if (source) {
+      if (connection === 'live') source.connect()
+      else source.disconnect()
+      return
+    }
+    const occurredAt = Date.now()
+    const message = connection === 'live' ? 'Live ward connection restored' : 'Ward connection lost; last readings frozen'
+    set((state) => ({
+      connection,
+      beds: state.beds.map((bed) => ({ ...bed, connection })),
+      activities: [activity({ bedId: null, kind: 'system', priority: connection === 'live' ? 'none' : 'high', message, occurredAt }), ...state.activities].slice(0, 30),
+    }))
   },
   acknowledgeBed: (bedId) => {
     const target = get().beds.find((bed) => bed.id === bedId)
