@@ -1,0 +1,64 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AlertRail } from '../components/AlertRail'
+import { WardGrid } from '../components/WardGrid'
+import { WardSummaryRow } from '../components/WardSummaryRow'
+import { getWardSummary } from '../domain/wardSummary'
+import { useWardDashboardStore } from '../store/wardDashboardStore'
+
+export function WardPage() {
+  const navigate = useNavigate()
+  const beds = useWardDashboardStore((state) => state.beds)
+  const connection = useWardDashboardStore((state) => state.connection)
+  const activities = useWardDashboardStore((state) => state.activities)
+  const start = useWardDashboardStore((state) => state.start)
+  const setConnection = useWardDashboardStore((state) => state.setConnection)
+  const acknowledgeBed = useWardDashboardStore((state) => state.acknowledgeBed)
+  const [railCollapsed, setRailCollapsed] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
+  const previousHigh = useRef(new Set(beds.filter((bed) => bed.priority === 'high').map((bed) => bed.id)))
+  const previousConnection = useRef(connection)
+  const summary = useMemo(() => getWardSummary(beds), [beds])
+
+  useEffect(() => start(), [start])
+
+  useEffect(() => {
+    const current = new Set(beds.filter((bed) => bed.priority === 'high').map((bed) => bed.id))
+    const added = [...current].filter((bedId) => !previousHigh.current.has(bedId))
+    if (added.length > 0) setAnnouncement(`New high priority alarm: ${added.join(', ')}`)
+    previousHigh.current = current
+  }, [beds])
+
+  useEffect(() => {
+    if (previousConnection.current !== connection && previousConnection.current !== 'connecting') {
+      setAnnouncement(connection === 'live' ? 'Ward connection restored' : 'Ward connection lost. Last readings are frozen.')
+    }
+    previousConnection.current = connection
+  }, [connection])
+
+  const openBed = (bedId: string) => navigate(`/bed/${bedId}`)
+
+  return (
+    <main id="main-content" className="ward-page">
+      <div className="sr-only" aria-live="assertive" aria-atomic="true">{announcement}</div>
+      <section className="ward-heading">
+        <div><p className="eyebrow">Ward 6 · Critical Care</p><h1>Live ward</h1><p>Clinical priority, signal trust, freshness, and device status remain independent.</p></div>
+        <div className="ward-heading__actions">
+          <div className={`connection-chip connection-chip--${connection}`}><i aria-hidden="true" />{connection === 'live' ? 'LIVE' : connection.toUpperCase()}</div>
+          <button type="button" onClick={() => setConnection(connection === 'live' ? 'disconnected' : 'live')}>{connection === 'live' ? 'Simulate connection loss' : 'Restore connection'}</button>
+        </div>
+      </section>
+
+      <WardSummaryRow summary={summary} />
+
+      <button className="mobile-alert-toggle" type="button" onClick={() => setRailCollapsed((value) => !value)} aria-expanded={!railCollapsed} aria-controls="alert-rail-content">
+        Alerts <strong>{summary.activeAlarms}</strong><span>{beds.filter((bed) => bed.priority === 'high').length} high priority</span>
+      </button>
+
+      <div className="ward-layout">
+        <WardGrid beds={beds} onOpenBed={openBed} />
+        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeBed} onOpenBed={openBed} />
+      </div>
+    </main>
+  )
+}

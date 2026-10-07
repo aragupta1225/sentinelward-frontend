@@ -1,4 +1,6 @@
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
+import { BedDetailPage } from './pages/BedDetailPage'
+import { WardPage } from './pages/WardPage'
 import { WardMilestonePage } from './pages/WardMilestonePage'
 
 export default function App() {
@@ -11,7 +13,9 @@ export default function App() {
       </header>
       <Routes>
         <Route path="/" element={<Navigate to="/ward" replace />} />
-        <Route path="/ward" element={<WardMilestonePage />} />
+        <Route path="/ward" element={<WardPage />} />
+        <Route path="/bed/:id" element={<BedDetailPage />} />
+        <Route path="/lab/bed-tile" element={<WardMilestonePage />} />
         <Route path="*" element={<Navigate to="/ward" replace />} />
       </Routes>
     </div>

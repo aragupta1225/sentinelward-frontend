@@ -1,9 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type KeyboardEventHandler, type Ref } from 'react'
 import type { Bed } from '../domain/ward'
 import { EMPTY_READINGS, EMPTY_WAVEFORM, VERDICT_PRESENTATION } from '../domain/ward'
 import { WaveformCanvas } from './WaveformCanvas'
 
-interface BedTileProps { bed: Bed; now?: number; onOpen?: (bedId: string) => void }
+interface BedTileProps {
+  bed: Bed
+  now?: number
+  compact?: boolean
+  tileRef?: Ref<HTMLElement>
+  onNavigate?: KeyboardEventHandler<HTMLElement>
+  onOpen?: (bedId: string) => void
+}
 
 function formatReading(value: number | null) { return value === null ? '—' : String(value) }
 
@@ -15,7 +22,7 @@ function freshnessLabel(bed: Bed, now: number) {
   return seconds === 0 ? 'Updated now' : `Updated ${seconds} s ago`
 }
 
-export function BedTile({ bed, now: suppliedNow, onOpen }: BedTileProps) {
+export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNavigate, onOpen }: BedTileProps) {
   const [clock, setClock] = useState(() => suppliedNow ?? Date.now())
   const effectiveClock = suppliedNow ?? clock
   const presentation = VERDICT_PRESENTATION[bed.verdict]
@@ -42,7 +49,19 @@ export function BedTile({ bed, now: suppliedNow, onOpen }: BedTileProps) {
       : `${bed.patient.displayName}${bed.patient.age === null ? '' : `, age ${bed.patient.age}`}`
 
   return (
-    <article className={`bed-tile bed-tile--${bed.priority} ${bed.trustState === 'untrusted' ? 'bed-tile--untrusted' : ''}`} aria-label={`${bed.label}: ${presentation.label}. ${patientDescription}`} data-testid="bed-tile">
+    <article
+      ref={tileRef}
+      className={`bed-tile bed-tile--${bed.priority} ${bed.trustState === 'untrusted' ? 'bed-tile--untrusted' : ''} ${compact ? 'bed-tile--compact' : ''} ${onOpen ? 'bed-tile--interactive' : ''}`}
+      aria-label={`${bed.label}: ${presentation.label}. ${patientDescription}`}
+      data-testid="bed-tile"
+      role={onOpen ? 'link' : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      onClick={() => onOpen?.(bed.id)}
+      onKeyDown={(event) => {
+        onNavigate?.(event)
+        if (!event.defaultPrevented && event.key === 'Enter') onOpen?.(bed.id)
+      }}
+    >
       <header className="bed-tile__header">
         <div><p className="eyebrow">{bed.label}</p><h2>{patientDescription}</h2></div>
         <div className={`priority priority--${bed.priority}`}>
@@ -80,7 +99,6 @@ export function BedTile({ bed, now: suppliedNow, onOpen }: BedTileProps) {
         <span className={`freshness ${isNoData ? 'freshness--stale' : ''}`}><i aria-hidden="true" /> {freshness}</span>
         <span>{bed.acknowledgement === 'acknowledged' ? 'Acknowledged' : 'Not acknowledged'}</span>
       </footer>
-      {onOpen && <button className="bed-tile__open" type="button" onClick={() => onOpen(bed.id)}>Open {bed.label}<span aria-hidden="true"> →</span></button>}
     </article>
   )
 }
