@@ -1,4 +1,4 @@
-import { type FormEvent, type ReactNode } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { can, ROLE_LABELS, ROLES, type Role } from '../domain/access'
 import type { ScenarioId } from '../domain/scenarios'
@@ -8,6 +8,7 @@ import { useBedDetailStore } from '../store/bedDetailStore'
 import { useDemoScenarioStore } from '../store/demoScenarioStore'
 import { useOperationsStore } from '../store/operationsStore'
 import { useSecurityStore } from '../store/securityStore'
+import { useClinicalWorkflowStore } from '../store/clinicalWorkflowStore'
 import { useWardDashboardStore } from '../store/wardDashboardStore'
 
 const formatTime = (time: number) => new Intl.DateTimeFormat('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(time)
@@ -23,8 +24,9 @@ export function LoginPage() {
 }
 
 export function CensusPage() {
-  const beds = useWardDashboardStore((s) => s.beds); const navigate = useNavigate()
-  return <Page title="Doctor / tele-ICU census" eyebrow="S5"><DataTable headers={['Bed', 'Patient', 'Priority', 'Verdict', 'Vitals', 'Action']}>{beds.filter((b) => b.occupancy === 'occupied').map((b) => <tr key={b.id}><td>{b.label}</td><td>{b.patient.displayName} · {b.patient.age}</td><td>{b.priority}</td><td>{VERDICT_PRESENTATION[b.verdict].label}</td><td>HR {b.readings.heartRate ?? '—'} · SpO₂ {b.readings.spo2 ?? '—'}</td><td><button onClick={() => navigate(`/bed/${b.id}`)}>Open</button></td></tr>)}</DataTable></Page>
+  const beds = useWardDashboardStore((s) => s.beds); const navigate = useNavigate(); const [filter, setFilter] = useState<'all' | 'priority' | 'unacknowledged'>('all'); const role = useBedDetailStore((s) => s.currentRole); const responses = useBedDetailStore((s) => s.responses); const acknowledgeResponse = useBedDetailStore((s) => s.acknowledgeResponse); const clinicians = useClinicalWorkflowStore((s) => s.clinicians); const assignments = useClinicalWorkflowStore((s) => s.assignments); const assignBed = useClinicalWorkflowStore((s) => s.assignBed); const setAssignmentStatus = useClinicalWorkflowStore((s) => s.setAssignmentStatus)
+  const visibleBeds = beds.filter((b) => b.occupancy === 'occupied').filter((b) => filter === 'all' || (filter === 'priority' ? b.priority === 'high' : !responses[b.id]?.responseAcknowledgedAt))
+  return <Page title="Doctor / tele-ICU census" eyebrow="S5"><div className="census-filters" role="group" aria-label="Census filter">{(['all', 'priority', 'unacknowledged'] as const).map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}</button>)}</div><DataTable headers={['Bed', 'Patient', 'Priority', 'Verdict', 'Vitals', 'Assigned clinician', 'Response', 'Detail']}>{visibleBeds.map((b) => { const assignment = assignments.find((item) => item.bedId === b.id); const acknowledged = responses[b.id]?.responseAcknowledgedAt; return <tr key={b.id}><td>{b.label}</td><td>{b.patient.displayName} · {b.patient.age}</td><td>{b.priority}</td><td>{VERDICT_PRESENTATION[b.verdict].label}</td><td>HR {b.readings.heartRate ?? '—'} · SpO₂ {b.readings.spo2 ?? '—'}</td><td><select aria-label={`Assign ${b.label}`} value={assignment?.clinicianId ?? ''} onChange={(event) => assignBed(b.id, event.target.value)}><option value="">Unassigned</option>{clinicians.filter((item) => item.role === 'doctor').map((item) => <option value={item.id} key={item.id}>{item.displayName}</option>)}</select></td><td><button disabled={!can(role, 'acknowledge_alert') || Boolean(acknowledged)} onClick={() => { acknowledgeResponse(b.id); setAssignmentStatus(b.id, 'on_my_way') }}>{acknowledged ? 'On my way recorded' : 'On my way'}</button></td><td><button onClick={() => navigate(`/bed/${b.id}`)}>Open</button></td></tr> })}</DataTable></Page>
 }
 
 export function SecurityPage() {
@@ -52,8 +54,8 @@ export function TicketsPage() {
 }
 
 export function BriefingPage() {
-  const beds = useWardDashboardStore((s) => s.beds); const high = beds.filter((b) => b.priority === 'high')
-  return <Page title="Briefing and workload" eyebrow="S10"><div className="record-grid"><article className="record-card"><h2>Shift priorities</h2><strong>{high.length} high-priority beds</strong><ul>{high.map((b) => <li key={b.id}>{b.label} · {VERDICT_PRESENTATION[b.verdict].label}</li>)}</ul></article><article className="record-card"><h2>Provisional workload</h2><p>Nurse: 4 assigned beds</p><p>Doctor / tele-ICU: {high.length} priority reviews</p><p>IT: {beds.filter((b) => b.trustState === 'untrusted').length} integrity reviews</p><p>Biomedical: {beds.filter((b) => ['LOOSE_SENSOR', 'DRIFTING'].includes(b.verdict)).length} device checks</p></article></div></Page>
+  const beds = useWardDashboardStore((s) => s.beds); const high = beds.filter((b) => b.priority === 'high'); const clinicians = useClinicalWorkflowStore((s) => s.clinicians); const assignments = useClinicalWorkflowStore((s) => s.assignments)
+  return <Page title="Briefing and workload" eyebrow="S10"><div className="record-grid"><article className="record-card"><h2>Shift priorities</h2><strong>{high.length} high-priority beds</strong><ul>{high.map((b) => <li key={b.id}>{b.label} · {VERDICT_PRESENTATION[b.verdict].label}</li>)}</ul></article><article className="record-card"><h2>Operational queues</h2><p>Doctor / tele-ICU: {high.length} priority reviews</p><p>IT: {beds.filter((b) => b.trustState === 'untrusted').length} integrity reviews</p><p>Biomedical: {beds.filter((b) => ['LOOSE_SENSOR', 'DRIFTING'].includes(b.verdict)).length} device checks</p></article></div><h2>Clinical assignments</h2><div className="workload-grid">{clinicians.map((clinician) => { const active = assignments.filter((item) => item.clinicianId === clinician.id && item.status !== 'complete'); return <article key={clinician.id}><strong>{clinician.displayName}</strong><span>{active.length} / {clinician.capacity} active beds</span><ul>{active.map((item) => <li key={item.bedId}>{item.bedId} · {item.status.replaceAll('_', ' ')}</li>)}</ul></article> })}</div></Page>
 }
 
 export function ActionLogPage() {
