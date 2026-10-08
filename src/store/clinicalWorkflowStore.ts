@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 import type { BedAssignment, Clinician } from '../domain/clinicalWorkflow'
 import { useWardDashboardStore, type WardActivity } from './wardDashboardStore'
+import { dispatchCommand } from '../adapters/commandGateway'
 
 interface ClinicalWorkflowState {
   clinicians: Clinician[]
   assignments: BedAssignment[]
-  assignBed: (bedId: string, clinicianId: string) => boolean
-  setAssignmentStatus: (bedId: string, status: BedAssignment['status']) => void
+  assignBed: (bedId: string, clinicianId: string) => Promise<boolean>
+  setAssignmentStatus: (bedId: string, status: BedAssignment['status']) => Promise<void>
 }
 
 let eventSequence = 0
@@ -34,21 +35,23 @@ const initialAssignments: BedAssignment[] = [
 export const useClinicalWorkflowStore = create<ClinicalWorkflowState>((set, get) => ({
   clinicians,
   assignments: initialAssignments,
-  assignBed: (bedId, clinicianId) => {
+  assignBed: async (bedId, clinicianId) => {
     const clinician = get().clinicians.find((item) => item.id === clinicianId)
     if (!clinician) return false
     const current = get().assignments.find((item) => item.bedId === bedId)
     const activeCount = get().assignments.filter((item) => item.clinicianId === clinicianId && item.status !== 'complete' && item.bedId !== bedId).length
     if (activeCount >= clinician.capacity) return false
+    if (!await dispatchCommand({ type: 'assign_clinician', bedId, clinicianId })) return false
     const timestamp = Date.now()
     const assignment: BedAssignment = { bedId, clinicianId, status: 'assigned', assignedAt: current?.assignedAt ?? timestamp, updatedAt: timestamp }
     set((state) => ({ assignments: [assignment, ...state.assignments.filter((item) => item.bedId !== bedId)] }))
     log(`${bedId} assigned to ${clinician.displayName}`, bedId)
     return true
   },
-  setAssignmentStatus: (bedId, status) => {
+  setAssignmentStatus: async (bedId, status) => {
     const assignment = get().assignments.find((item) => item.bedId === bedId)
     if (!assignment || assignment.status === status) return
+    if (!await dispatchCommand({ type: 'update_assignment', bedId, status })) return
     set((state) => ({ assignments: state.assignments.map((item) => item.bedId === bedId ? { ...item, status, updatedAt: Date.now() } : item) }))
     const clinician = get().clinicians.find((item) => item.id === assignment.clinicianId)
     log(`${clinician?.displayName ?? 'Clinician'} marked ${status.replaceAll('_', ' ')}`, bedId)

@@ -2,16 +2,17 @@ import { create } from 'zustand'
 import { can, type Role } from '../domain/access'
 import type { BedAction, BedActionType, BedResponseState } from '../domain/actions'
 import { useWardDashboardStore } from './wardDashboardStore'
+import { dispatchCommand } from '../adapters/commandGateway'
 
 interface BedDetailState {
   currentRole: Role
   responses: Record<string, BedResponseState>
   actions: BedAction[]
   setRole: (role: Role) => void
-  acknowledgeResponse: (bedId: string) => void
-  confirmPatient: (bedId: string, status: 'patient_ok' | 'patient_not_ok') => void
-  isolateDevice: (bedId: string) => void
-  undoAction: (actionId: string) => void
+  acknowledgeResponse: (bedId: string) => Promise<void>
+  confirmPatient: (bedId: string, status: 'patient_ok' | 'patient_not_ok') => Promise<void>
+  isolateDevice: (bedId: string) => Promise<void>
+  undoAction: (actionId: string) => Promise<void>
 }
 
 let sequence = 10
@@ -36,20 +37,22 @@ const initialActions: BedAction[] = [
 export const useBedDetailStore = create<BedDetailState>((set, get) => ({
   currentRole: 'nurse', responses: {}, actions: initialActions,
   setRole: (currentRole) => set({ currentRole }),
-  acknowledgeResponse: (bedId) => {
+  acknowledgeResponse: async (bedId) => {
     const state = get()
     if (!can(state.currentRole, 'acknowledge_alert')) return
     const current = responseFor(state, bedId)
     if (current.responseAcknowledgedAt) return
     const occurredAt = Date.now()
+    if (!await dispatchCommand({ type: 'acknowledge_alert', bedId })) return
     useWardDashboardStore.getState().acknowledgeBed(bedId)
     set({ responses: { ...state.responses, [bedId]: { ...current, responseAcknowledgedAt: occurredAt } }, actions: appendUserAction(state, bedId, 'response_acknowledged', 'On my way response recorded') })
   },
-  confirmPatient: (bedId, status) => {
+  confirmPatient: async (bedId, status) => {
     const state = get()
     if (!can(state.currentRole, 'confirm_bedside_status')) return
     const current = responseFor(state, bedId)
     const occurredAt = Date.now()
+    if (!await dispatchCommand({ type: 'confirm_bedside', bedId, status })) return
     if (status === 'patient_not_ok') {
       useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((bed) => bed.id === bedId ? {
         ...bed, priority: 'high', verdict: bed.verdict === 'TAMPERING' || bed.verdict === 'DEVICE_ATTACK' ? 'BOTH' : 'EMERGENCY',
@@ -58,21 +61,23 @@ export const useBedDetailStore = create<BedDetailState>((set, get) => ({
     }
     set({ responses: { ...state.responses, [bedId]: { ...current, bedsideStatus: status, bedsideConfirmedAt: occurredAt } }, actions: appendUserAction(state, bedId, status, status === 'patient_ok' ? 'Patient confirmed OK at bedside' : 'Patient confirmed NOT OK; high alert raised') })
   },
-  isolateDevice: (bedId) => {
+  isolateDevice: async (bedId) => {
     const state = get()
     if (!can(state.currentRole, 'isolate_device')) return
     const bed = useWardDashboardStore.getState().beds.find((item) => item.id === bedId)
     if (!bed || bed.isolated) return
+    if (!await dispatchCommand({ type: 'isolate_device', bedId })) return
     useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((item) => item.id === bedId ? { ...item, isolated: true } : item) }))
     set({ actions: appendUserAction(state, bedId, 'device_isolated', 'Device isolation requested; treatment systems untouched', true) })
   },
-  undoAction: (actionId) => {
+  undoAction: async (actionId) => {
     const state = get()
     if (!can(state.currentRole, 'undo_isolation')) return
     const original = state.actions.find((action) => action.id === actionId)
     if (!original?.undoable || original.type !== 'device_isolated') return
     const alreadyUndone = state.actions.some((action) => action.type === 'action_undone' && action.referencesActionId === actionId)
     if (alreadyUndone) return
+    if (!await dispatchCommand({ type: 'undo_action', bedId: original.bedId, originalActionId: actionId })) return
     useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((bed) => bed.id === original.bedId ? { ...bed, isolated: false } : bed) }))
     set({ actions: appendUserAction(state, original.bedId, 'action_undone', `Isolation action ${actionId} undone; original retained`, false, actionId) })
   },

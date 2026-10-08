@@ -2,12 +2,13 @@ import { create } from 'zustand'
 import { can, type Role } from '../domain/access'
 import type { IncidentEvidence, SecurityIncident } from '../domain/security'
 import { useWardDashboardStore, type WardActivity } from './wardDashboardStore'
+import { dispatchCommand } from '../adapters/commandGateway'
 
 interface SecurityState {
   incidents: SecurityIncident[]
-  captureEvidence: (bedId: string, role: Role) => void
-  containIncident: (bedId: string, role: Role) => void
-  resolveIncident: (bedId: string, role: Role) => boolean
+  captureEvidence: (bedId: string, role: Role) => Promise<void>
+  containIncident: (bedId: string, role: Role) => Promise<void>
+  resolveIncident: (bedId: string, role: Role) => Promise<boolean>
 }
 
 let evidenceSequence = 10
@@ -27,29 +28,32 @@ const initialIncidents: SecurityIncident[] = [
 
 export const useSecurityStore = create<SecurityState>((set, get) => ({
   incidents: initialIncidents,
-  captureEvidence: (bedId, role) => {
+  captureEvidence: async (bedId, role) => {
     if (!can(role, 'capture_incident_evidence')) return
     const incident = get().incidents.find((item) => item.bedId === bedId)
     const bed = useWardDashboardStore.getState().beds.find((item) => item.id === bedId)
     if (!incident || !bed) return
+    if (!await dispatchCommand({ type: 'capture_evidence', bedId })) return
     evidenceSequence += 1
     const evidence: IncidentEvidence = { id: `EV-${evidenceSequence}`, kind: 'signal_snapshot', label: `Signal snapshot · trust ${bed.trust}% · ${bed.verdict}`, capturedAt: Date.now(), source: 'manual' }
     set((state) => ({ incidents: state.incidents.map((item) => item.bedId === bedId ? { ...item, evidence: [...item.evidence, evidence] } : item) }))
     appendActivity(bedId, `${evidence.id} captured for ${incident.id}`, incident.severity)
   },
-  containIncident: (bedId, role) => {
+  containIncident: async (bedId, role) => {
     if (!can(role, 'contain_incident')) return
     const incident = get().incidents.find((item) => item.bedId === bedId)
     if (!incident || incident.status !== 'open') return
+    if (!await dispatchCommand({ type: 'contain_incident', bedId })) return
     const now = Date.now()
     set((state) => ({ incidents: state.incidents.map((item) => item.bedId === bedId ? { ...item, status: 'contained', containedAt: now } : item) }))
     useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((bed) => bed.id === bedId ? { ...bed, isolated: true, verdict: bed.priority === 'high' ? 'BOTH' : bed.verdict } : bed) }))
     appendActivity(bedId, `${incident.id} contained; device isolated without treatment changes`, incident.severity)
   },
-  resolveIncident: (bedId, role) => {
+  resolveIncident: async (bedId, role) => {
     if (!can(role, 'resolve_incident')) return false
     const incident = get().incidents.find((item) => item.bedId === bedId)
     if (!incident || incident.status !== 'contained' || incident.evidence.length === 0) return false
+    if (!await dispatchCommand({ type: 'resolve_incident', bedId })) return false
     set((state) => ({ incidents: state.incidents.map((item) => item.bedId === bedId ? { ...item, status: 'resolved', resolvedAt: Date.now() } : item) }))
     appendActivity(bedId, `${incident.id} marked resolved; device trust remains unchanged pending backend recovery rules`, incident.severity)
     return true

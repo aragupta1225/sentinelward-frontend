@@ -7,6 +7,7 @@ import { WardMilestonePage } from './pages/WardMilestonePage'
 import { useBedDetailStore } from './store/bedDetailStore'
 import { canViewScreen, ROLE_LABELS, type ScreenId } from './domain/access'
 import { useSessionStore } from './store/sessionStore'
+import { subscribeCommandFailures } from './adapters/commandGateway'
 
 const navigation = [
   ['/ward', 'Ward', 'ward'], ['/census', 'Census', 'census'], ['/security', 'Security', 'security'],
@@ -17,6 +18,12 @@ function WardClock() {
   const [time, setTime] = useState(() => Date.now())
   useEffect(() => { const timer = window.setInterval(() => setTime(Date.now()), 1000); return () => window.clearInterval(timer) }, [])
   return <time dateTime={new Date(time).toISOString()}>{new Intl.DateTimeFormat('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(time)}</time>
+}
+
+function CommandFailureAnnouncer() {
+  const [message, setMessage] = useState('')
+  useEffect(() => subscribeCommandFailures((failure) => setMessage(`Action failed: ${failure.message}`)), [])
+  return <div className="sr-only" role="alert">{message}</div>
 }
 
 function ProtectedRoute({ screen, children }: { screen: ScreenId; children: ReactNode }) {
@@ -35,6 +42,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">Skip to main content</a>
+      <CommandFailureAnnouncer />
       <header className="topbar">
         <Link className="brand" to="/ward" aria-label="SentinelWard ward view"><span className="brand__mark" aria-hidden="true">S</span><span><strong>SentinelWard</strong><small>Clinical command interface</small></span></Link>
         {authenticated && <nav className="primary-nav" aria-label="Primary">{navigation.filter(([, , screen]) => canViewScreen(role, screen as ScreenId)).map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>}

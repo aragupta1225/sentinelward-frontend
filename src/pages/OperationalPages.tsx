@@ -51,7 +51,7 @@ export function ReportPage() {
 
 export function TicketsPage() {
   const tickets = useOperationsStore((s) => s.tickets); const createTicket = useOperationsStore((s) => s.createTicket); const setTicketStatus = useOperationsStore((s) => s.setTicketStatus)
-  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const data = new FormData(event.currentTarget); createTicket(String(data.get('bed')).toUpperCase(), String(data.get('issue'))); event.currentTarget.reset() }
+  const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const form = event.currentTarget; const data = new FormData(form); const ticket = await createTicket(String(data.get('bed')).toUpperCase(), String(data.get('issue'))); if (ticket) form.reset() }
   return <Page title="Biomedical tickets" eyebrow="S9"><form className="inline-form" onSubmit={submit}><label>Bed<input name="bed" required pattern="B[0-9]{2}" placeholder="B04" /></label><label>Issue<input name="issue" required minLength={5} placeholder="Describe equipment issue" /></label><button type="submit">Create ticket</button></form><DataTable headers={['Ticket', 'Bed', 'Issue', 'Status', 'Update']}>{tickets.map((t) => <tr key={t.id}><td>{t.id}</td><td>{t.bedId}</td><td>{t.issue}</td><td>{t.status}</td><td><button disabled={t.status === 'resolved'} onClick={() => setTicketStatus(t.id, 'resolved')}>{t.status === 'resolved' ? 'Resolved' : 'Resolve'}</button></td></tr>)}</DataTable></Page>
 }
 

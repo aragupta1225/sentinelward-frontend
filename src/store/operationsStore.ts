@@ -1,13 +1,14 @@
 import { create } from 'zustand'
 import type { BiomedicalTicket, ReportReview } from '../domain/operations'
 import { useWardDashboardStore, type WardActivity } from './wardDashboardStore'
+import { dispatchCommand } from '../adapters/commandGateway'
 
 interface OperationsState {
   tickets: BiomedicalTicket[]
   reportReviews: Record<string, ReportReview>
-  createTicket: (bedId: string, issue: string) => BiomedicalTicket
-  setTicketStatus: (ticketId: string, status: BiomedicalTicket['status']) => void
-  markReportReviewed: (incidentId: string, reviewer: string) => void
+  createTicket: (bedId: string, issue: string) => Promise<BiomedicalTicket | null>
+  setTicketStatus: (ticketId: string, status: BiomedicalTicket['status']) => Promise<void>
+  markReportReviewed: (incidentId: string, reviewer: string) => Promise<void>
 }
 
 let ticketSequence = 104
@@ -27,21 +28,24 @@ const initialTickets: BiomedicalTicket[] = [
 export const useOperationsStore = create<OperationsState>((set, get) => ({
   tickets: initialTickets,
   reportReviews: {},
-  createTicket: (bedId, issue) => {
+  createTicket: async (bedId, issue) => {
     ticketSequence += 1
     const ticket: BiomedicalTicket = { id: `BIO-${ticketSequence}`, bedId, issue, status: 'open', createdAt: Date.now(), updatedAt: Date.now() }
+    if (!await dispatchCommand({ type: 'create_ticket', bedId, issue })) return null
     set((state) => ({ tickets: [ticket, ...state.tickets] }))
     appendActivity(`${ticket.id} created: ${issue}`, bedId)
     return ticket
   },
-  setTicketStatus: (ticketId, status) => {
+  setTicketStatus: async (ticketId, status) => {
     const ticket = get().tickets.find((item) => item.id === ticketId)
     if (!ticket || ticket.status === status) return
+    if (!await dispatchCommand({ type: 'update_ticket', ticketId, status })) return
     set((state) => ({ tickets: state.tickets.map((item) => item.id === ticketId ? { ...item, status, updatedAt: Date.now() } : item) }))
     appendActivity(`${ticketId} marked ${status}`, ticket.bedId)
   },
-  markReportReviewed: (incidentId, reviewer) => {
+  markReportReviewed: async (incidentId, reviewer) => {
     if (get().reportReviews[incidentId]?.status === 'reviewed') return
+    if (!await dispatchCommand({ type: 'review_report', incidentId })) return
     const review: ReportReview = { incidentId, status: 'reviewed', reviewedAt: Date.now(), reviewedBy: reviewer }
     set((state) => ({ reportReviews: { ...state.reportReviews, [incidentId]: review } }))
     appendActivity(`CERT-In draft for ${incidentId} reviewed by ${reviewer}`, incidentId)

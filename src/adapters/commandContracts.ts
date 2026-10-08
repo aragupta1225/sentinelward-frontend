@@ -1,0 +1,23 @@
+export type FrontendCommand =
+  | { type: 'acknowledge_alert'; bedId: string }
+  | { type: 'confirm_bedside'; bedId: string; status: 'patient_ok' | 'patient_not_ok' }
+  | { type: 'isolate_device'; bedId: string }
+  | { type: 'undo_action'; bedId: string; originalActionId: string }
+  | { type: 'capture_evidence'; bedId: string }
+  | { type: 'contain_incident'; bedId: string }
+  | { type: 'resolve_incident'; bedId: string }
+  | { type: 'create_ticket'; bedId: string; issue: string }
+  | { type: 'update_ticket'; ticketId: string; status: 'open' | 'assigned' | 'resolved' }
+  | { type: 'review_report'; incidentId: string }
+  | { type: 'assign_clinician'; bedId: string; clinicianId: string }
+  | { type: 'update_assignment'; bedId: string; status: 'assigned' | 'on_my_way' | 'reviewing' | 'complete' }
+
+export interface CommandReceipt {
+  commandId: string
+  acceptedAt: number
+  status: 'accepted'
+}
+
+export interface CommandAdapter {
+  execute(command: FrontendCommand, signal?: AbortSignal): Promise<CommandReceipt>
+}
