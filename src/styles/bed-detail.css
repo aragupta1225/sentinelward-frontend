@@ -6,15 +6,12 @@
 .detail-tabs button[aria-current='page'] { border-bottom-color: var(--cyan); color: #e8f7fc; }
 .detail-overview { display: grid; grid-template-columns: minmax(440px, 590px) minmax(360px, 1fr); align-items: start; gap: 18px; }
 .detail-workflows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.workflow-card { min-height: 210px; border: 1px solid var(--line); border-radius: 12px; padding: 18px; background: var(--surface); }
+.workflow-card { min-height: 210px; padding: 18px; }
 .workflow-card:last-child { grid-column: 1 / -1; min-height: 170px; }
 .workflow-card h2 { margin: 0 0 8px; font-size: 17px; }
 .workflow-card > p:not(.eyebrow) { min-height: 44px; margin-bottom: 15px; color: var(--muted); font-size: 11px; line-height: 1.55; }
-.workflow-card button { min-height: 44px; border: 1px solid #37627b; border-radius: 8px; padding: 0 14px; background: #123249; cursor: pointer; }
-.workflow-card button:disabled { opacity: .45; cursor: not-allowed; }
 .workflow-card small { display: block; margin-top: 10px; color: #d3bc73; font-size: 10px; }
 .bedside-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.bedside-actions .danger-action { border-color: #813e46; color: #ffdadd; background: #421f26; }
 .bedside-result { display: block; margin-top: 14px; color: #a8bdca; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; }
 .bedside-result--patient_ok { color: #75dcb6; }
 .bedside-result--patient_not_ok { color: #ff9da2; }
@@ -30,7 +27,6 @@
 .action-panel th { padding: 10px; border-bottom: 1px solid #3b5b70; color: #8da7b7; text-align: left; text-transform: uppercase; letter-spacing: .07em; }
 .action-panel td { padding: 12px 10px; border-bottom: 1px solid var(--line); color: #cedce4; vertical-align: top; }
 .action-panel td small { display: block; margin-top: 3px; color: #718a99; text-transform: capitalize; }
-.empty-state { padding: 36px; text-align: center; }
 .treatment-boundary { margin: 16px 0 0; border: 1px solid #31566e; border-radius: 8px; padding: 12px 14px; color: #a6bdca; background: #0b1d2a; font-size: 11px; text-align: center; }
 
 @media (max-width: 980px) {

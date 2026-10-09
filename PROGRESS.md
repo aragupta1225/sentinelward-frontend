@@ -4,7 +4,7 @@ Last verified: 2026-10-09
 
 Owner: Antara Gupta
 
-Repository status at inspection: `main` matched `origin/main` at `d3edbb2` before M3 implementation.
+Repository status at inspection: `main` matched `origin/main` at `f08f094` before M4 implementation.
 
 ## Current Status
 
@@ -34,6 +34,8 @@ The specification still has no S4: it defines 12 numbered web screens plus Teleg
 - Styles are split into foundation/Ward, Bed Detail, and operational route modules while preserving the existing responsive and accessibility behavior.
 - The obsolete Bed Tile lab route, legacy milestone pages, legacy Ward store, unused event-source mock, and their retired styles/tests have been removed.
 - The README now documents the current routes, adapter boundary, mock-safe runtime configuration, and verified development commands.
+- Shared typed primitives now provide consistent page headers, status chips, action buttons, panels, and explicit empty states across Ward, Bed Detail, and operational routes.
+- Operational page hierarchy and responsive presentation are consistent while clinical copy, non-color status cues, 44-pixel actions, and mock-only boundaries remain intact.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
 
@@ -45,7 +47,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
 - Screenshot-based visual regression is not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
 - Production deployment configuration, SPA deep-link fallback, CI, monitoring, and error reporting are not configured.
-- Final UI polish is deferred; current styling is functional rather than approved final design.
+- Final brand/design approval remains external; the current system is a consistent, accessible functional baseline.
 
 ## Bugs and Technical Debt
 
@@ -56,9 +58,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**M4 — Shared design system and screen hierarchy polish (active).**
+**M5 — Delivery performance and runtime independence (active).**
 
-M3 is complete and verified. The next implementation work consolidates repeated interface patterns and improves hierarchy without weakening safety semantics or changing workflow behavior.
+M4 is complete and verified. The next implementation work reduces the initial route bundle and removes the runtime font-service dependency without changing application behavior.
 
 ### M1 Verified Result
 
@@ -83,18 +85,25 @@ M3 is complete and verified. The next implementation work consolidates repeated 
 - The README describes the current frontend, runtime modes, adapter architecture, and verified commands.
 - The full quality gate passes with 68 unit/component tests and 21 Playwright tests.
 
-### M4 Acceptance Criteria — Shared Design System and Screen Hierarchy Polish
+### M4 Verified Result — Shared Design System and Screen Hierarchy Polish
 
-- Consolidate repeated page headers, status chips, action controls, panels, and empty-state patterns into reusable typed components.
-- Improve route hierarchy, responsive behavior, and interaction consistency using the existing restrained visual language.
-- Preserve exact clinical states, non-color cues, focus behavior, touch targets, and mock-only disclosure.
+- Reusable typed page headers, status chips, action controls, panels, and empty states replace route-specific variants.
+- Ward, Bed Detail, census, security, incident, report, ticket, briefing, log, demo, login, and landing hierarchy uses the shared system.
+- Exact clinical states, non-color cues, focus behavior, touch targets, and mock-only disclosure remain covered.
+- Four focused primitive tests were added and the full quality gate passes.
+
+### M5 Acceptance Criteria — Delivery Performance and Runtime Independence
+
+- Lazy-load noncritical route families with an accessible loading fallback while keeping Ward navigation and route guards stable.
+- Remove the Google Fonts runtime request and use a resilient system font stack.
+- Demonstrate a materially smaller initial JavaScript bundle without hiding safety-critical UI behind an extra interaction.
 - Keep all unit, axe, and browser workflow coverage green and pass `npm run check`.
 
 ## Prioritized Roadmap
 
-1. Complete M4 shared design system and screen hierarchy polish without changing safety behavior.
-2. Add route-level code splitting and remove the runtime font dependency.
-3. Add CI, production deployment routing, monitoring, and error reporting.
+1. Complete M5 route-level code splitting and remove the runtime font dependency.
+2. Add CI, production deployment routing, monitoring, and error reporting.
+3. Add screenshot-based visual regression after the visual baseline is approved.
 4. Integrate confirmed backend contracts through adapters and mappers only.
 
 ## Provisional Backend Dependencies
@@ -115,15 +124,15 @@ The following are **provisional and unresolved**; they must not block mock-mode 
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 19 files passed; 68 tests passed.
+- Tests: 20 files passed; 72 tests passed.
 - Browser regression: 21 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 13 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 168 modules; CSS 27.44 kB (6.63 kB gzip); JavaScript 465.92 kB (148.24 kB gzip).
+- Build output: 169 modules; CSS 27.18 kB (6.70 kB gzip); JavaScript 468.17 kB (149.14 kB gzip).
 
 ## Next Recommended Actions
 
-1. Inventory repeated interface patterns now exposed by the route-module split.
-2. Introduce reusable typed primitives without changing route behavior or safety copy.
-3. Refine hierarchy and responsive presentation across the operational screens.
+1. Introduce route-family lazy boundaries with an accessible loading fallback.
+2. Remove the external Google Fonts import and adopt resilient system font stacks.
+3. Verify initial chunk reduction and route behavior across direct and in-app navigation.
 4. Rerun the full unit, axe, browser, and production-build gate.

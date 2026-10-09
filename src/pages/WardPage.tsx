@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AlertRail } from '../components/AlertRail'
 import { WardGrid } from '../components/WardGrid'
 import { WardSummaryRow } from '../components/WardSummaryRow'
+import { ActionButton, PageHeader, StatusChip } from '../components/ui'
 import { getWardSummary } from '../domain/wardSummary'
 import { useBedDetailStore } from '../store/bedDetailStore'
 import { useWardDashboardStore } from '../store/wardDashboardStore'
@@ -45,13 +46,15 @@ export function WardPage() {
   return (
     <main id="main-content" className="ward-page">
       <div className="sr-only" aria-live="assertive" aria-atomic="true">{announcement}</div>
-      <section className="ward-heading">
-        <div><p className="eyebrow">Ward 6 · Critical Care</p><h1>Live ward</h1><p>Clinical priority, signal trust, freshness, and device status remain independent.</p></div>
-        <div className="ward-heading__actions">
-          <div className={`connection-chip connection-chip--${connection}`}><i aria-hidden="true" />{connection === 'live' ? 'LIVE' : connection.toUpperCase()}</div>
-          <button type="button" onClick={() => setConnection(connection === 'live' ? 'disconnected' : 'live')}>{connection === 'live' ? 'Simulate connection loss' : 'Restore connection'}</button>
-        </div>
-      </section>
+      <PageHeader
+        eyebrow="Ward 6 · Critical Care"
+        title="Live ward"
+        description="Clinical priority, signal trust, freshness, and device status remain independent."
+        actions={<>
+          <StatusChip tone={connection === 'live' ? 'positive' : connection === 'connecting' ? 'warning' : 'critical'} dot>{connection === 'live' ? 'LIVE' : connection.toUpperCase()}</StatusChip>
+          <ActionButton onClick={() => setConnection(connection === 'live' ? 'disconnected' : 'live')}>{connection === 'live' ? 'Simulate connection loss' : 'Restore connection'}</ActionButton>
+        </>}
+      />
 
       {loadError && <p className="ward-status-message ward-status-message--error" role="alert">Ward refresh failed: {loadError}. Last known patient data remains visible.</p>}
       {commandError && <p className="ward-status-message ward-status-message--error" role="alert">{commandError}</p>}

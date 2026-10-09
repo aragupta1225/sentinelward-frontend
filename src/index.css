@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import './styles/primitives.css';
 @import './styles/bed-detail.css';
 @import './styles/operations.css';
 
@@ -102,21 +103,9 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .ward-page, .bed-detail-page { width: min(1840px, calc(100% - 32px)); margin: 0 auto; padding: 26px 0 56px; }
-.ward-heading, .bed-detail-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 20px; }
-.ward-heading h1, .bed-detail-heading h1 { margin-bottom: 6px; font-size: clamp(28px, 3vw, 42px); }
-.ward-heading p:last-child, .bed-detail-heading p:last-child { margin: 0; color: var(--muted); font-size: 13px; }
-.ward-heading__actions { display: flex; align-items: center; gap: 10px; }
-.ward-heading__actions button, .primary-action, .back-button { min-height: 44px; border: 1px solid #31566e; border-radius: 8px; padding: 0 14px; background: #10283a; cursor: pointer; }
-.ward-heading__actions button:hover, .primary-action:hover, .back-button:hover { background: #17384e; }
+.back-button { margin-bottom: 12px; }
 .ward-status-message { margin: 0 0 16px; border: 1px solid #7e6936; border-radius: 8px; padding: 10px 12px; background: #2a2518; color: #f1d78b; font-size: 13px; }
 .ward-status-message--error { border-color: #8e4148; background: #301c22; color: #ffb8be; }
-.primary-action:disabled { opacity: .65; cursor: default; }
-.connection-chip { min-height: 38px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #31566e; border-radius: 99px; padding: 0 12px; color: #a8bdca; font: 500 10px 'DM Mono', monospace; }
-.connection-chip i { width: 8px; height: 8px; border-radius: 50%; background: #8ba2b2; }
-.connection-chip--live { border-color: #225c50; color: #8ce8c6; background: #0c2b28; }
-.connection-chip--live i { background: var(--green); }
-.connection-chip--disconnected { border-color: #8b3d45; color: #ffb2b6; background: #351b20; }
-.connection-chip--disconnected i { background: var(--red); }
 
 .ward-summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 14px; }
 .summary-card { min-height: 86px; display: grid; grid-template-columns: 1fr auto; align-content: center; gap: 3px 12px; border: 1px solid var(--line); border-radius: 10px; padding: 13px 15px; background: #0c1c2a; }
@@ -200,7 +189,6 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
   .alert-rail--collapsed .alert-rail__toggle > span:last-child { margin: 0; }
 }
 @media (max-width: 900px) {
-  .ward-heading { align-items: flex-start; flex-direction: column; }
   .ward-layout { grid-template-columns: 1fr; }
   .ward-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .alert-rail { position: static; grid-row: 1; width: 100%; max-height: none; }
@@ -212,7 +200,6 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
 }
 @media (max-width: 620px) {
   .ward-page, .bed-detail-page { width: min(100% - 20px, 520px); }
-  .ward-heading__actions, .bed-detail-heading { align-items: stretch; flex-direction: column; }
   .ward-summary { grid-template-columns: repeat(2, 1fr); }
   .ward-grid { grid-template-columns: 1fr; }
   .bed-tile--compact .vitals strong { font-size: 23px; }

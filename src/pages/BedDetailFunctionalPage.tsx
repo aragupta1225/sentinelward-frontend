@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { BedTile } from '../components/BedTile'
 import { TrendChart } from '../components/TrendChart'
+import { ActionButton, EmptyState, PageHeader, Panel } from '../components/ui'
 import { can, ROLE_LABELS, ROLES, type Role } from '../domain/access'
 import { VERDICT_PRESENTATION } from '../domain/ward'
 import { createThirtyMinuteTrend } from '../mocks/trendFixtures'
@@ -37,11 +38,13 @@ export function BedDetailFunctionalPage() {
 
   return (
     <main id="main-content" className="bed-detail-page bed-detail-page--functional">
-      <button className="back-button" type="button" onClick={() => navigate(-1)}>← Back to ward</button>
-      <section className="bed-detail-heading">
-        <div><p className="eyebrow">Bed detail · live mock data</p><h1>{bed.label} · {bed.patient.displayName}</h1><p>{VERDICT_PRESENTATION[bed.verdict].label} · {bed.reason}</p></div>
-        <label className="role-selector">Acting role<select value={currentRole} onChange={(event) => setRole(event.target.value as Role)}>{ROLES.map((role) => <option value={role} key={role}>{ROLE_LABELS[role]}</option>)}</select></label>
-      </section>
+      <ActionButton tone="quiet" className="back-button" onClick={() => navigate(-1)}>← Back to ward</ActionButton>
+      <PageHeader
+        eyebrow="Bed detail · live mock data"
+        title={`${bed.label} · ${bed.patient.displayName}`}
+        description={`${VERDICT_PRESENTATION[bed.verdict].label} · ${bed.reason}`}
+        actions={<label className="role-selector">Acting role<select value={currentRole} onChange={(event) => setRole(event.target.value as Role)}>{ROLES.map((role) => <option value={role} key={role}>{ROLE_LABELS[role]}</option>)}</select></label>}
+      />
 
       <nav className="detail-tabs" aria-label="Bed detail sections">
         {(['overview', 'trends', 'actions'] as DetailTab[]).map((item) => <button type="button" key={item} aria-current={tab === item ? 'page' : undefined} onClick={() => setTab(item)}>{item}</button>)}
@@ -51,29 +54,29 @@ export function BedDetailFunctionalPage() {
         <div className="detail-overview">
           <BedTile bed={bed} />
           <div className="detail-workflows">
-            <section className="workflow-card" aria-labelledby="response-title">
+            <Panel className="workflow-card" aria-labelledby="response-title">
               <p className="eyebrow">Step 1 · response</p><h2 id="response-title">Acknowledge “On my way”</h2>
               <p>This records a response only. It does not confirm the patient’s condition.</p>
-              <button className="primary-action" type="button" disabled={!can(currentRole, 'acknowledge_alert') || responseState.responseAcknowledgedAt !== null} onClick={() => acknowledgeResponse(bed.id)}>{responseState.responseAcknowledgedAt ? `Recorded · ${formatTime(responseState.responseAcknowledgedAt)}` : 'On my way'}</button>
-            </section>
+              <ActionButton tone="primary" disabled={!can(currentRole, 'acknowledge_alert') || responseState.responseAcknowledgedAt !== null} onClick={() => acknowledgeResponse(bed.id)}>{responseState.responseAcknowledgedAt ? `Recorded · ${formatTime(responseState.responseAcknowledgedAt)}` : 'On my way'}</ActionButton>
+            </Panel>
 
-            <section className="workflow-card" aria-labelledby="bedside-title">
+            <Panel className="workflow-card" aria-labelledby="bedside-title">
               <p className="eyebrow">Step 2 · bedside</p><h2 id="bedside-title">Confirm patient status</h2>
               <p>Bedside confirmation remains separate from the response acknowledgement.</p>
               <div className="bedside-actions">
-                <button type="button" disabled={!can(currentRole, 'confirm_bedside_status')} onClick={() => confirmPatient(bed.id, 'patient_ok')}>Patient OK</button>
-                <button className="danger-action" type="button" disabled={!can(currentRole, 'confirm_bedside_status')} onClick={() => confirmPatient(bed.id, 'patient_not_ok')}>Patient NOT OK</button>
+                <ActionButton disabled={!can(currentRole, 'confirm_bedside_status')} onClick={() => confirmPatient(bed.id, 'patient_ok')}>Patient OK</ActionButton>
+                <ActionButton tone="danger" disabled={!can(currentRole, 'confirm_bedside_status')} onClick={() => confirmPatient(bed.id, 'patient_not_ok')}>Patient NOT OK</ActionButton>
               </div>
               <strong className={`bedside-result bedside-result--${responseState.bedsideStatus}`}>{responseState.bedsideStatus === 'pending' ? 'Awaiting bedside confirmation' : responseState.bedsideStatus === 'patient_ok' ? 'Patient confirmed OK' : 'Patient NOT OK · high alert active'}</strong>
-            </section>
+            </Panel>
 
-            <section className="workflow-card" aria-labelledby="device-title">
+            <Panel className="workflow-card" aria-labelledby="device-title">
               <p className="eyebrow">Device integrity</p><h2 id="device-title">Isolation status</h2>
               <p>{bed.isolated ? 'Device isolated from the ward network.' : 'Device is not isolated.'} Treatment is never changed by this control.</p>
-              {!bed.isolated && <button type="button" disabled={!can(currentRole, 'isolate_device')} onClick={() => isolateDevice(bed.id)}>Request device isolation</button>}
-              {bed.isolated && undoableIsolation && <button type="button" disabled={!can(currentRole, 'undo_isolation')} onClick={() => undoAction(undoableIsolation.id)}>Undo isolation action</button>}
+              {!bed.isolated && <ActionButton disabled={!can(currentRole, 'isolate_device')} onClick={() => isolateDevice(bed.id)}>Request device isolation</ActionButton>}
+              {bed.isolated && undoableIsolation && <ActionButton disabled={!can(currentRole, 'undo_isolation')} onClick={() => undoAction(undoableIsolation.id)}>Undo isolation action</ActionButton>}
               {!can(currentRole, 'isolate_device') && !bed.isolated && <small>Current provisional role cannot isolate devices.</small>}
-            </section>
+            </Panel>
           </div>
         </div>
       )}
@@ -83,7 +86,7 @@ export function BedDetailFunctionalPage() {
       {tab === 'actions' && (
         <section className="action-panel" aria-labelledby="action-title"><div><p className="eyebrow">Append-only record</p><h2 id="action-title">Bed action history</h2><p>Undo creates a referencing entry; original actions remain visible.</p></div>
           <div className="action-table-wrap"><table><thead><tr><th>Time</th><th>Action</th><th>Actor</th><th>Mode</th><th>Reference</th></tr></thead><tbody>{bedActions.map((action) => <tr key={action.id}><td>{formatTime(action.occurredAt)}</td><td>{action.description}</td><td>{action.actor}<small>{action.actorRole}</small></td><td>{action.automatic ? 'Automatic' : 'Manual'}</td><td>{action.referencesActionId ?? '—'}</td></tr>)}</tbody></table></div>
-          {bedActions.length === 0 && <p className="empty-state">No actions recorded for this bed.</p>}
+          {bedActions.length === 0 && <EmptyState>No actions recorded for this bed.</EmptyState>}
         </section>
       )}
 

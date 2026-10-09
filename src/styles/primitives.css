@@ -1,0 +1,30 @@
+.ui-page-header { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 22px; border-bottom: 1px solid rgba(36, 65, 87, .72); padding-bottom: 18px; }
+.ui-page-header__copy { min-width: 0; }
+.ui-page-header h1 { margin-bottom: 6px; font-size: clamp(28px, 3vw, 42px); }
+.ui-page-header__description { max-width: 760px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.ui-page-header__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+
+.ui-status-chip { min-height: 34px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #31566e; border-radius: 999px; padding: 0 11px; color: #b8c9d3; background: #10283a; font: 500 10px 'DM Mono', monospace; letter-spacing: .035em; text-transform: uppercase; }
+.ui-status-chip i { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #8ba2b2; }
+.ui-status-chip--positive { border-color: #225c50; color: #8ce8c6; background: #0c2b28; }
+.ui-status-chip--positive i { background: var(--green); }
+.ui-status-chip--warning { border-color: #79672e; color: #f4d779; background: #302a18; }
+.ui-status-chip--warning i { background: var(--yellow); }
+.ui-status-chip--critical { border-color: #8b3d45; color: #ffb2b6; background: #351b20; }
+.ui-status-chip--critical i { background: var(--red); }
+
+.ui-action { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #37627b; border-radius: 8px; padding: 0 14px; color: var(--text); background: #10283a; cursor: pointer; text-decoration: none; }
+.ui-action:hover:not(:disabled) { background: #17384e; }
+.ui-action:disabled { opacity: .48; cursor: not-allowed; }
+.ui-action--primary { border-color: #367d99; color: #ecfbff; background: #12415a; }
+.ui-action--danger { border-color: #813e46; color: #ffdadd; background: #421f26; }
+.ui-action--quiet { border-color: transparent; color: #b5c9d5; background: transparent; }
+
+.ui-panel { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.ui-empty-state { margin: 0; padding: 36px 20px; color: var(--muted); text-align: center; }
+
+@media (max-width: 620px) {
+  .ui-page-header { align-items: stretch; flex-direction: column; gap: 14px; }
+  .ui-page-header__actions { justify-content: flex-start; }
+  .ui-page-header__actions > * { max-width: 100%; }
+}
