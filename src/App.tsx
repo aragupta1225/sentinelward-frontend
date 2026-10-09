@@ -1,9 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { BedDetailFunctionalPage } from './pages/BedDetailFunctionalPage'
-import { ActionLogPage, BriefingPage, CensusPage, DemoPage, IncidentPage, LandingPage, LoginPage, ReportPage, SecurityPage, TelegramPage, TicketsPage } from './pages/OperationalPages'
+import { ActionLogPage, BriefingPage, CensusPage, DemoPage, IncidentPage, LandingPage, LoginPage, ReportPage, SecurityPage, TelegramPage, TicketsPage } from './pages/operational'
 import { WardPage } from './pages/WardPage'
-import { WardMilestonePage } from './pages/WardMilestonePage'
 import { useBedDetailStore } from './store/bedDetailStore'
 import { canViewScreen, ROLE_LABELS, type ScreenId } from './domain/access'
 import { useSessionStore } from './store/sessionStore'
@@ -62,7 +61,6 @@ export default function App() {
         <Route path="/log" element={<ProtectedRoute screen="log"><ActionLogPage /></ProtectedRoute>} />
         <Route path="/demo" element={<ProtectedRoute screen="demo"><DemoPage /></ProtectedRoute>} />
         <Route path="/telegram" element={<ProtectedRoute screen="telegram"><TelegramPage /></ProtectedRoute>} />
-        <Route path="/lab/bed-tile" element={<WardMilestonePage />} />
         <Route path="*" element={<Navigate to="/ward" replace />} />
       </Routes>
     </div>

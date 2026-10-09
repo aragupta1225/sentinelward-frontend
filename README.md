@@ -2,37 +2,43 @@
 
 Role-based clinical command interface for SentinelWard, owned by Antara Gupta.
 
-## Current milestone
+The repository is a working, mock-driven React frontend. It keeps clinical urgency, signal trust, connection freshness, and device isolation independent, and it never implies that frontend actions modify patient treatment.
 
-The first vertical slice implements one reusable, domain-driven bed tile with:
+## Implemented application
 
-- all eight verdicts;
-- deterministic loading, empty, stale, disconnected, untrusted, and isolated fixtures;
-- live mock telemetry behind replaceable REST and WebSocket adapter interfaces;
-- Canvas ECG and PPG snapshots;
-- last-trusted-data retention for untrusted signals;
-- explicit emergency and device-isolation presentation for `BOTH`;
-- responsive and reduced-motion styles.
+- Protected routes for five provisional roles.
+- Ward dashboard with twelve beds, alert queue, summary metrics, live mock telemetry, keyboard navigation, and focus return.
+- Bed Detail response, bedside confirmation, isolation, undo, trend, and append-only action workflows.
+- Census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
+- Deterministic emergency, sensor, tampering, combined-threat, and connection-loss scenarios.
+- Validated REST, WebSocket, and command adapter boundaries with mock mode as the safe default.
+- Unit, component, full-route axe, and Playwright workflow coverage.
 
-The complete Ward grid and Bed Detail screen are intentionally outside this milestone.
+All authentication, patient telemetry, commands, incidents, evidence, reports, tickets, assignments, and messages are simulated until the owning backend team confirms and connects real contracts.
 
 ## Architecture
 
-Components consume frontend domain models rather than backend payloads. Raw data is validated and mapped before it reaches application state:
+Components consume frontend domain models rather than raw transport payloads:
 
 ```text
-REST / WebSocket payloads
-        ↓
+transport payload
+      ↓
 Zod validation and mapping
-        ↓
-Frontend domain models
-        ↓
+      ↓
+frontend domain model
+      ↓
 Zustand store
-        ↓
-React components
+      ↓
+React component
 ```
 
-Mock adapters implement the same boundaries planned for the future backend integration.
+One runtime bootstrap selects the complete adapter set. Supported frontend configuration:
+
+- `VITE_SENTINELWARD_RUNTIME_MODE`: `mock` by default, or `backend`.
+- `VITE_SENTINELWARD_API_BASE_URL`: REST and command base URL; defaults to `/api`.
+- `VITE_SENTINELWARD_WS_URL`: optional WebSocket URL; otherwise derived from the current host.
+
+Backend mode is provisional and has not been verified against a real SentinelWard service.
 
 ## Run locally
 
@@ -41,16 +47,24 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173/ward`.
+Open `http://localhost:5173/ward`. The app redirects unauthenticated users to the development role selector.
 
 ## Verification
+
+Install the Playwright browser once:
+
+```bash
+npx playwright install chromium
+```
+
+Run the complete gate:
 
 ```bash
 npm run check
 ```
 
-This runs linting, unit/component tests, TypeScript compilation, and a production build.
+The gate runs lint, the unit/component suite, 21 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
 
 ## Open specification issue
 
-The supplied source claims 13 web screens but defines 12 numbered web screens plus Telegram. No S4 is defined. This remains unresolved pending backend/team confirmation.
+The supplied source claims 13 web screens but defines 12 numbered web screens plus Telegram. No S4 is defined; this remains unresolved pending team confirmation.

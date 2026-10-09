@@ -19,6 +19,7 @@ describe('screen routes', () => {
     ['/log', 'Action log'],
     ['/demo', 'Demo control'],
     ['/telegram', 'Telegram message templates'],
+    ['/lab/bed-tile', 'Live ward'],
   ])('renders %s', (path, heading) => {
     if (path === '/' || path === '/login') useSessionStore.getState().signOut()
     else useSessionStore.getState().signIn('operator')
