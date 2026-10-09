@@ -48,7 +48,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 - Report submission is intentionally absent; the UI supports draft/review only.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
 - Screenshot-based visual regression is not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
-- Production deployment configuration, SPA deep-link fallback, CI, monitoring, and error reporting are not configured.
+- Production deployment, CI, monitoring, and backend infrastructure are not configured and are outside Antara Gupta's confirmed frontend assignment unless explicitly added later.
 - Final brand/design approval remains external; the current system is a consistent, accessible functional baseline.
 
 ## Bugs and Technical Debt
@@ -59,9 +59,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**M6 — Continuous integration and production failure containment (active).**
+**Confirmed functional frontend scope complete — UI update pending.**
 
-M5 is complete and verified. The next implementation work automates the verified gate and adds a safe top-level failure boundary before provider-specific deployment is selected.
+M5 is complete and verified. No additional functional milestone is authorized by the supplied frontend scope. The next confirmed phase is the user-directed UI update; backend-dependent work remains paused behind unconfirmed contracts.
 
 ### M1 Verified Result
 
@@ -100,19 +100,19 @@ M5 is complete and verified. The next implementation work automates the verified
 - The Google Fonts runtime request is removed and all typography uses resilient system stacks.
 - The initial JavaScript chunk fell from 468.17 kB to 444.39 kB (23.78 kB, about 5.1%) while all tests and the production build remain green.
 
-### M6 Acceptance Criteria — Continuous Integration and Production Failure Containment
+### Current Scope Boundary
 
-- Add a pinned GitHub Actions workflow that installs dependencies, provisions Chromium, and runs the same `npm run check` gate used locally.
-- Add a tested top-level error boundary that never presents a blank screen and clearly preserves the decision-support/treatment boundary.
-- Document provider-neutral deployment requirements, including SPA deep-link fallback and environment configuration, without claiming an unselected host is configured.
-- Keep the complete local quality gate green.
+- Antara Gupta's confirmed responsibility is the SentinelWard frontend represented by the supplied screens, workflows, safety behavior, typed adapters, mock mode, accessibility, and responsive behavior.
+- Do not add CI, hosting-provider configuration, monitoring, backend infrastructure, or speculative product features unless they are explicitly assigned.
+- Do not invent S4, backend payloads, final permissions, recovery semantics, or report/Telegram delivery contracts.
+- The next authorized implementation phase is UI refinement after direction from the user.
 
 ## Prioritized Roadmap
 
-1. Complete M6 CI automation and top-level production failure containment.
-2. Configure provider-specific deployment routing, monitoring, and error reporting after hosting is selected.
-3. Add screenshot-based visual regression after the visual baseline is approved.
-4. Integrate confirmed backend contracts through adapters and mappers only.
+1. Update the existing UI when the user provides or confirms the visual direction.
+2. Add screenshot-based visual regression only after that visual baseline is approved.
+3. Integrate frontend-facing backend contracts through adapters and mappers only after the owning team confirms them.
+4. Resolve the missing-S4/screen-count ambiguity only after product clarification.
 
 ## Provisional Backend Dependencies
 
@@ -140,7 +140,6 @@ Command: `npm run check`
 
 ## Next Recommended Actions
 
-1. Add a GitHub Actions workflow mirroring the local lockfile-based quality gate.
-2. Add and test a top-level error boundary with a safe, actionable fallback.
-3. Document provider-neutral SPA routing and runtime configuration requirements.
-4. Rerun the complete local quality gate before delivery.
+1. Preserve the current verified functional baseline until UI direction is confirmed.
+2. Keep mock mode as the safe default while backend contracts remain unconfirmed.
+3. Do not begin infrastructure or speculative feature work under Antara Gupta's frontend scope.
