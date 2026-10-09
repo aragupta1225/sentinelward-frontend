@@ -20,7 +20,7 @@
 .trend-panel h2, .action-panel h2 { margin: 0 0 5px; font-size: 20px; }
 .trend-panel p, .action-panel p { margin: 0; color: var(--muted); font-size: 11px; }
 .trend-chart { width: 100%; min-height: 230px; overflow: hidden; }
-.trend-chart .uplot { font-family: 'DM Mono', monospace; }
+.trend-chart .uplot { font-family: var(--font-mono); }
 .trend-chart .u-legend { color: #c7d7e1; }
 .action-table-wrap { overflow-x: auto; }
 .action-panel table { width: 100%; border-collapse: collapse; font-size: 11px; }

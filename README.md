@@ -12,6 +12,8 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 - Census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
 - Deterministic emergency, sensor, tampering, combined-threat, and connection-loss scenarios.
 - Validated REST, WebSocket, and command adapter boundaries with mock mode as the safe default.
+- Route-family code splitting keeps noncritical clinical, security, support, and demo screens out of the initial bundle.
+- Resilient system font stacks avoid a runtime dependency on an external font service.
 - Unit, component, full-route axe, and Playwright workflow coverage.
 
 All authentication, patient telemetry, commands, incidents, evidence, reports, tickets, assignments, and messages are simulated until the owning backend team confirms and connects real contracts.

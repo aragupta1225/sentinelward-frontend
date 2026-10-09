@@ -20,10 +20,10 @@ describe('screen routes', () => {
     ['/demo', 'Demo control'],
     ['/telegram', 'Telegram message templates'],
     ['/lab/bed-tile', 'Live ward'],
-  ])('renders %s', (path, heading) => {
+  ])('renders %s', async (path, heading) => {
     if (path === '/' || path === '/login') useSessionStore.getState().signOut()
     else useSessionStore.getState().signIn('operator')
     render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
-    expect(screen.getByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
   })
 })

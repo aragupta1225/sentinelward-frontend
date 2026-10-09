@@ -4,7 +4,7 @@ Last verified: 2026-10-09
 
 Owner: Antara Gupta
 
-Repository status at inspection: `main` matched `origin/main` at `f08f094` before M4 implementation.
+Repository status at inspection: `main` matched `origin/main` at `888076f` before M5 implementation.
 
 ## Current Status
 
@@ -36,6 +36,8 @@ The specification still has no S4: it defines 12 numbered web screens plus Teleg
 - The README now documents the current routes, adapter boundary, mock-safe runtime configuration, and verified development commands.
 - Shared typed primitives now provide consistent page headers, status chips, action buttons, panels, and explicit empty states across Ward, Bed Detail, and operational routes.
 - Operational page hierarchy and responsive presentation are consistent while clinical copy, non-color status cues, 44-pixel actions, and mock-only boundaries remain intact.
+- Noncritical clinical, security, support, and demo route families are lazy-loaded behind an accessible status fallback; Ward and Bed Detail remain in the initial safety-critical bundle.
+- The external Google Fonts request has been removed in favor of resilient system sans and monospace stacks.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
 
@@ -53,14 +55,13 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - No failing product bug was found during this inspection.
 - Application state is memory-only and resets on refresh; this is acceptable for mocks but must remain clearly presented as simulated.
-- The production JavaScript bundle is currently about 466 kB before gzip; route-level code splitting has not been applied.
-- Google Fonts are loaded at runtime, creating an avoidable external availability dependency.
+- The initial production JavaScript chunk is about 444 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
 
 ## Active Milestone
 
-**M5 — Delivery performance and runtime independence (active).**
+**M6 — Continuous integration and production failure containment (active).**
 
-M4 is complete and verified. The next implementation work reduces the initial route bundle and removes the runtime font-service dependency without changing application behavior.
+M5 is complete and verified. The next implementation work automates the verified gate and adds a safe top-level failure boundary before provider-specific deployment is selected.
 
 ### M1 Verified Result
 
@@ -92,17 +93,24 @@ M4 is complete and verified. The next implementation work reduces the initial ro
 - Exact clinical states, non-color cues, focus behavior, touch targets, and mock-only disclosure remain covered.
 - Four focused primitive tests were added and the full quality gate passes.
 
-### M5 Acceptance Criteria — Delivery Performance and Runtime Independence
+### M5 Verified Result — Delivery Performance and Runtime Independence
 
-- Lazy-load noncritical route families with an accessible loading fallback while keeping Ward navigation and route guards stable.
-- Remove the Google Fonts runtime request and use a resilient system font stack.
-- Demonstrate a materially smaller initial JavaScript bundle without hiding safety-critical UI behind an extra interaction.
-- Keep all unit, axe, and browser workflow coverage green and pass `npm run check`.
+- Clinical, security, support, and demo route families are emitted as independent lazy chunks with an accessible loading status.
+- Ward, Bed Detail, landing, and login remain immediately available; route guards and direct navigation are unchanged.
+- The Google Fonts runtime request is removed and all typography uses resilient system stacks.
+- The initial JavaScript chunk fell from 468.17 kB to 444.39 kB (23.78 kB, about 5.1%) while all tests and the production build remain green.
+
+### M6 Acceptance Criteria — Continuous Integration and Production Failure Containment
+
+- Add a pinned GitHub Actions workflow that installs dependencies, provisions Chromium, and runs the same `npm run check` gate used locally.
+- Add a tested top-level error boundary that never presents a blank screen and clearly preserves the decision-support/treatment boundary.
+- Document provider-neutral deployment requirements, including SPA deep-link fallback and environment configuration, without claiming an unselected host is configured.
+- Keep the complete local quality gate green.
 
 ## Prioritized Roadmap
 
-1. Complete M5 route-level code splitting and remove the runtime font dependency.
-2. Add CI, production deployment routing, monitoring, and error reporting.
+1. Complete M6 CI automation and top-level production failure containment.
+2. Configure provider-specific deployment routing, monitoring, and error reporting after hosting is selected.
 3. Add screenshot-based visual regression after the visual baseline is approved.
 4. Integrate confirmed backend contracts through adapters and mappers only.
 
@@ -128,11 +136,11 @@ Command: `npm run check`
 - Browser regression: 21 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 13 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 169 modules; CSS 27.18 kB (6.70 kB gzip); JavaScript 468.17 kB (149.14 kB gzip).
+- Build output: 168 modules; CSS 27.44 kB (6.72 kB gzip); initial JavaScript 444.39 kB (143.55 kB gzip), plus four lazy route-family chunks and three small shared chunks.
 
 ## Next Recommended Actions
 
-1. Introduce route-family lazy boundaries with an accessible loading fallback.
-2. Remove the external Google Fonts import and adopt resilient system font stacks.
-3. Verify initial chunk reduction and route behavior across direct and in-app navigation.
-4. Rerun the full unit, axe, browser, and production-build gate.
+1. Add a GitHub Actions workflow mirroring the local lockfile-based quality gate.
+2. Add and test a top-level error boundary with a safe, actionable fallback.
+3. Document provider-neutral SPA routing and runtime configuration requirements.
+4. Rerun the complete local quality gate before delivery.

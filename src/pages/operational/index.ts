@@ -1,5 +1,0 @@
-export { ActionLogPage, BriefingPage, CensusPage } from './ClinicalPages'
-export { DemoPage } from './DemoPage'
-export { LandingPage, LoginPage } from './PublicPages'
-export { IncidentPage, ReportPage, SecurityPage } from './SecurityPages'
-export { TelegramPage, TicketsPage } from './SupportPages'

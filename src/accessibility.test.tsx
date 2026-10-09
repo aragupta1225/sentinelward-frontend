@@ -24,14 +24,15 @@ async function expectNoAxeViolations(container: HTMLElement) {
 
 describe('accessibility foundations', () => {
   it.each([
-    ['/', 'landing'],
-    ['/login', 'login'],
-    ['/security', 'security'],
-    ['/incident/B08/report', 'report'],
-  ])('has no detectable structural axe violations on the %s route', async (path) => {
+    ['/', 'SentinelWard'],
+    ['/login', 'Select a role'],
+    ['/security', 'Security operations'],
+    ['/incident/B08/report', 'CERT-In report draft'],
+  ])('has no detectable structural axe violations on the %s route', async (path, heading) => {
     if (path === '/' || path === '/login') useSessionStore.getState().signOut()
     else useSessionStore.getState().signIn('operator')
     const { container } = render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
+    await screen.findByRole('heading', { level: 1, name: heading })
     await expectNoAxeViolations(container)
   })
 
