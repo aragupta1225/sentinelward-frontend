@@ -9,7 +9,7 @@ import { useSessionStore } from './store/sessionStore'
 import { subscribeCommandFailures } from './adapters/commandGateway'
 
 const navigation = [
-  ['/ward', 'Ward', 'ward'], ['/census', 'Census', 'census'], ['/security', 'Security', 'security'],
+  ['/ward', 'Ward', 'ward'], ['/alerts', 'Alerts', 'alerts'], ['/census', 'Census', 'census'], ['/security', 'Security', 'security'],
   ['/tickets', 'Tickets', 'tickets'], ['/briefing', 'Briefing', 'briefing'], ['/log', 'Log', 'log'], ['/demo', 'Demo', 'demo'],
 ] as const
 
@@ -22,6 +22,7 @@ const ReportPage = lazy(() => import('./pages/operational/SecurityPages').then((
 const TicketsPage = lazy(() => import('./pages/operational/SupportPages').then((module) => ({ default: module.TicketsPage })))
 const TelegramPage = lazy(() => import('./pages/operational/SupportPages').then((module) => ({ default: module.TelegramPage })))
 const DemoPage = lazy(() => import('./pages/operational/DemoPage').then((module) => ({ default: module.DemoPage })))
+const AlertsPage = lazy(() => import('./pages/operational/AlertsPage').then((module) => ({ default: module.AlertsPage })))
 
 function WardClock() {
   const [time, setTime] = useState(() => Date.now())
@@ -66,6 +67,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/ward" element={<ProtectedRoute screen="ward"><WardPage /></ProtectedRoute>} />
+          <Route path="/alerts" element={<ProtectedRoute screen="alerts"><AlertsPage /></ProtectedRoute>} />
           <Route path="/bed/:id" element={<ProtectedRoute screen="ward"><BedDetailFunctionalPage /></ProtectedRoute>} />
           <Route path="/census" element={<ProtectedRoute screen="census"><CensusPage /></ProtectedRoute>} />
           <Route path="/security" element={<ProtectedRoute screen="security"><SecurityPage /></ProtectedRoute>} />

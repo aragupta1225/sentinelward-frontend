@@ -9,7 +9,8 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 - Protected routes for five specified demo roles.
 - Ward dashboard with twelve beds, alert queue, summary metrics, live mock telemetry, keyboard navigation, and focus return.
 - Bed Detail response, bedside confirmation, isolation, undo, trend, and append-only action workflows.
-- Census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens. The dedicated Alerts and escalation screen remains under development.
+- Alerts and escalation, census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
+- Nurse/doctor alert workflow with Open, Acknowledged, and All views, a three-step escalation ladder, response history, and simulated Telegram message editing.
 - Deterministic emergency, sensor, tampering, combined-threat, and connection-loss scenarios.
 - Validated REST, WebSocket, and command adapter boundaries with mock mode as the safe default.
 - Route-family code splitting keeps noncritical clinical, security, support, and demo screens out of the initial bundle.
@@ -65,7 +66,7 @@ Run the complete gate:
 npm run check
 ```
 
-The gate runs lint, the unit/component suite, 21 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
+The gate runs lint, the unit/component suite, 23 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
 
 ## Source scope
 

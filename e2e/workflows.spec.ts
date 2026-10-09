@@ -39,6 +39,24 @@ test('response acknowledgement remains separate from bedside confirmation', asyn
   await expect(page.getByTestId('bed-tile').getByText('Clinical emergency', { exact: true })).toBeVisible()
 })
 
+test('alerts escalate through the nurse ladder and acknowledgement edits the same message', async ({ page }) => {
+  await signIn(page, 'nurse')
+  await navigateInApp(page, '/alerts')
+  await expect(page.getByRole('heading', { level: 1, name: 'Alerts and escalation' })).toBeVisible()
+
+  const row = page.getByRole('row').filter({ hasText: 'Bed 3' })
+  await expect(row).toContainText('Nurse Ravi')
+  await row.getByRole('button', { name: 'View details' }).click()
+  await expect(page.getByRole('heading', { name: 'Three-step response ladder' })).toBeVisible()
+  await expect(page.getByText('All nurses + doctor')).toBeVisible()
+  await page.getByRole('button', { name: 'Acknowledge alert' }).click()
+  await expect(page.getByText(/Acknowledged by Nurse at/)).toBeVisible()
+  await expect(page.getByText(/✅ Acknowledged by Nurse/)).toBeVisible()
+
+  await page.getByRole('button', { name: /Acknowledged/ }).click()
+  await expect(page.getByRole('row').filter({ hasText: 'Bed 3' })).toBeVisible()
+})
+
 test('device isolation can be undone without removing the original action', async ({ page }) => {
   await signIn(page, 'operator')
   await navigateInApp(page, '/bed/B07')

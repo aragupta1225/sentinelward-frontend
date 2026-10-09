@@ -8,17 +8,18 @@ const publicRoutes = [
 ] as const
 
 const protectedRoutes = [
-  ['/ward', 'Live ward'],
-  ['/bed/B08', 'Bed 8'],
-  ['/census', 'Doctor / tele-ICU census'],
-  ['/security', 'Security operations'],
-  ['/incident/B08', 'Incident'],
-  ['/incident/B08/report', 'CERT-In report draft'],
-  ['/tickets', 'Biomedical tickets'],
-  ['/briefing', 'Briefing and workload'],
-  ['/log', 'Action log'],
-  ['/demo', 'Demo control'],
-  ['/telegram', 'Telegram message templates'],
+  ['/ward', 'Live ward', 'operator'],
+  ['/bed/B08', 'Bed 8', 'operator'],
+  ['/alerts', 'Alerts and escalation', 'nurse'],
+  ['/census', 'Doctor / tele-ICU census', 'operator'],
+  ['/security', 'Security operations', 'operator'],
+  ['/incident/B08', 'Incident', 'operator'],
+  ['/incident/B08/report', 'CERT-In report draft', 'operator'],
+  ['/tickets', 'Biomedical tickets', 'operator'],
+  ['/briefing', 'Briefing and workload', 'operator'],
+  ['/log', 'Action log', 'operator'],
+  ['/demo', 'Demo control', 'operator'],
+  ['/telegram', 'Telegram message templates', 'operator'],
 ] as const
 
 async function expectAccessible(page: Page) {
@@ -40,9 +41,9 @@ for (const [path, heading] of publicRoutes) {
   })
 }
 
-for (const [path, heading] of protectedRoutes) {
+for (const [path, heading, role] of protectedRoutes) {
   test(`${path} has no automated axe violations, including color contrast`, async ({ page }) => {
-    await signIn(page, 'operator')
+    await signIn(page, role)
     await navigateInApp(page, path)
     await expect(page.getByRole('heading', { level: 1, name: new RegExp(heading) })).toBeVisible()
     await expectAccessible(page)

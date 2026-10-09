@@ -54,4 +54,11 @@ describe('accessibility foundations', () => {
     expect(opened).toBe('B01')
     expect(sessionStorage.getItem('ward-focus-return')).toBe('B01')
   })
+
+  it('has no detectable structural axe violations on the alerts route', async () => {
+    useSessionStore.getState().signIn('nurse')
+    const { container } = render(<MemoryRouter initialEntries={['/alerts']}><App /></MemoryRouter>)
+    await screen.findByRole('heading', { level: 1, name: 'Alerts and escalation' })
+    await expectNoAxeViolations(container)
+  })
 })

@@ -8,14 +8,16 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with 12 of the 13 specified S0-S12 screens represented. Ward and Bed Detail are the most mature. The dedicated S4 Alerts and escalation screen is missing, and most supporting screens implement only a subset of the Drive specification.
+The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens represented. Ward, Bed Detail, and Alerts are the most mature. Most other supporting screens still implement only a subset of the Drive specification.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
 ## Completed and Verified
 
 - React/Vite/TypeScript application shell with protected routing and five specified demo roles.
-- Landing, development login, Ward, Bed Detail, Census, Security, Incident, CERT-In draft, Tickets, Briefing, Action Log, Demo Control, and Telegram template routes; S4 Alerts remains to be added.
+- Landing, development login, Ward, Bed Detail, Alerts, Census, Security, Incident, CERT-In draft, Tickets, Briefing, Action Log, Demo Control, and Telegram template routes.
+- S4 Alerts and escalation for nurse and doctor roles: Open/Acknowledged/All views, the specified table fields, a complete three-step detail ladder, response history, simulated Telegram message editing, and an exact calm empty state.
+- Deterministic 30-second demo escalation stops on acknowledgement, repeated events update rather than duplicate, integrity-only incidents never enter the clinical queue, and Ward-rail acknowledgements synchronize with S4.
 - Twelve-bed Ward grid, summary metrics, alert rail, recent activity, responsive column changes, collapsed-alert discoverability, arrow-key navigation, Enter-to-open, and focus return.
 - Reusable Bed Tile covering all eight verdicts plus loading, unassigned, stale, disconnected, untrusted, and isolated states.
 - Canvas ECG/PPG display, last-trusted-value retention, explicit data age, and no zero/flatline inference for missing data.
@@ -43,7 +45,6 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Incomplete Features
 
-- S4 Alerts and escalation is missing: no `/alerts` route, status tabs, ladder-state table, escalation detail sheet, or deterministic 30-second demo escalation.
 - S0 and S1 are partial: the landing mini-ward/cards/offline state and role-card login/loading/retry/session persistence are not implemented.
 - S2 and the authenticated app frame are partial: no privacy toggle, stopped-alarm metric, or global high-alert strip.
 - S3 is partial: the top three reasons, six model scores, body/network witnesses, escalation action, incoming-untrusted panel, and manual hand-check form are missing.
@@ -69,7 +70,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F1 — S4 Alerts and escalation (active).**
+**R8-F2 — S3 Bed Detail explanation and manual-check workflows (active).**
 
 The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 45-50% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
@@ -118,23 +119,23 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Backend-dependent functionality must stay behind typed mocks/adapters, but its specified frontend states and actions remain in scope.
 - CI, deployment, monitoring, backend infrastructure, models, agents, and attack tooling remain out of scope.
 
-### R8-F1 Acceptance Criteria — S4 Alerts and Escalation
+### R8-F1 Verified Result — S4 Alerts and Escalation
 
-- Add protected `/alerts` navigation for nurse and doctor roles without exposing it to unrelated roles.
-- Show Open, Acknowledged, and All tabs with alert time, bed, textual priority, reason, assignee, ladder step, waiting time, and actions.
-- Provide an accessible detail panel showing the complete three-step ladder, response history, and exact simulated Telegram message.
-- Implement deterministic high-alert escalation after 30 seconds in mock mode; acknowledgement stops further escalation and updates the existing alert instead of duplicating it.
-- Keep integrity-only alerts away from nurse escalation and preserve the empty state “No open alerts. All beds calm.”
-- Add unit, route, axe, and browser workflow coverage and pass `npm run check`.
+- Protected `/alerts` navigation is available to nurse and doctor roles and redirects unrelated authenticated roles to Ward.
+- Open, Acknowledged, and All views show alert time, bed, textual priority, reason, assignee, ladder step, waiting time, and actions.
+- The accessible detail sheet shows the full three-step ladder, response history, and simulated Telegram message.
+- High alerts escalate deterministically after 30 and 60 seconds in mock mode; acknowledgement stops escalation and edits the existing Telegram alert.
+- Repeated events update rather than duplicate; integrity-only incidents stay outside the nurse queue; the empty state is exactly “No open alerts. All beds calm.”
+- Ward-rail and S4 acknowledgement state synchronize through the shared typed command boundary.
+- Unit, route, structural axe, browser workflow, full axe color-contrast, tablet, TypeScript, and production-build checks pass.
 
 ## Prioritized Roadmap
 
-1. Complete R8-F1 S4 Alerts and escalation.
-2. Complete S3 explanation, six-score, witness, escalation, and manual-check workflows.
-3. Complete S2/app-frame privacy, stopped-alarm, and global high-alert requirements plus locked role/priority corrections.
-4. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
-5. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
-6. Begin the separate UI-polish phase only after functional scope is verified.
+1. Complete S3 explanation, six-score, witness, escalation, and manual-check workflows.
+2. Complete S2/app-frame privacy, stopped-alarm, and global high-alert requirements plus locked role/priority corrections.
+3. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
+4. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
+5. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
 
@@ -153,14 +154,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 20 files passed; 72 tests passed.
-- Browser regression: 21 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
-- Accessibility: 13 material routes passed automated axe checks with color contrast enabled.
+- Tests: 21 files passed; 79 tests passed.
+- Browser regression: 23 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 168 modules; CSS 27.44 kB (6.72 kB gzip); initial JavaScript 444.39 kB (143.55 kB gzip), plus four lazy route-family chunks and three small shared chunks.
+- Build output: 171 modules; CSS 30.50 kB (7.28 kB gzip); initial JavaScript 448.91 kB (144.83 kB gzip), plus five lazy route-family chunks and three small shared chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F1 as a typed mock-first vertical slice.
-2. Preserve the current safety invariants and role boundaries while adding S4.
+1. Implement R8-F2 S3 explanation, six-score, witness, escalation, and manual-check workflows as a typed mock-first vertical slice.
+2. Preserve the current safety invariants and role boundaries while extending Bed Detail.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.

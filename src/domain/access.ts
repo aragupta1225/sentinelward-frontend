@@ -9,7 +9,7 @@ export type Permission =
   | 'contain_incident'
   | 'resolve_incident'
   | 'review_report'
-export type ScreenId = 'ward' | 'census' | 'security' | 'tickets' | 'briefing' | 'log' | 'demo' | 'telegram'
+export type ScreenId = 'ward' | 'alerts' | 'census' | 'security' | 'tickets' | 'briefing' | 'log' | 'demo' | 'telegram'
 
 export const ROLE_LABELS: Record<Role, string> = {
   nurse: 'Nurse', doctor: 'Doctor / tele-ICU', it: 'IT',
@@ -26,8 +26,8 @@ export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
 }
 
 export const ROLE_SCREENS: Record<Role, readonly ScreenId[]> = {
-  nurse: ['ward', 'log', 'telegram'],
-  doctor: ['ward', 'census', 'briefing', 'log', 'telegram'],
+  nurse: ['ward', 'alerts', 'log', 'telegram'],
+  doctor: ['ward', 'alerts', 'census', 'briefing', 'log', 'telegram'],
   it: ['ward', 'security', 'log'],
   biomedical: ['ward', 'tickets', 'log'],
   operator: ['ward', 'census', 'security', 'tickets', 'briefing', 'log', 'demo', 'telegram'],

@@ -26,4 +26,15 @@ describe('screen routes', () => {
     render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
     expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
   })
+
+  it('renders the nurse and doctor alerts route but hides it from unrelated roles', async () => {
+    useSessionStore.getState().signIn('nurse')
+    const { unmount } = render(<MemoryRouter initialEntries={['/alerts']}><App /></MemoryRouter>)
+    expect(await screen.findByRole('heading', { level: 1, name: 'Alerts and escalation' })).toBeInTheDocument()
+    unmount()
+
+    useSessionStore.getState().signIn('it')
+    render(<MemoryRouter initialEntries={['/alerts']}><App /></MemoryRouter>)
+    expect(await screen.findByRole('heading', { level: 1, name: 'Live ward' })).toBeInTheDocument()
+  })
 })

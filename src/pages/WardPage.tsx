@@ -6,7 +6,9 @@ import { WardSummaryRow } from '../components/WardSummaryRow'
 import { ActionButton, PageHeader, StatusChip } from '../components/ui'
 import { getWardSummary } from '../domain/wardSummary'
 import { useBedDetailStore } from '../store/bedDetailStore'
+import { useAlertStore } from '../store/alertStore'
 import { useWardDashboardStore } from '../store/wardDashboardStore'
+import { ROLE_LABELS } from '../domain/access'
 
 export function WardPage() {
   const navigate = useNavigate()
@@ -42,6 +44,11 @@ export function WardPage() {
   }, [connection])
 
   const openBed = (bedId: string) => navigate(`/bed/${bedId}`)
+  const acknowledgeFromRail = async (bedId: string) => {
+    if (await acknowledgeBed(bedId, currentRole)) {
+      useAlertStore.getState().recordAcknowledgementForBed(bedId, ROLE_LABELS[currentRole])
+    }
+  }
 
   return (
     <main id="main-content" className="ward-page">
@@ -67,7 +74,7 @@ export function WardPage() {
 
       <div className="ward-layout">
         <WardGrid beds={beds} onOpenBed={openBed} />
-        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={(bedId) => acknowledgeBed(bedId, currentRole)} onOpenBed={openBed} />
+        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeFromRail} onOpenBed={openBed} />
       </div>
     </main>
   )
