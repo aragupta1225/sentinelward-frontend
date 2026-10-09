@@ -7,7 +7,7 @@ interface BedTileProps {
   bed: Bed
   now?: number
   compact?: boolean
-  tileRef?: Ref<HTMLElement>
+  tileRef?: Ref<HTMLDivElement>
   onNavigate?: KeyboardEventHandler<HTMLElement>
   onOpen?: (bedId: string) => void
 }
@@ -49,7 +49,7 @@ export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNav
       : `${bed.patient.displayName}${bed.patient.age === null ? '' : `, age ${bed.patient.age}`}`
 
   return (
-    <article
+    <div
       ref={tileRef}
       className={`bed-tile bed-tile--${bed.priority} ${bed.trustState === 'untrusted' ? 'bed-tile--untrusted' : ''} ${compact ? 'bed-tile--compact' : ''} ${onOpen ? 'bed-tile--interactive' : ''}`}
       aria-label={`${bed.label}: ${presentation.label}. ${patientDescription}`}
@@ -99,6 +99,6 @@ export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNav
         <span className={`freshness ${isNoData ? 'freshness--stale' : ''}`}><i aria-hidden="true" /> {freshness}</span>
         <span>{bed.acknowledgement === 'acknowledged' ? 'Acknowledged' : 'Not acknowledged'}</span>
       </footer>
-    </article>
+    </div>
   )
 }

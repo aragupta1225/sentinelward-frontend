@@ -26,7 +26,7 @@ button, [href] { touch-action: manipulation; }
 .topbar__context { display: flex; gap: 16px; align-items: center; color: #a9bdca; font-size: 13px; }
 .topbar__divider { height: 20px; width: 1px; background: var(--line); }
 .topbar__context time { color: #d0e0e8; font: 500 11px 'DM Mono', monospace; }
-.logout-link { min-height: 38px; display: inline-flex; align-items: center; border: 1px solid #31536a; border-radius: 7px; padding: 0 10px; color: #b8d2df; text-decoration: none; }
+.logout-link { min-height: 38px; display: inline-flex; align-items: center; border: 1px solid #42677d; border-radius: 7px; padding: 0 10px; color: #e2f0f6; background: #10283a; text-decoration: none; }
 
 .milestone-page { width: min(1240px, calc(100% - 40px)); margin: 0 auto; padding: 44px 0 72px; }
 .milestone-intro { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 28px; }
@@ -222,7 +222,7 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
 .event-dot--high { background: var(--red); }
 .event-list div { display: grid; gap: 3px; }
 .event-list span { color: #b6c8d3; font-size: 9px; line-height: 1.45; }
-.event-list small { color: #688391; font: 500 8px 'DM Mono', monospace; }
+.event-list small { color: #95adba; font: 500 8px 'DM Mono', monospace; }
 .mobile-alert-toggle { display: none; }
 
 .back-button { margin-bottom: 18px; }

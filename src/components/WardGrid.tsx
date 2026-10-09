@@ -10,7 +10,7 @@ interface WardGridProps {
 
 export function WardGrid({ beds, onOpenBed }: WardGridProps) {
   const gridRef = useRef<HTMLDivElement>(null)
-  const tileRefs = useRef<(HTMLElement | null)[]>([])
+  const tileRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     const returnId = sessionStorage.getItem('ward-focus-return')

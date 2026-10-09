@@ -4,7 +4,7 @@ Last verified: 2026-10-09
 
 Owner: Antara Gupta
 
-Repository status at inspection: `main` matched `origin/main` at `6d947b0` before M1 implementation.
+Repository status at inspection: `main` matched `origin/main` at `e730dbf` before M2 implementation.
 
 ## Current Status
 
@@ -27,7 +27,9 @@ The specification still has no S4: it defines 12 numbered web screens plus Teleg
 - Ward startup now loads through `WardRestAdapter` before subscribing through `WardEventSource`; the store no longer creates a concrete transport.
 - Ward acknowledgement now enforces the provisional role policy, dispatches through the command boundary, displays a pending state, and restores the unacknowledged alert with visible failure feedback if the command fails.
 - Accessibility foundations: semantic status text, visible focus, skip link, reduced motion, live-region announcements, and non-color status cues.
-- Unit, store, adapter, route, component, and limited axe regression coverage.
+- M2 browser regression: Playwright covers protected routing, focus return, response versus bedside confirmation, isolation/undo, incident lifecycle, keyboard navigation, alert discoverability, reduced motion, and desktop/tablet layouts.
+- Axe runs with color contrast enabled across all 13 material routes; shared Bed Tile semantics, Logout contrast, and event timestamp contrast were corrected from the audit findings.
+- Unit, store, adapter, route, component, full-route axe, and critical browser workflow coverage.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
 
@@ -37,14 +39,13 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
 - Report submission is intentionally absent; the UI supports draft/review only.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
-- End-to-end browser tests, full-route accessibility checks, visual regression, and automated responsive verification are not configured.
+- Visual regression screenshots are not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
 - Production deployment configuration, SPA deep-link fallback, CI, monitoring, and error reporting are not configured.
 - Final UI polish is deferred; current styling is functional rather than approved final design.
 
 ## Bugs and Technical Debt
 
 - No failing product bug was found during this inspection.
-- Axe tests disable automated color-contrast checking and cover only a subset of routes; contrast requires a dedicated audit.
 - `OperationalPages.tsx` and `index.css` concentrate many unrelated concerns and should be split gradually when affected features are changed.
 - Legacy milestone/page components and the public `/lab/bed-tile` route remain after the full Ward and Bed Detail implementations.
 - `README.md` describes the old first milestone and incorrectly says the Ward grid and Bed Detail are out of scope.
@@ -54,9 +55,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**M2 — Accessibility and workflow regression (queued; implementation not started).**
+**M3 — Frontend maintainability cleanup (queued; implementation not started).**
 
-M1 is complete and verified. The next implementation work is browser-level workflow, accessibility, and responsive regression coverage.
+M2 is complete and verified. The next implementation work is a behavior-preserving cleanup of oversized and legacy frontend modules.
 
 ### M1 Verified Result
 
@@ -69,17 +70,24 @@ M1 is complete and verified. The next implementation work is browser-level workf
 ### M2 Acceptance Criteria — Accessibility and Workflow Regression
 
 - Playwright covers login/role routing, Ward-to-Bed focus return, acknowledgement versus bedside confirmation, isolation/undo, and one incident workflow.
-- Axe runs across every material route with color contrast enabled or any tool limitation documented with a manual audit result.
-- Desktop, landscape tablet, and portrait tablet layouts are verified; high alerts remain discoverable with a collapsed rail.
-- Keyboard-only operation, live announcements, and reduced-motion behavior are verified without announcing waveform ticks.
+- Axe runs across every material route with color contrast enabled and reports no automated violations.
+- Desktop, landscape tablet, and portrait tablet layouts are verified without horizontal overflow; high alerts remain discoverable when collapsed.
+- Keyboard navigation, live announcement boundaries, and reduced-motion behavior are verified without announcing waveform ticks.
+
+### M3 Acceptance Criteria — Frontend Maintainability Cleanup
+
+- Split `OperationalPages.tsx` into route-focused modules without changing paths, permissions, or user-visible workflows.
+- Split the global stylesheet into cohesive imports while preserving tokens, responsive behavior, and accessibility fixes.
+- Remove the obsolete public Bed Tile lab route and legacy page components after confirming no active dependencies.
+- Refresh the existing README so it describes the current frontend and verified commands rather than the retired first milestone.
+- Existing unit and Playwright coverage remains green and `npm run check` passes.
 
 ## Prioritized Roadmap
 
-1. Complete M2 end-to-end, accessibility, and responsive regression coverage.
-2. Refactor oversized page/style modules while preserving behavior and tests.
-3. Polish the shared design system and screen hierarchy after functional flows are stable.
-4. Add route-level code splitting, local font strategy, CI, and deployment routing.
-5. Integrate confirmed backend contracts through adapters and mappers only.
+1. Complete M3 frontend maintainability cleanup while preserving behavior and tests.
+2. Polish the shared design system and screen hierarchy after functional flows are stable.
+3. Add route-level code splitting, local font strategy, CI, and deployment routing.
+4. Integrate confirmed backend contracts through adapters and mappers only.
 
 ## Provisional Backend Dependencies
 
@@ -100,12 +108,14 @@ Command: `npm run check`
 
 - Lint: passed.
 - Tests: 20 files passed; 69 tests passed.
+- Browser regression: 21 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Accessibility: 13 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 163 modules; CSS 31.70 kB (7.38 kB gzip); JavaScript 470.68 kB (149.25 kB gzip).
+- Build output: 163 modules; CSS 31.72 kB (7.39 kB gzip); JavaScript 470.67 kB (149.25 kB gzip).
 
 ## Next Recommended Actions
 
-1. Begin M2 with Playwright configuration and the login/role-routing critical path.
-2. Add Ward-to-Bed focus-return, acknowledgement-versus-bedside-confirmation, isolation/undo, and incident workflow coverage.
-3. Expand axe coverage across material routes and document or resolve color-contrast limitations.
-4. Verify desktop and tablet layouts, keyboard-only operation, live announcements, and reduced-motion behavior.
+1. Split `OperationalPages.tsx` by route family while preserving protected-route behavior.
+2. Split the global stylesheet into cohesive imported modules without changing the visual system.
+3. Remove the retired Bed Tile lab route and legacy page components after dependency checks.
+4. Refresh the existing README and rerun the full unit/browser/build gate.
