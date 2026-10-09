@@ -4,18 +4,18 @@ Last verified: 2026-10-09
 
 Owner: Antara Gupta
 
-Repository status at inspection: `main` matched `origin/main` at `888076f` before M5 implementation.
+Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`.
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with all specified routes represented. The Ward and Bed Detail flows are the most mature. Operational screens and stateful workflows exist for doctor, IT, biomedical, operator, reporting, and demo use, but no real backend is connected and the current visual design remains subject to later refinement.
+The repository is a working, mock-driven React frontend with 12 of the 13 specified S0-S12 screens represented. Ward and Bed Detail are the most mature. The dedicated S4 Alerts and escalation screen is missing, and most supporting screens implement only a subset of the Drive specification.
 
-The specification still has no S4: it defines 12 numbered web screens plus Telegram while claiming 13 web screens.
+The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
 ## Completed and Verified
 
-- React/Vite/TypeScript application shell with protected routing and five provisional roles.
-- Landing, development login, Ward, Bed Detail, Census, Security, Incident, CERT-In draft, Tickets, Briefing, Action Log, Demo Control, and Telegram template routes.
+- React/Vite/TypeScript application shell with protected routing and five specified demo roles.
+- Landing, development login, Ward, Bed Detail, Census, Security, Incident, CERT-In draft, Tickets, Briefing, Action Log, Demo Control, and Telegram template routes; S4 Alerts remains to be added.
 - Twelve-bed Ward grid, summary metrics, alert rail, recent activity, responsive column changes, collapsed-alert discoverability, arrow-key navigation, Enter-to-open, and focus return.
 - Reusable Bed Tile covering all eight verdicts plus loading, unassigned, stale, disconnected, untrusted, and isolated states.
 - Canvas ECG/PPG display, last-trusted-value retention, explicit data age, and no zero/flatline inference for missing data.
@@ -43,9 +43,19 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Incomplete Features
 
+- S4 Alerts and escalation is missing: no `/alerts` route, status tabs, ladder-state table, escalation detail sheet, or deterministic 30-second demo escalation.
+- S0 and S1 are partial: the landing mini-ward/cards/offline state and role-card login/loading/retry/session persistence are not implemented.
+- S2 and the authenticated app frame are partial: no privacy toggle, stopped-alarm metric, or global high-alert strip.
+- S3 is partial: the top three reasons, six model scores, body/network witnesses, escalation action, incoming-untrusted panel, and manual hand-check form are missing.
+- S5 is partial: trust and bedside-check columns, untrusted warning, doctor escalation state, and call-bedside-nurse action are missing.
+- S6-S8 are partial: device/network inventory, fleet hunt, incident timeline/fingerprints/downloads/countdown, and editable/checklisted report workflow are missing.
+- S9-S12 are partial: ticket board/repeat-device details, Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
+- Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
+- Locked verdict priorities and role access still need correction; `LOOSE_SENSOR` and `DEVICE_ATTACK` currently differ from doc 00 v1.
+- Automatic-action Undo is only implemented for isolation rather than every applicable automatic action.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
-- Report submission is intentionally absent; the UI supports draft/review only.
+- The required human-controlled report save/download/checklist/mark-sent workflow is not implemented; the UI currently supports draft review only.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
 - Screenshot-based visual regression is not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
 - Production deployment, CI, monitoring, and backend infrastructure are not configured and are outside Antara Gupta's confirmed frontend assignment unless explicitly added later.
@@ -59,9 +69,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**Confirmed functional frontend scope complete — UI update pending.**
+**R8-F1 — S4 Alerts and escalation (active).**
 
-M5 is complete and verified. No additional functional milestone is authorized by the supplied frontend scope. The next confirmed phase is the user-directed UI update; backend-dependent work remains paused behind unconfirmed contracts.
+The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 45-50% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
 ### M1 Verified Result
 
@@ -100,29 +110,40 @@ M5 is complete and verified. No additional functional milestone is authorized by
 - The Google Fonts runtime request is removed and all typography uses resilient system stacks.
 - The initial JavaScript chunk fell from 468.17 kB to 444.39 kB (23.78 kB, about 5.1%) while all tests and the production build remain green.
 
-### Current Scope Boundary
+### Drive Audit Result
 
-- Antara Gupta's confirmed responsibility is the SentinelWard frontend represented by the supplied screens, workflows, safety behavior, typed adapters, mock mode, accessibility, and responsive behavior.
-- Do not add CI, hosting-provider configuration, monitoring, backend infrastructure, or speculative product features unless they are explicitly assigned.
-- Do not invent S4, backend payloads, final permissions, recovery semantics, or report/Telegram delivery contracts.
-- The next authorized implementation phase is UI refinement after direction from the user.
+- Antara Gupta owns S0-S12, Telegram message templates and frontend interactions with Aditya, README, and video visuals.
+- R8 explicitly defines S4 Alerts and escalation; the prior “missing S4” assumption was incorrect.
+- Locked doc 00 v1 defines verdict priorities, role-facing behavior, v1 message shapes, REST routes, `/ws`, and five safety rules.
+- Backend-dependent functionality must stay behind typed mocks/adapters, but its specified frontend states and actions remain in scope.
+- CI, deployment, monitoring, backend infrastructure, models, agents, and attack tooling remain out of scope.
+
+### R8-F1 Acceptance Criteria — S4 Alerts and Escalation
+
+- Add protected `/alerts` navigation for nurse and doctor roles without exposing it to unrelated roles.
+- Show Open, Acknowledged, and All tabs with alert time, bed, textual priority, reason, assignee, ladder step, waiting time, and actions.
+- Provide an accessible detail panel showing the complete three-step ladder, response history, and exact simulated Telegram message.
+- Implement deterministic high-alert escalation after 30 seconds in mock mode; acknowledgement stops further escalation and updates the existing alert instead of duplicating it.
+- Keep integrity-only alerts away from nurse escalation and preserve the empty state “No open alerts. All beds calm.”
+- Add unit, route, axe, and browser workflow coverage and pass `npm run check`.
 
 ## Prioritized Roadmap
 
-1. Update the existing UI when the user provides or confirms the visual direction.
-2. Add screenshot-based visual regression only after that visual baseline is approved.
-3. Integrate frontend-facing backend contracts through adapters and mappers only after the owning team confirms them.
-4. Resolve the missing-S4/screen-count ambiguity only after product clarification.
+1. Complete R8-F1 S4 Alerts and escalation.
+2. Complete S3 explanation, six-score, witness, escalation, and manual-check workflows.
+3. Complete S2/app-frame privacy, stopped-alarm, and global high-alert requirements plus locked role/priority corrections.
+4. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
+5. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
+6. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
 
-The following are **provisional and unresolved**; they must not block mock-mode frontend work:
+The locked Drive contracts guide frontend mocks, but these external integrations remain unavailable and must not block mock-mode frontend work:
 
-- Complete REST endpoint list and payload schemas.
-- WebSocket envelope, authentication, sequencing, reconnect, and missed-event recovery.
-- Final five-role permission matrix and identity/session contract.
-- Missing S4 and final screen count.
-- Acknowledge, escalate, isolation, undo, trust-restoration, and bedside-check contracts.
+- Running backend services for the locked REST endpoint list and `/ws` messages.
+- Real authentication/session service and team-issued identities.
+- WebSocket sequencing, authentication, and missed-event reconciliation beyond the locked message shapes.
+- Server-side acknowledge, escalate, isolation, undo, trust-restoration, bedside-check, and manual-reading execution.
 - History, evidence, network detail, report generation/submission, and reset paths.
 - Summary metric formulas and whether untrusted incoming values are exposed to the frontend.
 - Error envelope, idempotency, command status, pagination, timestamps/time zones, and audit identifiers.
@@ -140,6 +161,6 @@ Command: `npm run check`
 
 ## Next Recommended Actions
 
-1. Preserve the current verified functional baseline until UI direction is confirmed.
-2. Keep mock mode as the safe default while backend contracts remain unconfirmed.
-3. Do not begin infrastructure or speculative feature work under Antara Gupta's frontend scope.
+1. Implement R8-F1 as a typed mock-first vertical slice.
+2. Preserve the current safety invariants and role boundaries while adding S4.
+3. Rerun the complete unit, axe, browser, and production-build gate before delivery.

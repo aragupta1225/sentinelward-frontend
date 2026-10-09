@@ -9,6 +9,14 @@ Read this file and `PROGRESS.md` before making changes. This repository is owned
 - Preserve safety rules: never render a blank patient, never treat missing data as zero, never suppress an emergency because data is untrusted, and never imply that frontend automation changes treatment.
 - Keep the application ready for later integration with the team backend without redesigning components.
 
+## Authoritative Scope
+
+- This is Antara Gupta's frontend-only practice repository. It will be merged into the team repository later; do not add work owned by other teammates.
+- The Google Drive documents `05 Antara Gupta (screens and alerts) - work plan v3`, `06 Research R8 - Screens spec for Antara (v2, 6 Oct)`, and `00 How our parts connect (read first) - v1 LOCKED` are the product source of truth.
+- Implement S0 through S12, including the standalone S4 Alerts and escalation screen, plus Antara's Telegram templates and frontend interactions.
+- Where backend behavior is unavailable, implement the specified frontend state and workflow through typed deterministic mocks using the locked v1 routes and message shapes.
+- Do not add CI, deployment, monitoring, backend infrastructure, AI models, agents, attack tooling, or other teammates' deliverables unless explicitly requested.
+
 ## Stack and Architecture
 
 - React, Vite, TypeScript, React Router, Zustand, Zod, Canvas waveforms, and uPlot trends.
@@ -41,7 +49,7 @@ Read this file and `PROGRESS.md` before making changes. This repository is owned
 - Clearly label mock authentication, telemetry, actions, evidence, reports, tickets, and message templates as simulated.
 - Do not describe accepted mock commands as backend execution.
 - Backend contract changes should require mapper or adapter changes, not component rewrites.
-- Treat role permissions, endpoints, WebSocket envelopes, recovery behavior, and metric formulas as provisional until confirmed.
+- Follow the R8 role-to-screen map and locked doc 00 v1 routes/message shapes. Treat real backend enforcement, authentication, recovery behavior, and undocumented payload details as provisional until the owning teammate confirms them.
 
 ## Autonomous Workflow
 

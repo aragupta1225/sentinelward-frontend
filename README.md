@@ -6,10 +6,10 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 
 ## Implemented application
 
-- Protected routes for five provisional roles.
+- Protected routes for five specified demo roles.
 - Ward dashboard with twelve beds, alert queue, summary metrics, live mock telemetry, keyboard navigation, and focus return.
 - Bed Detail response, bedside confirmation, isolation, undo, trend, and append-only action workflows.
-- Census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
+- Census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens. The dedicated Alerts and escalation screen remains under development.
 - Deterministic emergency, sensor, tampering, combined-threat, and connection-loss scenarios.
 - Validated REST, WebSocket, and command adapter boundaries with mock mode as the safe default.
 - Route-family code splitting keeps noncritical clinical, security, support, and demo screens out of the initial bundle.
@@ -67,6 +67,6 @@ npm run check
 
 The gate runs lint, the unit/component suite, 21 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
 
-## Open specification issue
+## Source scope
 
-The supplied source claims 13 web screens but defines 12 numbered web screens plus Telegram. No S4 is defined; this remains unresolved pending team confirmation.
+The authoritative frontend scope defines 13 screens, S0 through S12. S4 is Alerts and escalation; Telegram is a secondary channel in addition to those screens. This practice repository contains Antara Gupta's frontend work only and will be integrated into the team repository later.
