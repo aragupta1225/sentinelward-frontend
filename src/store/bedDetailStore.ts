@@ -42,9 +42,8 @@ export const useBedDetailStore = create<BedDetailState>((set, get) => ({
     if (!can(state.currentRole, 'acknowledge_alert')) return
     const current = responseFor(state, bedId)
     if (current.responseAcknowledgedAt) return
+    if (!await useWardDashboardStore.getState().acknowledgeBed(bedId, state.currentRole)) return
     const occurredAt = Date.now()
-    if (!await dispatchCommand({ type: 'acknowledge_alert', bedId })) return
-    useWardDashboardStore.getState().acknowledgeBed(bedId)
     set({ responses: { ...state.responses, [bedId]: { ...current, responseAcknowledgedAt: occurredAt } }, actions: appendUserAction(state, bedId, 'response_acknowledged', 'On my way response recorded') })
   },
   confirmPatient: async (bedId, status) => {

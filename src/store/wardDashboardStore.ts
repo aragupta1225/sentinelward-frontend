@@ -1,7 +1,10 @@
 import { create } from 'zustand'
+import { dispatchCommand } from '../adapters/commandGateway'
+import type { WardAdapterSet } from '../adapters/createWardAdapters'
+import type { WardEvent, WardEventSource } from '../adapters/contracts'
+import { can, type Role } from '../domain/access'
 import type { Bed } from '../domain/ward'
 import { BED_FIXTURES } from '../mocks/fixtures'
-import { MockWardGridEventSource } from '../mocks/mockWardEventSource'
 
 export interface WardActivity {
   id: string
@@ -16,10 +19,19 @@ interface WardDashboardState {
   beds: Bed[]
   connection: Bed['connection']
   activities: WardActivity[]
-  source: MockWardGridEventSource | null
+  source: WardEventSource | null
+  loadState: 'idle' | 'loading' | 'ready' | 'error'
+  loadError: string | null
+  commandError: string | null
   start: () => () => void
   setConnection: (connection: 'live' | 'disconnected') => void
-  acknowledgeBed: (bedId: string) => void
+  acknowledgeBed: (bedId: string, role: Role) => Promise<boolean>
+}
+
+let configuredAdapters: WardAdapterSet | null = null
+
+export function configureWardDashboardAdapters(adapters: WardAdapterSet) {
+  configuredAdapters = adapters
 }
 
 let activitySequence = 0
@@ -40,12 +52,27 @@ export const useWardDashboardStore = create<WardDashboardState>((set, get) => ({
   connection: 'connecting',
   activities: initialActivities,
   source: null,
+  loadState: 'idle',
+  loadError: null,
+  commandError: null,
   start: () => {
-    const source = new MockWardGridEventSource(get().beds)
-    const unsubscribe = source.subscribe((event) => {
+    const adapters = configuredAdapters
+    if (!adapters) {
+      set({ loadState: 'error', loadError: 'Ward runtime is not configured' })
+      return () => undefined
+    }
+    const source = adapters.events
+    const controller = new AbortController()
+    let active = true
+    let unsubscribe: (() => void) | null = null
+    const handleEvent = (event: WardEvent) => {
       if (event.type === 'bed.updated') {
         set((state) => ({
-          beds: state.beds.map((bed) => bed.id === event.bed.id ? event.bed : bed),
+          beds: state.beds.map((bed) => {
+            if (bed.id !== event.bed.id) return bed
+            const acknowledgement = bed.acknowledgement === 'none' ? event.bed.acknowledgement : bed.acknowledgement
+            return { ...event.bed, acknowledgement }
+          }),
         }))
         return
       }
@@ -61,13 +88,32 @@ export const useWardDashboardStore = create<WardDashboardState>((set, get) => ({
           activities: [activity({ bedId: null, kind: 'system', priority: event.state === 'live' ? 'none' : 'high', message, occurredAt: event.occurredAt }), ...state.activities].slice(0, 30),
         }
       })
+    }
+    const connectSource = () => {
+      if (!active) return
+      unsubscribe = source.subscribe(handleEvent)
+      set({ source })
+      source.connect()
+    }
+    set({ source: null, connection: 'connecting', loadState: 'loading', loadError: null })
+    void adapters.rest.getWard(controller.signal).then((snapshot) => {
+      if (!active) return
+      set({ beds: snapshot.beds, loadState: 'ready', loadError: null })
+      connectSource()
+    }).catch((error: unknown) => {
+      if (!active || (error instanceof DOMException && error.name === 'AbortError')) return
+      set({
+        loadState: 'error',
+        loadError: error instanceof Error ? error.message : 'Ward data could not be loaded',
+      })
+      connectSource()
     })
-    set({ source })
-    source.connect()
     return () => {
-      unsubscribe()
+      active = false
+      controller.abort()
+      unsubscribe?.()
       source.disconnect()
-      set({ source: null })
+      if (get().source === source) set({ source: null })
     }
   },
   setConnection: (connection) => {
@@ -85,12 +131,30 @@ export const useWardDashboardStore = create<WardDashboardState>((set, get) => ({
       activities: [activity({ bedId: null, kind: 'system', priority: connection === 'live' ? 'none' : 'high', message, occurredAt }), ...state.activities].slice(0, 30),
     }))
   },
-  acknowledgeBed: (bedId) => {
+  acknowledgeBed: async (bedId, role) => {
     const target = get().beds.find((bed) => bed.id === bedId)
-    if (!target || target.acknowledgement === 'acknowledged') return
+    if (!target) return false
+    if (!can(role, 'acknowledge_alert')) {
+      set({ commandError: 'Your current role cannot acknowledge alerts.' })
+      return false
+    }
+    if (target.acknowledgement === 'acknowledged') return true
+    if (target.acknowledgement === 'pending') return false
+    set((state) => ({
+      commandError: null,
+      beds: state.beds.map((bed) => bed.id === bedId ? { ...bed, acknowledgement: 'pending' } : bed),
+    }))
+    if (!await dispatchCommand({ type: 'acknowledge_alert', bedId })) {
+      set((state) => ({
+        commandError: `${target.label} acknowledgement failed. The alert remains unacknowledged.`,
+        beds: state.beds.map((bed) => bed.id === bedId && bed.acknowledgement === 'pending' ? { ...bed, acknowledgement: 'none' } : bed),
+      }))
+      return false
+    }
     set((state) => ({
       beds: state.beds.map((bed) => bed.id === bedId ? { ...bed, acknowledgement: 'acknowledged' } : bed),
       activities: [activity({ bedId, kind: 'acknowledgement', priority: target.priority, message: `${target.label} alert acknowledged`, occurredAt: Date.now() }), ...state.activities].slice(0, 30),
     }))
+    return true
   },
 }))

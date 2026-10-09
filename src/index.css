@@ -147,6 +147,8 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
 .ward-heading__actions { display: flex; align-items: center; gap: 10px; }
 .ward-heading__actions button, .primary-action, .back-button { min-height: 44px; border: 1px solid #31566e; border-radius: 8px; padding: 0 14px; background: #10283a; cursor: pointer; }
 .ward-heading__actions button:hover, .primary-action:hover, .back-button:hover { background: #17384e; }
+.ward-status-message { margin: 0 0 16px; border: 1px solid #7e6936; border-radius: 8px; padding: 10px 12px; background: #2a2518; color: #f1d78b; font-size: 13px; }
+.ward-status-message--error { border-color: #8e4148; background: #301c22; color: #ffb8be; }
 .primary-action:disabled { opacity: .65; cursor: default; }
 .connection-chip { min-height: 38px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #31566e; border-radius: 99px; padding: 0 12px; color: #a8bdca; font: 500 10px 'DM Mono', monospace; }
 .connection-chip i { width: 8px; height: 8px; border-radius: 50%; background: #8ba2b2; }

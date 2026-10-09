@@ -1,7 +1,6 @@
 import type { CommandAdapter, FrontendCommand } from './commandContracts'
-import { MockCommandAdapter } from './mockCommandAdapter'
 
-let adapter: CommandAdapter = new MockCommandAdapter()
+let adapter: CommandAdapter | null = null
 export interface CommandFailure { command: FrontendCommand; message: string }
 const failureListeners = new Set<(failure: CommandFailure) => void>()
 
@@ -11,6 +10,7 @@ export function configureCommandAdapter(nextAdapter: CommandAdapter) {
 
 export async function dispatchCommand(command: FrontendCommand) {
   try {
+    if (!adapter) throw new Error('Command runtime is not configured')
     return await adapter.execute(command)
   } catch (error) {
     const failure = { command, message: error instanceof Error ? error.message : 'Command failed' }

@@ -1,4 +1,7 @@
 import '@testing-library/jest-dom/vitest'
+import { bootstrapApplication } from '../runtime/bootstrapApplication'
+
+bootstrapApplication({})
 
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', { value: () => null })
 

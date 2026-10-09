@@ -4,6 +4,7 @@ import { AlertRail } from '../components/AlertRail'
 import { WardGrid } from '../components/WardGrid'
 import { WardSummaryRow } from '../components/WardSummaryRow'
 import { getWardSummary } from '../domain/wardSummary'
+import { useBedDetailStore } from '../store/bedDetailStore'
 import { useWardDashboardStore } from '../store/wardDashboardStore'
 
 export function WardPage() {
@@ -11,9 +12,12 @@ export function WardPage() {
   const beds = useWardDashboardStore((state) => state.beds)
   const connection = useWardDashboardStore((state) => state.connection)
   const activities = useWardDashboardStore((state) => state.activities)
+  const loadError = useWardDashboardStore((state) => state.loadError)
+  const commandError = useWardDashboardStore((state) => state.commandError)
   const start = useWardDashboardStore((state) => state.start)
   const setConnection = useWardDashboardStore((state) => state.setConnection)
   const acknowledgeBed = useWardDashboardStore((state) => state.acknowledgeBed)
+  const currentRole = useBedDetailStore((state) => state.currentRole)
   const [railCollapsed, setRailCollapsed] = useState(false)
   const [announcement, setAnnouncement] = useState('')
   const previousHigh = useRef(new Set(beds.filter((bed) => bed.priority === 'high').map((bed) => bed.id)))
@@ -49,6 +53,9 @@ export function WardPage() {
         </div>
       </section>
 
+      {loadError && <p className="ward-status-message ward-status-message--error" role="alert">Ward refresh failed: {loadError}. Last known patient data remains visible.</p>}
+      {commandError && <p className="ward-status-message ward-status-message--error" role="alert">{commandError}</p>}
+
       <WardSummaryRow summary={summary} />
 
       <button className="mobile-alert-toggle" type="button" onClick={() => setRailCollapsed((value) => !value)} aria-expanded={!railCollapsed} aria-controls="alert-rail-content">
@@ -57,7 +64,7 @@ export function WardPage() {
 
       <div className="ward-layout">
         <WardGrid beds={beds} onOpenBed={openBed} />
-        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeBed} onOpenBed={openBed} />
+        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={(bedId) => acknowledgeBed(bedId, currentRole)} onOpenBed={openBed} />
       </div>
     </main>
   )

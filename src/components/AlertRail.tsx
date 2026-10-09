@@ -6,7 +6,7 @@ interface AlertRailProps {
   activities: readonly WardActivity[]
   collapsed: boolean
   onToggle: () => void
-  onAcknowledge: (bedId: string) => void
+  onAcknowledge: (bedId: string) => void | Promise<unknown>
   onOpenBed: (bedId: string) => void
 }
 
@@ -43,8 +43,8 @@ export function AlertRail({ beds, activities, collapsed, onToggle, onAcknowledge
                 <small>{VERDICT_PRESENTATION[bed.verdict].label}</small>
                 <p>{bed.reason}</p>
               </button>
-              <button className="alert-card__ack" type="button" disabled={bed.acknowledgement === 'acknowledged'} onClick={() => onAcknowledge(bed.id)}>
-                {bed.acknowledgement === 'acknowledged' ? 'Acknowledged' : 'Acknowledge alert'}
+              <button className="alert-card__ack" type="button" disabled={bed.acknowledgement !== 'none'} onClick={() => onAcknowledge(bed.id)}>
+                {bed.acknowledgement === 'acknowledged' ? 'Acknowledged' : bed.acknowledgement === 'pending' ? 'Acknowledging…' : 'Acknowledge alert'}
               </button>
             </article>
           ))}

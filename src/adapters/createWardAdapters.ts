@@ -1,18 +1,23 @@
 import type { WardEventSource, WardRestAdapter } from './contracts'
 import { HttpWardRestAdapter } from './httpWardAdapter'
 import { NativeWardWebSocketEventSource } from './nativeWardWebSocket'
-import { getFixture } from '../mocks/fixtures'
-import { MockWardEventSource, MockWardRestAdapter } from '../mocks/mockAdapters'
+import { BED_FIXTURES } from '../mocks/fixtures'
+import { MockWardRestAdapter } from '../mocks/mockAdapters'
+import { MockWardGridEventSource } from '../mocks/mockWardEventSource'
+import type { RuntimeLocation } from '../runtime/applicationRuntime'
+import type { RuntimeConfig } from '../runtime/runtimeConfig'
 
 export interface WardAdapterSet { rest: WardRestAdapter; events: WardEventSource }
 
-export function createWardAdapters(mode: 'mock' | 'backend', onRecoveryRequired?: () => void): WardAdapterSet {
-  if (mode === 'mock') return { rest: new MockWardRestAdapter(), events: new MockWardEventSource(getFixture('B01')) }
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+export function createWardAdapters(config: RuntimeConfig, location: RuntimeLocation, onRecoveryRequired?: () => void): WardAdapterSet {
+  if (config.mode === 'mock') {
+    return { rest: new MockWardRestAdapter(), events: new MockWardGridEventSource(BED_FIXTURES) }
+  }
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
   return {
-    rest: new HttpWardRestAdapter('/api'),
+    rest: new HttpWardRestAdapter(config.apiBaseUrl),
     events: new NativeWardWebSocketEventSource({
-      url: `${protocol}//${window.location.host}/ws`,
+      url: config.webSocketUrl ?? `${protocol}//${location.host}/ws`,
       onRecoveryRequired,
     }),
   }
