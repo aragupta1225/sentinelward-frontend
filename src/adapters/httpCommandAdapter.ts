@@ -10,7 +10,9 @@ const receiptSchema = z.object({ command_id: z.string(), accepted_at: z.number()
 const defaultEndpoint: EndpointResolver = (command) => {
   switch (command.type) {
     case 'acknowledge_alert': return `/beds/${command.bedId}/acknowledge`
-    case 'confirm_bedside': return `/beds/${command.bedId}/bedside-confirmation`
+    case 'escalate_alert': return `/alerts/${command.alertId}/escalate`
+    case 'confirm_bedside': return `/beds/${command.bedId}/bedside-check`
+    case 'record_manual_reading': return `/beds/${command.bedId}/manual-reading`
     case 'isolate_device': return `/beds/${command.bedId}/isolate`
     case 'undo_action': return `/actions/${command.originalActionId}/undo`
     case 'capture_evidence': return `/incidents/${command.bedId}/evidence`

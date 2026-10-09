@@ -15,7 +15,11 @@ describe('command adapters', () => {
     const fetcher = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ command_id: 'cmd-1', accepted_at: 123 }) } as Response)
     const adapter = new HttpCommandAdapter('/api/', fetcher)
     await adapter.execute({ type: 'confirm_bedside', bedId: 'B08', status: 'patient_not_ok' })
-    expect(fetcher).toHaveBeenCalledWith('/api/beds/B08/bedside-confirmation', expect.objectContaining({ method: 'POST' }))
+    expect(fetcher).toHaveBeenCalledWith('/api/beds/B08/bedside-check', expect.objectContaining({ method: 'POST' }))
+    await adapter.execute({ type: 'record_manual_reading', bedId: 'B08', heartRate: 86, spo2: 94, notes: 'Portable device' })
+    expect(fetcher).toHaveBeenCalledWith('/api/beds/B08/manual-reading', expect.objectContaining({ method: 'POST' }))
+    await adapter.execute({ type: 'escalate_alert', alertId: 'AL-B08', bedId: 'B08' })
+    expect(fetcher).toHaveBeenCalledWith('/api/alerts/AL-B08/escalate', expect.objectContaining({ method: 'POST' }))
   })
 
   it('reports adapter failures without an unhandled rejection', async () => {

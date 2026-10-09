@@ -22,6 +22,8 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - Reusable Bed Tile covering all eight verdicts plus loading, unassigned, stale, disconnected, untrusted, and isolated states.
 - Canvas ECG/PPG display, last-trusted-value retention, explicit data age, and no zero/flatline inference for missing data.
 - Bed Detail overview, mock 30-minute uPlot trends, append-only actions, separate “On my way” and bedside confirmation, immediate high alert for “Patient NOT OK,” isolation, and referencing undo actions.
+- S3 Bed Detail explanation: top three reasons, all six named model checks, confidence, body/network witnesses, recent actions, manual escalation, and exact typed command paths for bedside and hand-check requests.
+- Untrusted Bed Detail safely separates frozen last-trusted values from a grey patterned “incoming (not trusted)” box and provides a five-minute hand-check countdown with validated HR, portable-device SpO₂, notes, and an append-only record.
 - Deterministic timed scenarios for emergency, loose sensor, drifting sensor, tampering, BOTH, and connection loss.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
@@ -47,7 +49,6 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - S0 and S1 are partial: the landing mini-ward/cards/offline state and role-card login/loading/retry/session persistence are not implemented.
 - S2 and the authenticated app frame are partial: no privacy toggle, stopped-alarm metric, or global high-alert strip.
-- S3 is partial: the top three reasons, six model scores, body/network witnesses, escalation action, incoming-untrusted panel, and manual hand-check form are missing.
 - S5 is partial: trust and bedside-check columns, untrusted warning, doctor escalation state, and call-bedside-nurse action are missing.
 - S6-S8 are partial: device/network inventory, fleet hunt, incident timeline/fingerprints/downloads/countdown, and editable/checklisted report workflow are missing.
 - S9-S12 are partial: ticket board/repeat-device details, Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
@@ -66,11 +67,11 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - No failing product bug was found during this inspection.
 - Application state is memory-only and resets on refresh; this is acceptable for mocks but must remain clearly presented as simulated.
-- The initial production JavaScript chunk is about 444 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
+- The initial production JavaScript chunk is about 459 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
 
 ## Active Milestone
 
-**R8-F2 — S3 Bed Detail explanation and manual-check workflows (active).**
+**R8-F3 — S2 Ward frame, locked priorities, and privacy behavior (active).**
 
 The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 45-50% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
@@ -129,13 +130,22 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Ward-rail and S4 acknowledgement state synchronize through the shared typed command boundary.
 - Unit, route, structural axe, browser workflow, full axe color-contrast, tablet, TypeScript, and production-build checks pass.
 
+### R8-F2 Verified Result — S3 Bed Detail
+
+- The “Why” panel displays the verdict confidence, three concise reasons, all six named model checks on a 0–1 scale, and the latest actions.
+- Body and network witnesses remain separate and textual, so the explanation never depends on color alone.
+- Untrusted beds keep the main display on the last trusted snapshot and expose incoming values only in a labelled, grey-patterned “incoming (not trusted)” box.
+- Nurse and doctor actions include On my way, manual escalation, Patient OK / NOT OK, and a validated hand-check form; IT remains read-only for the new S3 actions.
+- Hand checks persist HR, portable-device SpO₂, notes, recorder, time, a five-minute next-check schedule, and an append-only action entry without converting untrusted telemetry into trusted data.
+- Escalation and manual readings dispatch through typed mock/backend command boundaries using the locked `/api/alerts/:id/escalate`, `/api/beds/:id/bedside-check`, and `/api/beds/:id/manual-reading` paths.
+- Unit/component and browser tests cover the explanation count, untrusted boundary, permissions, escalation, hand-check persistence, and adapter paths; the full quality gate passes.
+
 ## Prioritized Roadmap
 
-1. Complete S3 explanation, six-score, witness, escalation, and manual-check workflows.
-2. Complete S2/app-frame privacy, stopped-alarm, and global high-alert requirements plus locked role/priority corrections.
-3. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
-4. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
-5. Begin the separate UI-polish phase only after functional scope is verified.
+1. Complete S2/app-frame privacy, stopped-alarm, and global high-alert requirements plus locked role/priority corrections.
+2. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
+3. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
+4. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
 
@@ -154,14 +164,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 21 files passed; 79 tests passed.
-- Browser regression: 23 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 22 files passed; 84 tests passed.
+- Browser regression: 24 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 171 modules; CSS 30.50 kB (7.28 kB gzip); initial JavaScript 448.91 kB (144.83 kB gzip), plus five lazy route-family chunks and three small shared chunks.
+- Build output: 172 modules; CSS 34.33 kB (7.96 kB gzip); initial JavaScript 458.66 kB (147.88 kB gzip), plus five lazy route-family chunks and three small shared chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F2 S3 explanation, six-score, witness, escalation, and manual-check workflows as a typed mock-first vertical slice.
-2. Preserve the current safety invariants and role boundaries while extending Bed Detail.
+1. Implement R8-F3 S2 privacy, stopped-alarm, high-alert frame, and exact verdict priorities as a typed mock-first vertical slice.
+2. Preserve the current safety invariants and role boundaries while correcting the Ward frame.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.

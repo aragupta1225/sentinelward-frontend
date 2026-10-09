@@ -57,6 +57,23 @@ test('alerts escalate through the nurse ladder and acknowledgement edits the sam
   await expect(page.getByRole('row').filter({ hasText: 'Bed 3' })).toBeVisible()
 })
 
+test('Bed Detail explains the verdict and records an untrusted hand check', async ({ page }) => {
+  await signIn(page, 'nurse')
+  await navigateInApp(page, '/bed/B07')
+
+  await expect(page.getByRole('heading', { name: 'Monitor cannot be trusted' })).toBeVisible()
+  await expect(page.getByRole('progressbar')).toHaveCount(6)
+  await expect(page.getByRole('heading', { name: 'Two witnesses' })).toBeVisible()
+  await expect(page.getByText('incoming (not trusted)')).toBeVisible()
+
+  await page.getByLabel('Heart rate').fill('82')
+  await page.getByLabel('SpO₂ by portable device').fill('97')
+  await page.getByLabel('Notes').fill('Pulse regular')
+  await page.getByRole('button', { name: 'Record hand check' }).click()
+  await expect(page.getByText(/Latest: HR 82, SpO₂ 97/)).toBeVisible()
+  await expect(page.getByText('incoming (not trusted)')).toBeVisible()
+})
+
 test('device isolation can be undone without removing the original action', async ({ page }) => {
   await signIn(page, 'operator')
   await navigateInApp(page, '/bed/B07')

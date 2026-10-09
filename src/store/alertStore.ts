@@ -10,6 +10,7 @@ interface AlertState {
   commandError: string | null
   advanceEscalations: (now?: number) => void
   acknowledgeAlert: (alertId: string, actor: string, now?: number) => Promise<boolean>
+  escalateAlert: (alertId: string, now?: number) => void
   recordAcknowledgementForBed: (bedId: string, actor: string, now?: number) => void
   receiveAlert: (incoming: IncomingWardAlert) => void
 }
@@ -102,6 +103,17 @@ export const useAlertStore = create<AlertState>((set, get) => ({
     set((state) => ({ alerts: state.alerts.map((alert) => alert.id === alertId ? acknowledge(alert, actor, now) : alert), pendingAlertId: null }))
     useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((bed) => bed.id === target.bedId ? { ...bed, acknowledgement: 'acknowledged' } : bed) }))
     return true
+  },
+  escalateAlert: (alertId, now = Date.now()) => {
+    set((state) => ({ alerts: state.alerts.map((alert) => {
+      if (alert.id !== alertId || alert.status !== 'open' || alert.ladderStep === 3) return alert
+      const ladderStep = (alert.ladderStep + 1) as LadderStep
+      const assignedTo = ladderRecipient(ladderStep)
+      return {
+        ...alert, ladderStep, assignedTo, updatedAt: now,
+        responseHistory: [...alert.responseHistory, response(`Escalated manually to ${assignedTo}`, now)],
+      }
+    }) }))
   },
   recordAcknowledgementForBed: (bedId, actor, now = Date.now()) => {
     set((state) => ({ alerts: state.alerts.map((alert) => alert.bedId === bedId && alert.status === 'open' ? acknowledge(alert, actor, now) : alert) }))

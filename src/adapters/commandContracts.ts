@@ -1,6 +1,8 @@
 export type FrontendCommand =
   | { type: 'acknowledge_alert'; bedId: string }
+  | { type: 'escalate_alert'; alertId: string; bedId: string }
   | { type: 'confirm_bedside'; bedId: string; status: 'patient_ok' | 'patient_not_ok' }
+  | { type: 'record_manual_reading'; bedId: string; heartRate: number; spo2: number; notes: string }
   | { type: 'isolate_device'; bedId: string }
   | { type: 'undo_action'; bedId: string; originalActionId: string }
   | { type: 'capture_evidence'; bedId: string }

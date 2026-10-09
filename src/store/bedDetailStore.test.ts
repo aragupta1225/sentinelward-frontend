@@ -1,8 +1,17 @@
-import { describe, expect, it } from 'vitest'
-import { useBedDetailStore } from './bedDetailStore'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { resetBedDetailStore, useBedDetailStore } from './bedDetailStore'
 import { useWardDashboardStore } from './wardDashboardStore'
+import { configureCommandAdapter } from '../adapters/commandGateway'
+import { MockCommandAdapter } from '../adapters/mockCommandAdapter'
+import { resetAlertStore, useAlertStore } from './alertStore'
 
 describe('bed detail workflows', () => {
+  beforeEach(() => {
+    configureCommandAdapter(new MockCommandAdapter())
+    resetBedDetailStore()
+    resetAlertStore(1_000_000)
+  })
+
   it('keeps response acknowledgement separate from bedside confirmation', async () => {
     useBedDetailStore.getState().setRole('nurse')
     await useBedDetailStore.getState().acknowledgeResponse('B02')
@@ -36,5 +45,26 @@ describe('bed detail workflows', () => {
     useBedDetailStore.getState().setRole('biomedical')
     await useBedDetailStore.getState().confirmPatient('B04', 'patient_ok')
     expect(useBedDetailStore.getState().responses.B04).toBeUndefined()
+  })
+
+  it('escalates an open alert through the typed command boundary and records the action', async () => {
+    expect(await useBedDetailStore.getState().escalateAlert('B03')).toBe(true)
+    expect(useAlertStore.getState().alerts.find((alert) => alert.bedId === 'B03')?.ladderStep).toBe(2)
+    expect(useBedDetailStore.getState().actions.some((action) => action.bedId === 'B03' && action.type === 'alert_escalated')).toBe(true)
+  })
+
+  it('records validated hand-check values and schedules the next check', async () => {
+    expect(await useBedDetailStore.getState().recordManualReading('B07', { heartRate: 82, spo2: 97, notes: 'Pulse regular' })).toBe(true)
+    const reading = useBedDetailStore.getState().manualReadings.B07[0]
+    expect(reading).toMatchObject({ heartRate: 82, spo2: 97, notes: 'Pulse regular' })
+    expect(useBedDetailStore.getState().nextManualCheckAt.B07).toBeGreaterThan(reading.recordedAt)
+    expect(useBedDetailStore.getState().actions.some((action) => action.type === 'manual_reading_recorded')).toBe(true)
+  })
+
+  it('keeps S3 actions read-only for IT', async () => {
+    useBedDetailStore.getState().setRole('it')
+    expect(await useBedDetailStore.getState().escalateAlert('B03')).toBe(false)
+    expect(await useBedDetailStore.getState().recordManualReading('B07', { heartRate: 82, spo2: 97, notes: '' })).toBe(false)
+    expect(useBedDetailStore.getState().manualReadings.B07).toBeUndefined()
   })
 })

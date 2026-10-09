@@ -9,7 +9,7 @@ const publicRoutes = [
 
 const protectedRoutes = [
   ['/ward', 'Live ward', 'operator'],
-  ['/bed/B08', 'Bed 8', 'operator'],
+  ['/bed/B08', 'Bed 8', 'nurse'],
   ['/alerts', 'Alerts and escalation', 'nurse'],
   ['/census', 'Doctor / tele-ICU census', 'operator'],
   ['/security', 'Security operations', 'operator'],

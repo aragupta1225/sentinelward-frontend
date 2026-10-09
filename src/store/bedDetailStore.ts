@@ -1,23 +1,38 @@
 import { create } from 'zustand'
 import { can, type Role } from '../domain/access'
-import type { BedAction, BedActionType, BedResponseState } from '../domain/actions'
+import type { BedAction, BedActionType, BedResponseState, ManualReading } from '../domain/actions'
 import { useWardDashboardStore } from './wardDashboardStore'
 import { dispatchCommand } from '../adapters/commandGateway'
+import { useAlertStore } from './alertStore'
+
+export interface ManualReadingInput {
+  heartRate: number
+  spo2: number
+  notes: string
+}
 
 interface BedDetailState {
   currentRole: Role
   responses: Record<string, BedResponseState>
   actions: BedAction[]
+  manualReadings: Record<string, ManualReading[]>
+  nextManualCheckAt: Record<string, number>
+  pendingCommand: 'escalate' | 'manual-reading' | null
+  commandError: string | null
   setRole: (role: Role) => void
   acknowledgeResponse: (bedId: string) => Promise<void>
+  escalateAlert: (bedId: string) => Promise<boolean>
   confirmPatient: (bedId: string, status: 'patient_ok' | 'patient_not_ok') => Promise<void>
+  recordManualReading: (bedId: string, reading: ManualReadingInput) => Promise<boolean>
   isolateDevice: (bedId: string) => Promise<void>
   undoAction: (actionId: string) => Promise<void>
 }
 
 let sequence = 10
+let manualReadingSequence = 0
 const responseFor = (state: BedDetailState, bedId: string): BedResponseState => state.responses[bedId] ?? { responseAcknowledgedAt: null, bedsideStatus: 'pending', bedsideConfirmedAt: null }
 const actor = (role: Role) => role === 'operator' ? 'Demo operator' : 'Antara Gupta'
+const isClinicalRole = (role: Role) => role === 'nurse' || role === 'doctor'
 
 function newAction(input: Omit<BedAction, 'id'>): BedAction {
   sequence += 1
@@ -35,20 +50,38 @@ const initialActions: BedAction[] = [
 ]
 
 export const useBedDetailStore = create<BedDetailState>((set, get) => ({
-  currentRole: 'nurse', responses: {}, actions: initialActions,
+  currentRole: 'nurse', responses: {}, actions: initialActions, manualReadings: {}, nextManualCheckAt: {}, pendingCommand: null, commandError: null,
   setRole: (currentRole) => set({ currentRole }),
   acknowledgeResponse: async (bedId) => {
     const state = get()
-    if (!can(state.currentRole, 'acknowledge_alert')) return
+    if (!isClinicalRole(state.currentRole) || !can(state.currentRole, 'acknowledge_alert')) return
     const current = responseFor(state, bedId)
     if (current.responseAcknowledgedAt) return
     if (!await useWardDashboardStore.getState().acknowledgeBed(bedId, state.currentRole)) return
     const occurredAt = Date.now()
     set({ responses: { ...state.responses, [bedId]: { ...current, responseAcknowledgedAt: occurredAt } }, actions: appendUserAction(state, bedId, 'response_acknowledged', 'On my way response recorded') })
   },
+  escalateAlert: async (bedId) => {
+    const state = get()
+    if (!isClinicalRole(state.currentRole)) return false
+    const alert = useAlertStore.getState().alerts.find((item) => item.bedId === bedId && item.status === 'open')
+    if (!alert) {
+      set({ commandError: 'No open alert is available to escalate.' })
+      return false
+    }
+    set({ pendingCommand: 'escalate', commandError: null })
+    if (!await dispatchCommand({ type: 'escalate_alert', alertId: alert.id, bedId })) {
+      set({ pendingCommand: null, commandError: 'Escalation failed. The current response ladder remains unchanged.' })
+      return false
+    }
+    const occurredAt = Date.now()
+    useAlertStore.getState().escalateAlert(alert.id, occurredAt)
+    set({ actions: appendUserAction(state, bedId, 'alert_escalated', 'Alert manually escalated to the next responder'), pendingCommand: null })
+    return true
+  },
   confirmPatient: async (bedId, status) => {
     const state = get()
-    if (!can(state.currentRole, 'confirm_bedside_status')) return
+    if (!isClinicalRole(state.currentRole) || !can(state.currentRole, 'confirm_bedside_status')) return
     const current = responseFor(state, bedId)
     const occurredAt = Date.now()
     if (!await dispatchCommand({ type: 'confirm_bedside', bedId, status })) return
@@ -59,6 +92,32 @@ export const useBedDetailStore = create<BedDetailState>((set, get) => ({
       } : bed) }))
     }
     set({ responses: { ...state.responses, [bedId]: { ...current, bedsideStatus: status, bedsideConfirmedAt: occurredAt } }, actions: appendUserAction(state, bedId, status, status === 'patient_ok' ? 'Patient confirmed OK at bedside' : 'Patient confirmed NOT OK; high alert raised') })
+  },
+  recordManualReading: async (bedId, reading) => {
+    const state = get()
+    if (!isClinicalRole(state.currentRole)) return false
+    if (reading.heartRate < 20 || reading.heartRate > 250 || reading.spo2 < 50 || reading.spo2 > 100) {
+      set({ commandError: 'Enter a heart rate from 20–250 and SpO₂ from 50–100.' })
+      return false
+    }
+    set({ pendingCommand: 'manual-reading', commandError: null })
+    if (!await dispatchCommand({ type: 'record_manual_reading', bedId, ...reading })) {
+      set({ pendingCommand: null, commandError: 'Hand check could not be recorded. No reading was saved.' })
+      return false
+    }
+    const recordedAt = Date.now()
+    manualReadingSequence += 1
+    const manualReading: ManualReading = {
+      id: `manual-reading-${manualReadingSequence}`, bedId, ...reading,
+      recordedBy: actor(state.currentRole), recordedAt,
+    }
+    set({
+      manualReadings: { ...state.manualReadings, [bedId]: [manualReading, ...(state.manualReadings[bedId] ?? [])] },
+      nextManualCheckAt: { ...state.nextManualCheckAt, [bedId]: recordedAt + 300_000 },
+      actions: appendUserAction(state, bedId, 'manual_reading_recorded', `Hand check recorded: HR ${reading.heartRate}, SpO₂ ${reading.spo2}`),
+      pendingCommand: null,
+    })
+    return true
   },
   isolateDevice: async (bedId) => {
     const state = get()
@@ -81,3 +140,10 @@ export const useBedDetailStore = create<BedDetailState>((set, get) => ({
     set({ actions: appendUserAction(state, original.bedId, 'action_undone', `Isolation action ${actionId} undone; original retained`, false, actionId) })
   },
 }))
+
+export function resetBedDetailStore() {
+  useBedDetailStore.setState({
+    currentRole: 'nurse', responses: {}, actions: structuredClone(initialActions), manualReadings: {},
+    nextManualCheckAt: {}, pendingCommand: null, commandError: null,
+  })
+}
