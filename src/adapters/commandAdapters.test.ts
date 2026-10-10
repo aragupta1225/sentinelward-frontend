@@ -20,13 +20,39 @@ describe('command adapters', () => {
     expect(fetcher).toHaveBeenCalledWith('/api/beds/B08/manual-reading', expect.objectContaining({ method: 'POST' }))
     await adapter.execute({ type: 'escalate_alert', alertId: 'AL-B08', bedId: 'B08' })
     expect(fetcher).toHaveBeenCalledWith('/api/alerts/AL-B08/escalate', expect.objectContaining({ method: 'POST' }))
+    await adapter.execute({ type: 'isolate_device', deviceId: 'MON-07', bedId: 'B07' })
+    expect(fetcher).toHaveBeenCalledWith('/api/devices/MON-07/isolate', expect.objectContaining({ method: 'POST' }))
+    await adapter.execute({ type: 'fleet_hunt', model: 'Sentinel V4' })
+    expect(fetcher).toHaveBeenCalledWith('/api/fleet-hunt', expect.objectContaining({ method: 'POST' }))
+    const report = {
+      incidentId: 'INC-B07',
+      organisation: 'SentinelWard Hospital',
+      contact: 'it@sentinelward.example',
+      noticedAt: '2026-10-10T10:00',
+      occurredAt: '2026-10-10T09:55',
+      incidentType: 'Replay attack',
+      affectedSystems: 'MON-07',
+      description: 'Repeated monitor frames detected.',
+      actionsTaken: 'Device isolated.',
+      evidenceList: 'network-summary.json',
+      factsChecked: true,
+      evidenceAttached: true,
+      approver: 'Antara Gupta',
+      savedAt: null,
+      sentAt: null,
+      sentBy: null,
+    }
+    await adapter.execute({ type: 'save_report', incidentId: 'INC-B07', report })
+    expect(fetcher).toHaveBeenCalledWith('/api/reports/INC-B07', expect.objectContaining({ method: 'POST' }))
+    await adapter.execute({ type: 'mark_report_sent', incidentId: 'INC-B07', sentBy: 'Antara Gupta' })
+    expect(fetcher).toHaveBeenCalledWith('/api/reports/INC-B07/mark-sent', expect.objectContaining({ method: 'POST' }))
   })
 
   it('reports adapter failures without an unhandled rejection', async () => {
     const listener = vi.fn()
     const unsubscribe = subscribeCommandFailures(listener)
     configureCommandAdapter({ execute: async () => { throw new Error('Backend unavailable') } })
-    const result = await dispatchCommand({ type: 'isolate_device', bedId: 'B07' })
+    const result = await dispatchCommand({ type: 'isolate_device', deviceId: 'MON-07', bedId: 'B07' })
     expect(result).toBeNull()
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({ message: 'Backend unavailable' }))
     unsubscribe()

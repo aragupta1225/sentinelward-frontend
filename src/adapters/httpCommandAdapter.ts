@@ -13,7 +13,8 @@ const defaultEndpoint: EndpointResolver = (command) => {
     case 'escalate_alert': return `/alerts/${command.alertId}/escalate`
     case 'confirm_bedside': return `/beds/${command.bedId}/bedside-check`
     case 'record_manual_reading': return `/beds/${command.bedId}/manual-reading`
-    case 'isolate_device': return `/beds/${command.bedId}/isolate`
+    case 'isolate_device': return `/devices/${command.deviceId}/isolate`
+    case 'fleet_hunt': return '/fleet-hunt'
     case 'undo_action': return `/actions/${command.originalActionId}/undo`
     case 'capture_evidence': return `/incidents/${command.bedId}/evidence`
     case 'contain_incident': return `/incidents/${command.bedId}/contain`
@@ -21,6 +22,8 @@ const defaultEndpoint: EndpointResolver = (command) => {
     case 'create_ticket': return '/tickets'
     case 'update_ticket': return `/tickets/${command.ticketId}`
     case 'review_report': return `/incidents/${command.incidentId}/report/review`
+    case 'save_report': return `/reports/${command.incidentId}`
+    case 'mark_report_sent': return `/reports/${command.incidentId}/mark-sent`
     case 'assign_clinician': return `/beds/${command.bedId}/assignment`
     case 'update_assignment': return `/beds/${command.bedId}/assignment/status`
   }

@@ -9,8 +9,9 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 - Protected routes, home screens, and read/action boundaries for all five specified demo roles.
 - Ward dashboard with twelve beds, default-on name privacy, stopped-alarm summary, global high-alert strip, alert queue, live mock telemetry, keyboard navigation, and focus return.
 - Bed Detail response, verdict explanation, six model checks, body/network witnesses, bedside confirmation, hand-check recording, escalation, isolation, undo, trend, and append-only action workflows.
-- Alerts and escalation, census, security incident, CERT-In draft, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
+- Alerts and escalation, census, security inventory, incident evidence, editable CERT-In report, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
 - Nurse/doctor alert workflow with Open, Acknowledged, and All views, a three-step escalation ladder, response history, and simulated Telegram message editing.
+- IT security workflow with a 12-device inventory, live attack feed, network witness, fleet hunt, confirmed isolation/reconnect, incident timelines, downloadable evidence fingerprints, and human-controlled CERT-In reporting.
 - Deterministic emergency, sensor, tampering, combined-threat, and connection-loss scenarios.
 - Validated REST, WebSocket, and command adapter boundaries with mock mode as the safe default.
 - Route-family code splitting keeps noncritical clinical, security, support, and demo screens out of the initial bundle.
@@ -66,7 +67,7 @@ Run the complete gate:
 npm run check
 ```
 
-The gate runs lint, the unit/component suite, 25 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
+The gate runs lint, the unit/component suite, 26 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
 
 ## Source scope
 

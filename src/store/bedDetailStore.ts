@@ -124,7 +124,7 @@ export const useBedDetailStore = create<BedDetailState>((set, get) => ({
     if (!can(state.currentRole, 'isolate_device')) return
     const bed = useWardDashboardStore.getState().beds.find((item) => item.id === bedId)
     if (!bed || bed.isolated) return
-    if (!await dispatchCommand({ type: 'isolate_device', bedId })) return
+    if (!await dispatchCommand({ type: 'isolate_device', deviceId: `MON-${bedId.slice(1)}`, bedId })) return
     useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((item) => item.id === bedId ? { ...item, isolated: true } : item) }))
     set({ actions: appendUserAction(state, bedId, 'device_isolated', 'Device isolation requested; treatment systems untouched', true) })
   },

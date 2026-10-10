@@ -12,7 +12,7 @@ describe('screen routes', () => {
     ['/login', 'Select a role', null],
     ['/census', 'Doctor / tele-ICU census', 'doctor'],
     ['/security', 'Security operations', 'it'],
-    ['/incident/B08', 'Incident · Bed 8', 'it'],
+    ['/incident/B08', 'Replay attack on MON-08, Bed 8', 'it'],
     ['/incident/B08/report', 'CERT-In report draft', 'it'],
     ['/tickets', 'Biomedical tickets', 'biomedical'],
     ['/briefing', 'Briefing and workload', 'nurse'],

@@ -13,7 +13,7 @@ const protectedRoutes = [
   ['/alerts', 'Alerts and escalation', 'nurse'],
   ['/census', 'Doctor / tele-ICU census', 'doctor'],
   ['/security', 'Security operations', 'it'],
-  ['/incident/B08', 'Incident', 'it'],
+  ['/incident/B08', 'Replay attack', 'it'],
   ['/incident/B08/report', 'CERT-In report draft', 'it'],
   ['/tickets', 'Biomedical tickets', 'biomedical'],
   ['/briefing', 'Briefing and workload', 'nurse'],

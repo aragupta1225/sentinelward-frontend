@@ -1,6 +1,6 @@
 # SentinelWard Frontend Progress
 
-Last verified: 2026-10-09
+Last verified: 2026-10-10
 
 Owner: Antara Gupta
 
@@ -8,7 +8,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens represented. Ward, Bed Detail, and Alerts are the most mature. Most other supporting screens still implement only a subset of the Drive specification.
+The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens represented. Ward, Bed Detail, Alerts, Security, Incident, and CERT-In Report now implement their functional Drive requirements. The remaining supporting screens still implement only a subset of the Drive specification.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -27,6 +27,9 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - S2 Ward privacy is on by default and can be deliberately revealed; the summary includes the mock stopped-alarm count and the authenticated frame keeps high clinical alarms visible across screens.
 - Locked Ward behavior assigns `LOOSE_SENSOR` low priority and `DEVICE_ATTACK` no clinical priority, with textual sensor-silenced, IT-investigating, and manual-check cues on tiles.
 - All five roles land on their specified home screens and protected routes follow the Drive access matrix; doctor and IT Ward views are read-only, Bed actions are nurse-only, and operator access is limited to Demo and the all-role log.
+- S6 Security provides the 12-device inventory, live attack feed, per-device network witness, explicit cut-off confirmation, reconnecting undo, incident links, and same-model fleet hunt behind IT-only typed commands.
+- S7 Incident provides the six-hour response clock, append-only timeline, downloadable evidence with byte size and SHA-256 fingerprint, affected-bed actions, referencing undo, report drafting, and reason-required closure without restoring device trust automatically.
+- S8 CERT-In Report provides editable human-owned report fields, response countdown, readiness checklist, draft saving, simulated PDF download, and a human-only mark-sent action that remains disabled until facts, evidence, and approver are complete.
 - Deterministic timed scenarios for emergency, loose sensor, drifting sensor, tampering, BOTH, and connection loss.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
@@ -52,13 +55,11 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - S0 and S1 are partial: the landing mini-ward/cards/offline state and role-card login/loading/retry/session persistence are not implemented.
 - S5 is partial: trust and bedside-check columns, untrusted warning, doctor escalation state, and call-bedside-nurse action are missing.
-- S6-S8 are partial: device/network inventory, fleet hunt, incident timeline/fingerprints/downloads/countdown, and editable/checklisted report workflow are missing.
 - S9-S12 are partial: ticket board/repeat-device details, Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
 - Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
 - Automatic-action Undo is only implemented for isolation rather than every applicable automatic action.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
-- The required human-controlled report save/download/checklist/mark-sent workflow is not implemented; the UI currently supports draft review only.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
 - Screenshot-based visual regression is not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
 - Production deployment, CI, monitoring, and backend infrastructure are not configured and are outside Antara Gupta's confirmed frontend assignment unless explicitly added later.
@@ -72,9 +73,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F4 — S6-S8 security, incident evidence, and CERT-In report workflows (active).**
+**R8-F5 — S5 clinical census and workload workflow (active).**
 
-The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 45-50% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
+The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 60-65% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
 ### M1 Verified Result
 
@@ -151,10 +152,20 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Ward acknowledgement is nurse-only, S3 actions are nurse-only, doctor and IT retain their specified read access, and operator no longer has broad clinical/security access.
 - Unit, route, axe, browser role/privacy workflow, responsive tablet, TypeScript, and production-build checks pass.
 
+### R8-F4 Verified Result — S6-S8 Security, Incident Evidence, and CERT-In Report
+
+- IT users can inspect all 12 mock devices, message freshness/rate, firmware, network score, isolation state, and the live attack feed; selecting a device renders its network witness and supports same-model fleet hunt.
+- Device cut-off requires explicit confirmation, dispatches through the typed command boundary, and records an append-only action; Undo reconnects the device while retaining and referencing the original action.
+- Incident detail provides a six-hour clock, chronological timeline, affected beds/actions, evidence size and SHA-256 metadata, browser downloads, manual capture, containment, report drafting, and reason-required closure.
+- Closing an incident never restores device trust or reconnects isolation automatically.
+- CERT-In reports are editable and human-controlled: drafts can be saved or downloaded as a simulated PDF, while Mark sent stays disabled until facts, evidence, and approver checks pass and records the responsible human and time.
+- Provisional backend endpoints remain isolated in typed adapters; mock mode is the safe default until the owning backend team confirms them.
+- The full quality gate passes with 89 unit/component tests and 26 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+
 ## Prioritized Roadmap
 
-1. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
-2. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
+1. Complete S5 clinical census, untrusted-state warning, doctor escalation, and bedside-nurse request requirements.
+2. Complete remaining S0-S1 and S9-S12 functional gaps, then exact Telegram frontend behavior.
 3. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
@@ -174,14 +185,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 22 files passed; 86 tests passed.
-- Browser regression: 25 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 23 files passed; 89 tests passed.
+- Browser regression: 26 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 172 modules; CSS 35.16 kB (8.12 kB gzip); initial JavaScript 459.51 kB (148.25 kB gzip), plus five lazy route-family chunks and three small shared chunks.
+- Build output: 173 modules; CSS 40.64 kB (9.05 kB gzip); initial JavaScript 459.65 kB (148.30 kB gzip), plus five lazy route-family chunks and three small shared chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F4 S6-S8 security inventory, incident evidence, and report workflow as typed mock-first vertical slices.
-2. Preserve the current safety invariants and IT-only access while extending security workflows.
+1. Implement R8-F5 S5 clinical census and workload behavior as a typed mock-first vertical slice.
+2. Preserve trust visibility, separate clinical/integrity priorities, and role boundaries while extending the census workflow.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.
