@@ -59,6 +59,19 @@ test('doctor census follows S5 trust, bedside-check, escalation, and call-nurse 
   await expect(page.getByRole('button', { name: 'Patient OK' })).toHaveCount(0)
 })
 
+test('biomedical ticket board follows S9 status, repair, and repeat-device rules', async ({ page }) => {
+  await signIn(page, 'biomedical')
+  for (const heading of ['New', 'In progress', 'Done', 'Devices with repeat problems']) await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible()
+  const ticket = page.locator('.ticket-card').filter({ hasText: 'BIO-104' })
+  await expect(ticket).toContainText('MON-04 · B04')
+  await expect(ticket).toContainText('Suggested fix')
+  await expect(ticket).toContainText('times this device had issues (30 days)')
+  await ticket.getByLabel('Work note').fill('Leads reseated; cable inspection started')
+  await ticket.getByRole('button', { name: 'Start work' }).click()
+  await expect(page.locator('.ticket-column').filter({ hasText: /^In progress/ })).toContainText('BIO-104')
+  await expect(page.locator('.repeat-devices')).toContainText('MON-05')
+})
+
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
   await signIn(page, 'nurse')
   const bedTile = page.getByRole('link', { name: /Bed 3:/ })

@@ -12,7 +12,7 @@ export type FrontendCommand =
   | { type: 'contain_incident'; bedId: string }
   | { type: 'resolve_incident'; bedId: string; reason: string }
   | { type: 'create_ticket'; bedId: string; issue: string }
-  | { type: 'update_ticket'; ticketId: string; status: 'open' | 'assigned' | 'resolved' }
+  | { type: 'update_ticket'; ticketId: string; status: 'open' | 'assigned' | 'resolved'; note: string }
   | { type: 'review_report'; incidentId: string }
   | { type: 'save_report'; incidentId: string; report: CertReportDraft }
   | { type: 'mark_report_sent'; incidentId: string; sentBy: string }

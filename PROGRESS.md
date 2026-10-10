@@ -33,6 +33,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - S5 Census now follows the compact doctor/tele-ICU specification: occupied beds sorted by priority then trust, all required columns, explicit untrusted-data warning, last-trusted values, bedside-check and escalation state, read-only S3 navigation, and a typed mock Telegram ping to the bedside nurse.
 - S0 Landing now provides the specified five-second product message, Nurse-preselected live-ward entry, four-bed read-only preview with one high alarm, explicit offline still state, three cause cards, and TessNova/IBM/GitHub footer.
 - S1 Login now provides five described one-click role cards, chosen-button loading, inline failure and Retry, typed mock/backend session adapters, sessionStorage persistence, role-home routing, and logout cleanup with the required demo-account disclosure.
+- S9 Biomedical Tickets now provides the New/In progress/Done board, device/bed problem cards, suggested fixes, 30-day issue counters, repeat-problem device list, and note-required status updates through the typed PATCH boundary.
 - Deterministic timed scenarios for emergency, loose sensor, drifting sensor, tampering, BOTH, and connection loss.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
@@ -56,7 +57,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Incomplete Features
 
-- S9-S12 are partial: ticket board/repeat-device details, Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
+- S10-S12 are partial: Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
 - Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
 - Automatic-action Undo is only implemented for isolation rather than every applicable automatic action.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
@@ -74,9 +75,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F7 — S9 biomedical ticket board and repeat-device workflow (active).**
+**R8-F8 — S10 briefing and workload workflow (active).**
 
-The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 70-75% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
+The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 75-80% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
 ### M1 Verified Result
 
@@ -181,10 +182,18 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Mock mode remains the safe default; no real authentication or backend availability is implied.
 - The full quality gate passes with 97 unit/component tests and 28 Playwright tests, including all-route axe scans and desktop/tablet workflows.
 
+### R8-F7 Verified Result — S9 Biomedical Ticket Board
+
+- The biomedical home is a three-column New / In progress / Done board with one card per repair job.
+- Every card shows the device and bed, concrete problem, suggested fix, and “times this device had issues (30 days)” count; a side list ranks repeat-problem devices.
+- Moving a ticket requires a work note and dispatches the locked `PATCH /api/tickets/:id` command with status and note before changing the board.
+- Rejected updates retain the original column and display failure feedback; accepted updates append an activity record.
+- The full quality gate passes with 98 unit/component tests and 29 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+
 ## Prioritized Roadmap
 
-1. Complete S9 biomedical ticket board and repeat-device requirements.
-2. Complete remaining S10-S12 functional gaps, then exact Telegram frontend behavior.
+1. Complete S10 briefing and workload requirements.
+2. Complete remaining S11-S12 functional gaps, then exact Telegram frontend behavior.
 3. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
@@ -204,14 +213,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 26 files passed; 97 tests passed.
-- Browser regression: 28 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 26 files passed; 98 tests passed.
+- Browser regression: 29 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 176 modules; CSS 45.74 kB (10.02 kB gzip); initial JavaScript 359.46 kB (119.34 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 176 modules; CSS 47.88 kB (10.37 kB gzip); initial JavaScript 359.52 kB (119.36 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F7 S9 biomedical ticket board and repeat-device behavior as a typed mock-first vertical slice.
-2. Preserve device history, role boundaries, and visible failure behavior while extending ticket workflows.
+1. Implement R8-F8 S10 briefing and workload behavior as a typed mock-first vertical slice.
+2. Preserve role boundaries, clinical priority visibility, and non-color warning cues while adding workload evidence.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.

@@ -43,7 +43,7 @@ export class HttpCommandAdapter implements CommandAdapter {
 
   async execute(command: FrontendCommand, signal?: AbortSignal): Promise<CommandReceipt> {
     const response = await this.fetcher(`${this.baseUrl}${this.resolveEndpoint(command)}`, {
-      method: 'POST',
+      method: command.type === 'update_ticket' || command.type === 'save_report' ? 'PATCH' : 'POST',
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(command),
       signal,
