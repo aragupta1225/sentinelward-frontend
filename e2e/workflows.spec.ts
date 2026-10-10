@@ -15,6 +15,29 @@ test('login applies role routing and protected-route rules', async ({ page }) =>
   await expect(page).toHaveURL(/\/census$/)
 })
 
+test('doctor census follows S5 trust, bedside-check, escalation, and call-nurse rules', async ({ page }) => {
+  await signIn(page, 'doctor')
+  await expect(page.getByRole('heading', { level: 1, name: 'Doctor / tele-ICU census' })).toBeVisible()
+  for (const heading of ['Bed', 'Patient', 'Verdict', 'Trust', 'HR', 'SpO₂', 'BP', 'Last bedside check', 'Escalated to me']) {
+    await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible()
+  }
+  const trustWarning = page.locator('.census-trust-warning')
+  await expect(trustWarning).toContainText("beds' data can't be trusted")
+  await expect(trustWarning).toContainText("Don't act on its numbers without a bedside check.")
+
+  const rows = page.locator('.data-table tbody tr')
+  await expect(rows.nth(0)).toContainText('Bed 8')
+  await expect(rows.nth(1)).toContainText('Bed 3')
+  const untrustedRow = page.getByRole('row').filter({ hasText: 'Bed 7' })
+  await expect(untrustedRow).toContainText('UNTRUSTED')
+  await expect(untrustedRow).toContainText('Last trusted')
+  await untrustedRow.getByRole('button', { name: 'Call bedside nurse' }).click()
+  await expect(untrustedRow.getByRole('button', { name: /Nurse called/ })).toBeDisabled()
+  await untrustedRow.getByRole('button', { name: 'Open read-only' }).click()
+  await expect(page).toHaveURL(/\/bed\/B07$/)
+  await expect(page.getByRole('button', { name: 'Patient OK' })).toHaveCount(0)
+})
+
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
   await signIn(page, 'nurse')
   const bedTile = page.getByRole('link', { name: /Bed 3:/ })

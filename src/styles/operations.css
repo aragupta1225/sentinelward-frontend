@@ -38,6 +38,16 @@
 .census-filters { display: flex; gap: 7px; margin: 18px 0; }
 .census-filters button { min-height: 40px; border: 1px solid #31566e; border-radius: 7px; padding: 0 12px; color: var(--muted); background: #0e2536; cursor: pointer; text-transform: capitalize; }
 .census-filters button[aria-pressed='true'] { border-color: var(--cyan); color: #e0f7fd; background: #12364b; }
+.census-trust-warning { display: flex; align-items: center; gap: 14px; margin: 18px 0; border-color: #6f7d86; padding: 14px 16px; background: repeating-linear-gradient(135deg, #202c34, #202c34 8px, #293640 8px, #293640 16px); }
+.census-trust-warning strong { flex: 0 0 auto; color: #f3f6f7; font-size: 10px; letter-spacing: .06em; }
+.census-trust-warning span { color: #d8e0e4; font-size: 11px; line-height: 1.5; }
+.census-row--untrusted { box-shadow: inset 4px 0 #77858e; }
+.census-trust { display: grid; min-width: 82px; gap: 3px; border: 1px solid #31566e; border-radius: 6px; padding: 7px 8px; background: #10283a; }
+.census-trust strong { color: #dce8ed; font-size: 9px; }
+.census-trust span { color: var(--muted); font: 600 10px var(--font-mono); }
+.census-trust--untrusted { border-color: #6f7d86; background: repeating-linear-gradient(135deg, #222e36, #222e36 6px, #2d3a43 6px, #2d3a43 12px); }
+.census-actions { min-width: 175px; }
+.census-actions .ui-action { width: 100%; margin: 3px 0; }
 .workload-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .workload-grid article { min-height: 140px; padding: 15px; }
 .workload-grid article > strong, .workload-grid article > span { display: block; }

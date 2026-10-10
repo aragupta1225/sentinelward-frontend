@@ -1,58 +1,67 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ActionButton, Panel, StatusChip } from '../../components/ui'
 import { can } from '../../domain/access'
-import { VERDICT_PRESENTATION } from '../../domain/ward'
+import { VERDICT_PRESENTATION, type Bed, type VitalReadings } from '../../domain/ward'
+import { useAlertStore } from '../../store/alertStore'
 import { useBedDetailStore } from '../../store/bedDetailStore'
 import { useClinicalWorkflowStore } from '../../store/clinicalWorkflowStore'
+import { useSessionStore } from '../../store/sessionStore'
 import { useWardDashboardStore } from '../../store/wardDashboardStore'
 import { formatTime } from './formatTime'
 import { DataTable, OperationalPage } from './shared'
+import { sortCensusBeds } from './census'
+
+function displayedReadings(bed: Bed): VitalReadings {
+  return bed.trustState === 'untrusted' && bed.trustedSnapshot ? bed.trustedSnapshot.readings : bed.readings
+}
+
+function formatVital(value: number | null, lastTrusted: boolean) {
+  return value === null ? '—' : `${lastTrusted ? 'Last trusted ' : ''}${value}`
+}
+
+function formatBloodPressure(readings: VitalReadings, lastTrusted: boolean) {
+  if (readings.systolic === null || readings.diastolic === null) return '—'
+  return `${lastTrusted ? 'Last trusted ' : ''}${readings.systolic}/${readings.diastolic}`
+}
 
 export function CensusPage() {
   const beds = useWardDashboardStore((state) => state.beds)
   const navigate = useNavigate()
-  const [filter, setFilter] = useState<'all' | 'priority' | 'unacknowledged'>('all')
   const role = useBedDetailStore((state) => state.currentRole)
   const responses = useBedDetailStore((state) => state.responses)
-  const acknowledgeResponse = useBedDetailStore((state) => state.acknowledgeResponse)
-  const clinicians = useClinicalWorkflowStore((state) => state.clinicians)
-  const assignments = useClinicalWorkflowStore((state) => state.assignments)
-  const assignBed = useClinicalWorkflowStore((state) => state.assignBed)
-  const setAssignmentStatus = useClinicalWorkflowStore((state) => state.setAssignmentStatus)
-  const visibleBeds = beds
-    .filter((bed) => bed.occupancy === 'occupied')
-    .filter((bed) => filter === 'all' || (filter === 'priority' ? bed.priority === 'high' : !responses[bed.id]?.responseAcknowledgedAt))
+  const alerts = useAlertStore((state) => state.alerts)
+  const displayName = useSessionStore((state) => state.displayName) ?? 'Doctor / tele-ICU'
+  const bedsideCalls = useClinicalWorkflowStore((state) => state.bedsideCalls)
+  const pendingCallBedId = useClinicalWorkflowStore((state) => state.pendingCallBedId)
+  const commandError = useClinicalWorkflowStore((state) => state.commandError)
+  const callBedsideNurse = useClinicalWorkflowStore((state) => state.callBedsideNurse)
+  const visibleBeds = sortCensusBeds(beds.filter((bed) => bed.occupancy === 'occupied'))
+  const untrustedCount = visibleBeds.filter((bed) => bed.trustState === 'untrusted').length
 
   return (
-    <OperationalPage title="Doctor / tele-ICU census" eyebrow="S5" description="Assign clinical ownership and record response separately from bedside confirmation.">
-      <div className="census-filters" role="group" aria-label="Census filter">
-        {(['all', 'priority', 'unacknowledged'] as const).map((item) => (
-          <ActionButton tone="quiet" key={item} aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}</ActionButton>
-        ))}
-      </div>
-      <DataTable
-        headers={['Bed', 'Patient', 'Priority', 'Verdict', 'Vitals', 'Assigned clinician', 'Response', 'Detail']}
-        emptyMessage={visibleBeds.length === 0 ? 'No occupied beds match this filter.' : undefined}
-      >
+    <OperationalPage title="Doctor / tele-ICU census" eyebrow="S5" description="A compact remote view sorted by clinical priority, then lowest trust.">
+      {untrustedCount > 0 && <Panel className="census-trust-warning" role="alert"><strong>UNTRUSTED DATA</strong><span>{untrustedCount === 1 ? "1 bed's data can't be trusted." : `${untrustedCount} beds' data can't be trusted.`} Don't act on its numbers without a bedside check.</span></Panel>}
+      {commandError && <p className="command-error" role="alert">{commandError}</p>}
+      <DataTable headers={['Bed', 'Patient', 'Verdict', 'Trust', 'HR', 'SpO₂', 'BP', 'Last bedside check', 'Escalated to me', 'Actions']} emptyMessage={visibleBeds.length === 0 ? 'No occupied beds are available.' : undefined}>
         {visibleBeds.map((bed) => {
-          const assignment = assignments.find((item) => item.bedId === bed.id)
-          const acknowledged = responses[bed.id]?.responseAcknowledgedAt
+          const response = responses[bed.id]
+          const call = bedsideCalls[bed.id]
+          const alert = alerts.find((item) => item.bedId === bed.id && item.status === 'open')
+          const escalatedToDoctor = Boolean(alert?.assignedTo.toLowerCase().includes('doctor') || alert?.responseHistory.some((item) => item.message.toLowerCase().includes('doctor')))
+          const readings = displayedReadings(bed)
+          const untrusted = bed.trustState === 'untrusted'
           return (
-            <tr key={bed.id}>
-              <td>{bed.label}</td>
-              <td>{bed.patient.displayName} · {bed.patient.age}</td>
-              <td><StatusChip tone={bed.priority === 'high' ? 'critical' : bed.priority === 'medium' ? 'warning' : 'neutral'}>{bed.priority}</StatusChip></td>
-              <td>{VERDICT_PRESENTATION[bed.verdict].label}</td>
-              <td>HR {bed.readings.heartRate ?? '—'} · SpO₂ {bed.readings.spo2 ?? '—'}</td>
-              <td>
-                <select aria-label={`Assign ${bed.label}`} value={assignment?.clinicianId ?? ''} onChange={(event) => assignBed(bed.id, event.target.value)}>
-                  <option value="">Unassigned</option>
-                  {clinicians.filter((item) => item.role === 'doctor').map((item) => <option value={item.id} key={item.id}>{item.displayName}</option>)}
-                </select>
-              </td>
-              <td><ActionButton disabled={!can(role, 'acknowledge_alert') || Boolean(acknowledged)} onClick={() => { acknowledgeResponse(bed.id); setAssignmentStatus(bed.id, 'on_my_way') }}>{acknowledged ? 'On my way recorded' : 'On my way'}</ActionButton></td>
-              <td><ActionButton tone="quiet" onClick={() => navigate(`/bed/${bed.id}`)}>Open</ActionButton></td>
+            <tr key={bed.id} className={untrusted ? 'census-row--untrusted' : undefined}>
+              <td><button className="table-link" onClick={() => navigate(`/bed/${bed.id}`)}>{bed.label}</button></td>
+              <td>{bed.patient.initials}{bed.patient.age === null ? '' : `, age ${bed.patient.age}`}</td>
+              <td><StatusChip tone={bed.priority === 'high' ? 'critical' : bed.priority === 'medium' ? 'warning' : bed.priority === 'low' ? 'info' : 'neutral'}>{VERDICT_PRESENTATION[bed.verdict].label}</StatusChip></td>
+              <td><div className={untrusted ? 'census-trust census-trust--untrusted' : 'census-trust'}><strong>{untrusted ? 'UNTRUSTED' : 'Trusted'}</strong><span>{bed.trust}%</span></div></td>
+              <td>{formatVital(readings.heartRate, untrusted)}</td>
+              <td>{formatVital(readings.spo2, untrusted)}</td>
+              <td>{formatBloodPressure(readings, untrusted)}</td>
+              <td>{response?.bedsideConfirmedAt ? `${response.bedsideStatus === 'patient_ok' ? 'Patient OK' : 'Patient NOT OK'} · ${formatTime(response.bedsideConfirmedAt)}` : 'Not checked'}</td>
+              <td>{escalatedToDoctor ? `Yes · ${alert?.assignedTo}` : 'No'}</td>
+              <td className="census-actions"><ActionButton tone="quiet" onClick={() => navigate(`/bed/${bed.id}`)}>Open read-only</ActionButton><ActionButton disabled={!can(role, 'call_bedside_nurse') || Boolean(call) || pendingCallBedId === bed.id} onClick={() => callBedsideNurse(bed.id, role, displayName)}>{pendingCallBedId === bed.id ? 'Calling…' : call ? `Nurse called ${formatTime(call.requestedAt)}` : 'Call bedside nurse'}</ActionButton></td>
             </tr>
           )
         })}

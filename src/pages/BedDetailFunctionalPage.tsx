@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { BedTile } from '../components/BedTile'
 import { TrendChart } from '../components/TrendChart'
-import { ActionButton, EmptyState, PageHeader, Panel } from '../components/ui'
-import { can, ROLE_LABELS, ROLES, type Role } from '../domain/access'
+import { ActionButton, EmptyState, PageHeader, Panel, StatusChip } from '../components/ui'
+import { can } from '../domain/access'
 import { createMockBedAnalysis } from '../domain/bedAnalysis'
 import { VERDICT_PRESENTATION } from '../domain/ward'
 import { createThirtyMinuteTrend } from '../mocks/trendFixtures'
@@ -31,7 +31,6 @@ export function BedDetailFunctionalPage() {
   const bed = useWardDashboardStore((state) => state.beds.find((item) => item.id === id))
   const [tab, setTab] = useState<DetailTab>('overview')
   const currentRole = useBedDetailStore((state) => state.currentRole)
-  const setRole = useBedDetailStore((state) => state.setRole)
   const response = useBedDetailStore((state) => id ? state.responses[id] : undefined)
   const actions = useBedDetailStore((state) => state.actions)
   const manualReadings = useBedDetailStore((state) => id ? state.manualReadings[id] : undefined)
@@ -78,7 +77,7 @@ export function BedDetailFunctionalPage() {
         eyebrow="Bed detail · live mock data"
         title={`${bed.label} · ${bed.patient.displayName}`}
         description={`${VERDICT_PRESENTATION[bed.verdict].label} · ${bed.reason}`}
-        actions={<div className="detail-header-actions"><label className="role-selector">Acting role<select value={currentRole} onChange={(event) => setRole(event.target.value as Role)}>{ROLES.map((role) => <option value={role} key={role}>{ROLE_LABELS[role]}</option>)}</select></label><div><ActionButton tone="primary" disabled={!clinicalActionsAllowed || responseState.responseAcknowledgedAt !== null} onClick={() => acknowledgeResponse(bed.id)}>{responseState.responseAcknowledgedAt ? `Recorded · ${formatTime(responseState.responseAcknowledgedAt)}` : 'On my way'}</ActionButton><ActionButton disabled={!clinicalActionsAllowed || bed.priority === 'none' || pendingCommand === 'escalate'} onClick={() => escalateAlert(bed.id)}>{pendingCommand === 'escalate' ? 'Escalating…' : 'Escalate'}</ActionButton></div></div>}
+        actions={clinicalActionsAllowed ? <div className="detail-header-actions"><div><ActionButton tone="primary" disabled={responseState.responseAcknowledgedAt !== null} onClick={() => acknowledgeResponse(bed.id)}>{responseState.responseAcknowledgedAt ? `Recorded · ${formatTime(responseState.responseAcknowledgedAt)}` : 'On my way'}</ActionButton><ActionButton disabled={bed.priority === 'none' || pendingCommand === 'escalate'} onClick={() => escalateAlert(bed.id)}>{pendingCommand === 'escalate' ? 'Escalating…' : 'Escalate'}</ActionButton></div></div> : <StatusChip>Read-only</StatusChip>}
       />
 
       {commandError && <p className="ward-status-message ward-status-message--error" role="alert">{commandError}</p>}
@@ -96,27 +95,27 @@ export function BedDetailFunctionalPage() {
 
             <Panel className="witness-panel" aria-labelledby="witness-title"><p className="eyebrow">Independent evidence</p><h2 id="witness-title">Two witnesses</h2>{analysis.witnesses.map((witness) => <article key={witness.kind}><strong>{witness.kind}</strong><span>{witness.summary}</span><em>{witness.supportsVerdict ? '✓ supports verdict' : '? needs review'}</em></article>)}</Panel>
 
-            {bed.trustState === 'untrusted' && <Panel className="manual-check-panel" aria-labelledby="manual-check-title"><header><div><p className="eyebrow">Bedside referee</p><h2 id="manual-check-title">Check pulse and breathing by hand</h2></div><strong>next check in {formatCountdown((nextManualCheckAt ?? fallbackManualCheckAt) - now)}</strong></header><form onSubmit={submitManualReading}><label>Heart rate<input name="heartRate" type="number" min="20" max="250" required value={manualForm.heartRate} onChange={(event) => setManualForm((form) => ({ ...form, heartRate: event.target.value }))} /></label><label>SpO₂ by portable device<input name="spo2" type="number" min="50" max="100" required value={manualForm.spo2} onChange={(event) => setManualForm((form) => ({ ...form, spo2: event.target.value }))} /></label><label className="manual-check-panel__notes">Notes<textarea name="notes" rows={2} value={manualForm.notes} onChange={(event) => setManualForm((form) => ({ ...form, notes: event.target.value }))} /></label><ActionButton tone="primary" type="submit" disabled={!clinicalActionsAllowed || pendingCommand === 'manual-reading'}>{pendingCommand === 'manual-reading' ? 'Recording…' : 'Record hand check'}</ActionButton></form>{latestManualReading && <p className="manual-check-panel__saved">Latest: HR {latestManualReading.heartRate}, SpO₂ {latestManualReading.spo2} · {formatTime(latestManualReading.recordedAt)} · {latestManualReading.recordedBy}</p>}</Panel>}
+            {bed.trustState === 'untrusted' && <Panel className="manual-check-panel" aria-labelledby="manual-check-title"><header><div><p className="eyebrow">Bedside referee</p><h2 id="manual-check-title">Check pulse and breathing by hand</h2></div><strong>next check in {formatCountdown((nextManualCheckAt ?? fallbackManualCheckAt) - now)}</strong></header>{clinicalActionsAllowed ? <form onSubmit={submitManualReading}><label>Heart rate<input name="heartRate" type="number" min="20" max="250" required value={manualForm.heartRate} onChange={(event) => setManualForm((form) => ({ ...form, heartRate: event.target.value }))} /></label><label>SpO₂ by portable device<input name="spo2" type="number" min="50" max="100" required value={manualForm.spo2} onChange={(event) => setManualForm((form) => ({ ...form, spo2: event.target.value }))} /></label><label className="manual-check-panel__notes">Notes<textarea name="notes" rows={2} value={manualForm.notes} onChange={(event) => setManualForm((form) => ({ ...form, notes: event.target.value }))} /></label><ActionButton tone="primary" type="submit" disabled={pendingCommand === 'manual-reading'}>{pendingCommand === 'manual-reading' ? 'Recording…' : 'Record hand check'}</ActionButton></form> : <p className="scope-note">Read-only view. Call the bedside nurse from Census to request a hand check.</p>}{latestManualReading && <p className="manual-check-panel__saved">Latest: HR {latestManualReading.heartRate}, SpO₂ {latestManualReading.spo2} · {formatTime(latestManualReading.recordedAt)} · {latestManualReading.recordedBy}</p>}</Panel>}
           </div>
 
           <div className="detail-analysis-column">
-            <Panel className="why-panel" aria-labelledby="why-title"><p className="eyebrow">Why</p><header><h2 id="why-title">{analysis.headline}</h2><strong>confidence {analysis.confidence.toFixed(2)}</strong></header><h3>Top three reasons</h3><ol>{analysis.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ol><h3>The six checks (0–1)</h3><div className="analysis-scores">{analysis.scores.map((score) => <div key={score.id}><span><strong>{score.id}</strong> {score.label}</span><progress value={score.value} max="1" aria-label={`${score.id} ${score.label} ${score.value.toFixed(2)}`} /><em>{score.value.toFixed(2)}</em></div>)}</div><h3>Actions taken</h3>{bedActions.length === 0 ? <EmptyState>No actions recorded for this bed.</EmptyState> : <ol className="why-actions">{bedActions.slice(0, 3).map((action) => { const undone = bedActions.some((candidate) => candidate.referencesActionId === action.id); return <li key={action.id}><time dateTime={new Date(action.occurredAt).toISOString()}>{formatTime(action.occurredAt)}</time><span>{action.description}</span>{action.undoable && !undone && <ActionButton tone="quiet" disabled={!can(currentRole, 'undo_isolation')} onClick={() => undoAction(action.id)}>Undo</ActionButton>}</li> })}</ol>}</Panel>
+            <Panel className="why-panel" aria-labelledby="why-title"><p className="eyebrow">Why</p><header><h2 id="why-title">{analysis.headline}</h2><strong>confidence {analysis.confidence.toFixed(2)}</strong></header><h3>Top three reasons</h3><ol>{analysis.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ol><h3>The six checks (0–1)</h3><div className="analysis-scores">{analysis.scores.map((score) => <div key={score.id}><span><strong>{score.id}</strong> {score.label}</span><progress value={score.value} max="1" aria-label={`${score.id} ${score.label} ${score.value.toFixed(2)}`} /><em>{score.value.toFixed(2)}</em></div>)}</div><h3>Actions taken</h3>{bedActions.length === 0 ? <EmptyState>No actions recorded for this bed.</EmptyState> : <ol className="why-actions">{bedActions.slice(0, 3).map((action) => { const undone = bedActions.some((candidate) => candidate.referencesActionId === action.id); return <li key={action.id}><time dateTime={new Date(action.occurredAt).toISOString()}>{formatTime(action.occurredAt)}</time><span>{action.description}</span>{action.undoable && !undone && can(currentRole, 'undo_isolation') && <ActionButton tone="quiet" onClick={() => undoAction(action.id)}>Undo</ActionButton>}</li> })}</ol>}</Panel>
 
             <div className="detail-workflows">
               <Panel className="workflow-card" aria-labelledby="bedside-title">
                 <p className="eyebrow">Bedside referee</p><h2 id="bedside-title">Checked at the bedside?</h2>
                 <p>Bedside confirmation remains separate from the response acknowledgement.</p>
-                <div className="bedside-actions">
+                {clinicalActionsAllowed && <div className="bedside-actions">
                   <ActionButton disabled={!clinicalActionsAllowed || !can(currentRole, 'confirm_bedside_status')} onClick={() => confirmPatient(bed.id, 'patient_ok')}>Patient OK</ActionButton>
                   <ActionButton tone="danger" disabled={!clinicalActionsAllowed || !can(currentRole, 'confirm_bedside_status')} onClick={() => confirmPatient(bed.id, 'patient_not_ok')}>Patient NOT OK</ActionButton>
-                </div>
+                </div>}
                 <strong className={`bedside-result bedside-result--${responseState.bedsideStatus}`}>{responseState.bedsideStatus === 'pending' ? 'Awaiting bedside confirmation' : responseState.bedsideStatus === 'patient_ok' ? 'Patient confirmed OK' : 'Patient NOT OK · high alert active'}</strong>
               </Panel>
 
               <Panel className="workflow-card" aria-labelledby="device-title">
                 <p className="eyebrow">Device integrity</p><h2 id="device-title">Isolation status</h2>
                 <p>{bed.isolated ? 'Device isolated from the ward network.' : 'Device is not isolated.'} Treatment is never changed by this control.</p>
-                {bed.isolated && undoableIsolation && <ActionButton disabled={!can(currentRole, 'undo_isolation')} onClick={() => undoAction(undoableIsolation.id)}>Undo isolation action</ActionButton>}
+                {bed.isolated && undoableIsolation && can(currentRole, 'undo_isolation') && <ActionButton onClick={() => undoAction(undoableIsolation.id)}>Undo isolation action</ActionButton>}
                 {!bed.isolated && <small>Manage device isolation from the IT Security screen.</small>}
               </Panel>
             </div>

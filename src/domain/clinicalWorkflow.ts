@@ -12,3 +12,10 @@ export interface BedAssignment {
   assignedAt: number
   updatedAt: number
 }
+
+export interface BedsideNurseCall {
+  bedId: string
+  requestedAt: number
+  requestedBy: string
+  channel: 'telegram'
+}

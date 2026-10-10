@@ -1,13 +1,18 @@
 import { create } from 'zustand'
-import type { BedAssignment, Clinician } from '../domain/clinicalWorkflow'
+import { can, type Role } from '../domain/access'
+import type { BedAssignment, BedsideNurseCall, Clinician } from '../domain/clinicalWorkflow'
 import { useWardDashboardStore, type WardActivity } from './wardDashboardStore'
 import { dispatchCommand } from '../adapters/commandGateway'
 
 interface ClinicalWorkflowState {
   clinicians: Clinician[]
   assignments: BedAssignment[]
+  bedsideCalls: Record<string, BedsideNurseCall>
+  pendingCallBedId: string | null
+  commandError: string | null
   assignBed: (bedId: string, clinicianId: string) => Promise<boolean>
   setAssignmentStatus: (bedId: string, status: BedAssignment['status']) => Promise<void>
+  callBedsideNurse: (bedId: string, role: Role, requestedBy: string) => Promise<boolean>
 }
 
 let eventSequence = 0
@@ -35,6 +40,9 @@ const initialAssignments: BedAssignment[] = [
 export const useClinicalWorkflowStore = create<ClinicalWorkflowState>((set, get) => ({
   clinicians,
   assignments: initialAssignments,
+  bedsideCalls: {},
+  pendingCallBedId: null,
+  commandError: null,
   assignBed: async (bedId, clinicianId) => {
     const clinician = get().clinicians.find((item) => item.id === clinicianId)
     if (!clinician) return false
@@ -56,4 +64,23 @@ export const useClinicalWorkflowStore = create<ClinicalWorkflowState>((set, get)
     const clinician = get().clinicians.find((item) => item.id === assignment.clinicianId)
     log(`${clinician?.displayName ?? 'Clinician'} marked ${status.replaceAll('_', ' ')}`, bedId)
   },
+  callBedsideNurse: async (bedId, role, requestedBy) => {
+    if (!can(role, 'call_bedside_nurse')) return false
+    set({ pendingCallBedId: bedId, commandError: null })
+    if (!await dispatchCommand({ type: 'call_bedside_nurse', bedId, requestedBy })) {
+      set({ pendingCallBedId: null, commandError: `Could not call the bedside nurse for ${bedId}. No Telegram ping was recorded.` })
+      return false
+    }
+    const call: BedsideNurseCall = { bedId, requestedAt: Date.now(), requestedBy, channel: 'telegram' }
+    set((state) => ({ bedsideCalls: { ...state.bedsideCalls, [bedId]: call }, pendingCallBedId: null }))
+    log(`Telegram ping sent to ${bedId} bedside nurse by ${requestedBy}`, bedId)
+    return true
+  },
 }))
+
+export function resetClinicalWorkflowStore() {
+  useClinicalWorkflowStore.setState({
+    clinicians: structuredClone(clinicians), assignments: structuredClone(initialAssignments), bedsideCalls: {},
+    pendingCallBedId: null, commandError: null,
+  })
+}

@@ -24,6 +24,7 @@ const defaultEndpoint: EndpointResolver = (command) => {
     case 'review_report': return `/incidents/${command.incidentId}/report/review`
     case 'save_report': return `/reports/${command.incidentId}`
     case 'mark_report_sent': return `/reports/${command.incidentId}/mark-sent`
+    case 'call_bedside_nurse': return `/beds/${command.bedId}/call-nurse`
     case 'assign_clinician': return `/beds/${command.bedId}/assignment`
     case 'update_assignment': return `/beds/${command.bedId}/assignment/status`
   }

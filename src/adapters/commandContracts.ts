@@ -16,6 +16,7 @@ export type FrontendCommand =
   | { type: 'review_report'; incidentId: string }
   | { type: 'save_report'; incidentId: string; report: CertReportDraft }
   | { type: 'mark_report_sent'; incidentId: string; sentBy: string }
+  | { type: 'call_bedside_nurse'; bedId: string; requestedBy: string }
   | { type: 'assign_clinician'; bedId: string; clinicianId: string }
   | { type: 'update_assignment'; bedId: string; status: 'assigned' | 'on_my_way' | 'reviewing' | 'complete' }
 

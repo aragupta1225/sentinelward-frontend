@@ -9,6 +9,7 @@ export type Permission =
   | 'contain_incident'
   | 'resolve_incident'
   | 'review_report'
+  | 'call_bedside_nurse'
 export type ScreenId = 'ward' | 'bed' | 'alerts' | 'census' | 'security' | 'tickets' | 'briefing' | 'log' | 'demo' | 'telegram'
 
 export const ROLE_LABELS: Record<Role, string> = {
@@ -19,7 +20,7 @@ export const ROLE_LABELS: Record<Role, string> = {
 // Provisional configuration pending Aditya Singh's final role matrix.
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   nurse: ['acknowledge_alert', 'confirm_bedside_status'],
-  doctor: ['acknowledge_alert'],
+  doctor: ['acknowledge_alert', 'call_bedside_nurse'],
   it: ['isolate_device', 'undo_isolation', 'capture_incident_evidence', 'contain_incident', 'resolve_incident', 'review_report'],
   biomedical: [],
   operator: [],

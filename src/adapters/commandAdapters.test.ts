@@ -46,6 +46,8 @@ describe('command adapters', () => {
     expect(fetcher).toHaveBeenCalledWith('/api/reports/INC-B07', expect.objectContaining({ method: 'POST' }))
     await adapter.execute({ type: 'mark_report_sent', incidentId: 'INC-B07', sentBy: 'Antara Gupta' })
     expect(fetcher).toHaveBeenCalledWith('/api/reports/INC-B07/mark-sent', expect.objectContaining({ method: 'POST' }))
+    await adapter.execute({ type: 'call_bedside_nurse', bedId: 'B07', requestedBy: 'Antara Gupta' })
+    expect(fetcher).toHaveBeenCalledWith('/api/beds/B07/call-nurse', expect.objectContaining({ method: 'POST' }))
   })
 
   it('reports adapter failures without an unhandled rejection', async () => {

@@ -8,6 +8,8 @@
 .ui-status-chip i { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #8ba2b2; }
 .ui-status-chip--positive { border-color: #225c50; color: #8ce8c6; background: #0c2b28; }
 .ui-status-chip--positive i { background: var(--green); }
+.ui-status-chip--info { border-color: #20798a; color: #a8eff8; background: #0e3038; }
+.ui-status-chip--info i { background: var(--cyan); }
 .ui-status-chip--warning { border-color: #79672e; color: #f4d779; background: #302a18; }
 .ui-status-chip--warning i { background: var(--yellow); }
 .ui-status-chip--critical { border-color: #8b3d45; color: #ffb2b6; background: #351b20; }

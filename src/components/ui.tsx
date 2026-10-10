@@ -29,7 +29,7 @@ export function PageHeader({
   )
 }
 
-export type StatusTone = 'neutral' | 'positive' | 'warning' | 'critical'
+export type StatusTone = 'neutral' | 'positive' | 'info' | 'warning' | 'critical'
 
 export function StatusChip({ children, tone = 'neutral', dot = false, className }: {
   children: ReactNode

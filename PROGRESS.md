@@ -30,6 +30,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - S6 Security provides the 12-device inventory, live attack feed, per-device network witness, explicit cut-off confirmation, reconnecting undo, incident links, and same-model fleet hunt behind IT-only typed commands.
 - S7 Incident provides the six-hour response clock, append-only timeline, downloadable evidence with byte size and SHA-256 fingerprint, affected-bed actions, referencing undo, report drafting, and reason-required closure without restoring device trust automatically.
 - S8 CERT-In Report provides editable human-owned report fields, response countdown, readiness checklist, draft saving, simulated PDF download, and a human-only mark-sent action that remains disabled until facts, evidence, and approver are complete.
+- S5 Census now follows the compact doctor/tele-ICU specification: occupied beds sorted by priority then trust, all required columns, explicit untrusted-data warning, last-trusted values, bedside-check and escalation state, read-only S3 navigation, and a typed mock Telegram ping to the bedside nurse.
 - Deterministic timed scenarios for emergency, loose sensor, drifting sensor, tampering, BOTH, and connection loss.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
@@ -54,7 +55,6 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 ## Incomplete Features
 
 - S0 and S1 are partial: the landing mini-ward/cards/offline state and role-card login/loading/retry/session persistence are not implemented.
-- S5 is partial: trust and bedside-check columns, untrusted warning, doctor escalation state, and call-bedside-nurse action are missing.
 - S9-S12 are partial: ticket board/repeat-device details, Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
 - Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
 - Automatic-action Undo is only implemented for isolation rather than every applicable automatic action.
@@ -73,9 +73,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F5 — S5 clinical census and workload workflow (active).**
+**R8-F6 — S0 landing and S1 development login workflows (active).**
 
-The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 60-65% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
+The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 65-70% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
 ### M1 Verified Result
 
@@ -162,10 +162,19 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Provisional backend endpoints remain isolated in typed adapters; mock mode is the safe default until the owning backend team confirms them.
 - The full quality gate passes with 89 unit/component tests and 26 Playwright tests, including all-route axe scans and desktop/tablet workflows.
 
+### R8-F5 Verified Result — S5 Doctor / Tele-ICU Census
+
+- The occupied-bed census uses the exact S5 columns and deterministic ordering: clinical priority first, then lowest trust, then bed ID.
+- Patient privacy uses initials and age. Untrusted rows are patterned and labelled, show frozen last-trusted vitals, and are paired with the specified warning not to act without a bedside check.
+- Last bedside-check state and doctor-escalation state remain separate and visible for every bed.
+- A doctor can send one explicit bedside-nurse Telegram ping through the typed command adapter; a rejected command leaves no sent state and displays failure feedback.
+- Census rows open S3 in a genuine read-only role state. The development role switcher was removed from Bed Detail, and nurse/IT mutation controls are hidden from unauthorized roles.
+- The full quality gate passes with 92 unit/component tests and 27 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+
 ## Prioritized Roadmap
 
-1. Complete S5 clinical census, untrusted-state warning, doctor escalation, and bedside-nurse request requirements.
-2. Complete remaining S0-S1 and S9-S12 functional gaps, then exact Telegram frontend behavior.
+1. Complete S0 landing and S1 development-login requirements.
+2. Complete remaining S9-S12 functional gaps, then exact Telegram frontend behavior.
 3. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
@@ -185,14 +194,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 23 files passed; 89 tests passed.
-- Browser regression: 26 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 24 files passed; 92 tests passed.
+- Browser regression: 27 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 173 modules; CSS 40.64 kB (9.05 kB gzip); initial JavaScript 459.65 kB (148.30 kB gzip), plus five lazy route-family chunks and three small shared chunks.
+- Build output: 174 modules; CSS 41.63 kB (9.26 kB gzip); initial JavaScript 352.44 kB (117.26 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F5 S5 clinical census and workload behavior as a typed mock-first vertical slice.
-2. Preserve trust visibility, separate clinical/integrity priorities, and role boundaries while extending the census workflow.
+1. Implement R8-F6 S0 landing and S1 development-login behavior as mock-first frontend workflows.
+2. Preserve role routing, privacy, offline safety states, and the current protected-screen matrix.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.
