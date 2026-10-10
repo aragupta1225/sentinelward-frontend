@@ -4,8 +4,8 @@ export type TestRole = 'nurse' | 'doctor' | 'it' | 'biomedical' | 'operator'
 
 export async function signIn(page: Page, role: TestRole = 'operator') {
   await page.goto('/login')
-  await page.getByLabel('Role').selectOption(role)
-  await page.getByRole('button', { name: new RegExp(`Continue as`) }).click()
+  const labels: Record<TestRole, string> = { nurse: 'Central nurse', doctor: 'Doctor / tele-ICU', biomedical: 'Biomed', it: 'IT security', operator: 'Demo operator' }
+  await page.getByRole('button', { name: new RegExp(`^${labels[role]}`) }).click()
   const homes: Record<TestRole, { path: string; heading: string }> = {
     nurse: { path: '/ward', heading: 'Live ward' }, doctor: { path: '/census', heading: 'Doctor / tele-ICU census' },
     it: { path: '/security', heading: 'Security operations' }, biomedical: { path: '/tickets', heading: 'Biomedical tickets' },

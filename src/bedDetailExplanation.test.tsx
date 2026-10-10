@@ -9,10 +9,10 @@ import { resetBedDetailStore } from './store/bedDetailStore'
 import { useSessionStore } from './store/sessionStore'
 
 describe('Bed Detail explanation and manual check', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     configureCommandAdapter(new MockCommandAdapter())
     resetBedDetailStore()
-    useSessionStore.getState().signIn('nurse')
+    await useSessionStore.getState().signIn('nurse')
   })
 
   afterEach(cleanup)

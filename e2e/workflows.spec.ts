@@ -5,14 +5,35 @@ test('login applies role routing and protected-route rules', async ({ page }) =>
   await page.goto('/census')
   await expect(page).toHaveURL(/\/login$/)
 
-  await page.getByLabel('Role').selectOption('doctor')
-  await page.getByRole('button', { name: 'Continue as Doctor / tele-ICU' }).click()
+  await page.getByRole('button', { name: /^Doctor \/ tele-ICU/ }).click()
   await expect(page).toHaveURL(/\/census$/)
   await expect(page.getByRole('link', { name: 'Census' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Security' })).toHaveCount(0)
 
   await navigateInApp(page, '/security')
   await expect(page).toHaveURL(/\/census$/)
+})
+
+test('public landing and development session follow S0-S1', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1, name: 'Patient, Sensor, or Hacker?' })).toBeVisible()
+  await expect(page.locator('.landing-bed')).toHaveCount(4)
+  await expect(page.locator('.landing-bed--high')).toHaveCount(1)
+  for (const label of ['Real emergency', 'Loose / drifting sensor', 'Hacker']) await expect(page.getByText(label, { exact: true })).toBeVisible()
+  await expect(page.getByText(/Team TessNova · IBM Z Datathon 2026/)).toBeVisible()
+  await page.getByRole('link', { name: 'Open the live ward' }).click()
+  await expect(page).toHaveURL(/\/login\?role=nurse$/)
+  const nurse = page.getByRole('button', { name: /^Central nurse/ })
+  await expect(nurse).toContainText('Pre-selected')
+  await nurse.click()
+  await expect(page).toHaveURL(/\/ward$/)
+  await page.reload()
+  await expect(page).toHaveURL(/\/ward$/)
+  await expect(page.getByRole('heading', { level: 1, name: 'Live ward' })).toBeVisible()
+  await page.getByRole('button', { name: 'Logout' }).click()
+  await expect(page).toHaveURL(/\/login$/)
+  await page.reload()
+  await expect(page).toHaveURL(/\/login$/)
 })
 
 test('doctor census follows S5 trust, bedside-check, escalation, and call-nurse rules', async ({ page }) => {

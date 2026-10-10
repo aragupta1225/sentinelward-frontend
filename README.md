@@ -6,6 +6,8 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 
 ## Implemented application
 
+- Public landing with the IBM LinuxONE product message, four-bed preview/offline fallback, Nurse-preselected entry, three explanation cards, and the required project footer.
+- Five-card development login with typed session adapters, per-role loading and retry, sessionStorage restoration, role-home routing, and logout cleanup.
 - Protected routes, home screens, and read/action boundaries for all five specified demo roles.
 - Ward dashboard with twelve beds, default-on name privacy, stopped-alarm summary, global high-alert strip, alert queue, live mock telemetry, keyboard navigation, and focus return.
 - Bed Detail response, verdict explanation, six model checks, body/network witnesses, bedside confirmation, hand-check recording, escalation, isolation, undo, trend, and append-only action workflows.
@@ -68,7 +70,7 @@ Run the complete gate:
 npm run check
 ```
 
-The gate runs lint, the unit/component suite, 27 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
+The gate runs lint, the unit/component suite, 28 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
 
 ## Source scope
 

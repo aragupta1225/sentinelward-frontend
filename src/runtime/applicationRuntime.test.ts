@@ -3,6 +3,7 @@ import { HttpCommandAdapter } from '../adapters/httpCommandAdapter'
 import { HttpWardRestAdapter } from '../adapters/httpWardAdapter'
 import { MockCommandAdapter } from '../adapters/mockCommandAdapter'
 import { NativeWardWebSocketEventSource } from '../adapters/nativeWardWebSocket'
+import { HttpPublicAdapter, MockPublicAdapter } from '../adapters/publicAdapters'
 import { MockWardRestAdapter } from '../mocks/mockAdapters'
 import { MockWardGridEventSource } from '../mocks/mockWardEventSource'
 import { createApplicationRuntime } from './applicationRuntime'
@@ -17,6 +18,7 @@ describe('application runtime composition', () => {
     expect(runtime.ward.rest).toBeInstanceOf(MockWardRestAdapter)
     expect(runtime.ward.events).toBeInstanceOf(MockWardGridEventSource)
     expect(runtime.commands).toBeInstanceOf(MockCommandAdapter)
+    expect(runtime.public).toBeInstanceOf(MockPublicAdapter)
   })
 
   it('selects all backend adapters from validated configuration', () => {
@@ -33,6 +35,7 @@ describe('application runtime composition', () => {
     expect(runtime.ward.rest).toBeInstanceOf(HttpWardRestAdapter)
     expect(runtime.ward.events).toBeInstanceOf(NativeWardWebSocketEventSource)
     expect(runtime.commands).toBeInstanceOf(HttpCommandAdapter)
+    expect(runtime.public).toBeInstanceOf(HttpPublicAdapter)
   })
 
   it('rejects an unknown runtime mode instead of silently enabling a transport', () => {

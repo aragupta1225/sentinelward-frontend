@@ -1,4 +1,5 @@
 import { configureCommandAdapter } from '../adapters/commandGateway'
+import { configurePublicAdapter } from '../adapters/publicGateway'
 import { configureWardDashboardAdapters } from '../store/wardDashboardStore'
 import { createApplicationRuntime, type ApplicationRuntime, type RuntimeLocation } from './applicationRuntime'
 
@@ -9,6 +10,7 @@ export function bootstrapApplication(
 ): ApplicationRuntime {
   const runtime = createApplicationRuntime(environment, location, onRecoveryRequired)
   configureCommandAdapter(runtime.commands)
+  configurePublicAdapter(runtime.public)
   configureWardDashboardAdapters(runtime.ward)
   return runtime
 }

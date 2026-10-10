@@ -3,8 +3,8 @@ import { expect, test, type Page } from '@playwright/test'
 import { navigateInApp, signIn } from './helpers'
 
 const publicRoutes = [
-  ['/', 'SentinelWard'],
-  ['/login', 'Select a role'],
+  ['/', 'Patient, Sensor, or Hacker?'],
+  ['/login', 'Pick a demo role'],
 ] as const
 
 const protectedRoutes = [

@@ -2,12 +2,15 @@ import type { CommandAdapter } from '../adapters/commandContracts'
 import { createWardAdapters, type WardAdapterSet } from '../adapters/createWardAdapters'
 import { HttpCommandAdapter } from '../adapters/httpCommandAdapter'
 import { MockCommandAdapter } from '../adapters/mockCommandAdapter'
+import { HttpPublicAdapter, MockPublicAdapter } from '../adapters/publicAdapters'
+import type { PublicAdapter } from '../adapters/publicContracts'
 import { parseRuntimeConfig, type RuntimeConfig } from './runtimeConfig'
 
 export interface ApplicationRuntime {
   config: RuntimeConfig
   ward: WardAdapterSet
   commands: CommandAdapter
+  public: PublicAdapter
 }
 
 export interface RuntimeLocation {
@@ -27,5 +30,8 @@ export function createApplicationRuntime(
     commands: config.mode === 'mock'
       ? new MockCommandAdapter()
       : new HttpCommandAdapter(config.apiBaseUrl),
+    public: config.mode === 'mock'
+      ? new MockPublicAdapter()
+      : new HttpPublicAdapter(config.apiBaseUrl),
   }
 }
