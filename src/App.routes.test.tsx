@@ -8,21 +8,21 @@ afterEach(cleanup)
 
 describe('screen routes', () => {
   it.each([
-    ['/', 'SentinelWard'],
-    ['/login', 'Select a role'],
-    ['/census', 'Doctor / tele-ICU census'],
-    ['/security', 'Security operations'],
-    ['/incident/B08', 'Incident · Bed 8'],
-    ['/incident/B08/report', 'CERT-In report draft'],
-    ['/tickets', 'Biomedical tickets'],
-    ['/briefing', 'Briefing and workload'],
-    ['/log', 'Action log'],
-    ['/demo', 'Demo control'],
-    ['/telegram', 'Telegram message templates'],
-    ['/lab/bed-tile', 'Live ward'],
-  ])('renders %s', async (path, heading) => {
+    ['/', 'SentinelWard', null],
+    ['/login', 'Select a role', null],
+    ['/census', 'Doctor / tele-ICU census', 'doctor'],
+    ['/security', 'Security operations', 'it'],
+    ['/incident/B08', 'Incident · Bed 8', 'it'],
+    ['/incident/B08/report', 'CERT-In report draft', 'it'],
+    ['/tickets', 'Biomedical tickets', 'biomedical'],
+    ['/briefing', 'Briefing and workload', 'nurse'],
+    ['/log', 'Action log', 'nurse'],
+    ['/demo', 'Demo control', 'operator'],
+    ['/telegram', 'Telegram message templates', 'nurse'],
+    ['/lab/bed-tile', 'Live ward', 'nurse'],
+  ] as const)('renders %s', async (path, heading, role) => {
     if (path === '/' || path === '/login') useSessionStore.getState().signOut()
-    else useSessionStore.getState().signIn('operator')
+    else useSessionStore.getState().signIn(role ?? 'nurse')
     render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
     expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
   })
@@ -35,6 +35,6 @@ describe('screen routes', () => {
 
     useSessionStore.getState().signIn('it')
     render(<MemoryRouter initialEntries={['/alerts']}><App /></MemoryRouter>)
-    expect(await screen.findByRole('heading', { level: 1, name: 'Live ward' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Security operations' })).toBeInTheDocument()
   })
 })

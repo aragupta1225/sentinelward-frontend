@@ -6,9 +6,10 @@ import { BedTile } from './BedTile'
 interface WardGridProps {
   beds: readonly Bed[]
   onOpenBed: (bedId: string) => void
+  hideNames?: boolean
 }
 
-export function WardGrid({ beds, onOpenBed }: WardGridProps) {
+export function WardGrid({ beds, onOpenBed, hideNames = true }: WardGridProps) {
   const gridRef = useRef<HTMLDivElement>(null)
   const tileRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -35,6 +36,7 @@ export function WardGrid({ beds, onOpenBed }: WardGridProps) {
         <div role="listitem" key={bed.id}>
           <BedTile
             bed={bed}
+            hideNames={hideNames}
             compact
             tileRef={(element) => { tileRefs.current[index] = element }}
             onNavigate={(event) => handleKeyDown(event, index)}

@@ -30,7 +30,7 @@ describe('accessibility foundations', () => {
     ['/incident/B08/report', 'CERT-In report draft'],
   ])('has no detectable structural axe violations on the %s route', async (path, heading) => {
     if (path === '/' || path === '/login') useSessionStore.getState().signOut()
-    else useSessionStore.getState().signIn('operator')
+    else useSessionStore.getState().signIn('it')
     const { container } = render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
     await screen.findByRole('heading', { level: 1, name: heading })
     await expectNoAxeViolations(container)

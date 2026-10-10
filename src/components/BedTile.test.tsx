@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import { VERDICTS } from '../domain/ward'
+import { VERDICT_PRESENTATION, VERDICTS } from '../domain/ward'
 import { getFixture } from '../mocks/fixtures'
 import { BedTile } from './BedTile'
 
@@ -36,5 +36,19 @@ describe('BedTile', () => {
     expect(screen.getByText(/Patient data loading/)).toBeInTheDocument()
     rerender(<BedTile bed={getFixture('B12')} now={Date.now()} />)
     expect(screen.getByText(/Unassigned bed/)).toBeInTheDocument()
+  })
+
+  it('uses initials by default when the Ward privacy control hides names', () => {
+    const bed = getFixture('B03')
+    const { rerender } = render(<BedTile bed={bed} hideNames now={bed.lastUpdatedAt ?? Date.now()} />)
+    expect(screen.getByText(/NS, age 72/)).toBeInTheDocument()
+    expect(screen.queryByText(/N\. Singh/)).not.toBeInTheDocument()
+    rerender(<BedTile bed={bed} hideNames={false} now={bed.lastUpdatedAt ?? Date.now()} />)
+    expect(screen.getByText(/N\. Singh, age 72/)).toBeInTheDocument()
+  })
+
+  it('uses the locked low and non-clinical priorities', () => {
+    expect(VERDICT_PRESENTATION.LOOSE_SENSOR.priority).toBe('low')
+    expect(VERDICT_PRESENTATION.DEVICE_ATTACK.priority).toBe('none')
   })
 })

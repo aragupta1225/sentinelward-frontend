@@ -5,9 +5,14 @@ export type TestRole = 'nurse' | 'doctor' | 'it' | 'biomedical' | 'operator'
 export async function signIn(page: Page, role: TestRole = 'operator') {
   await page.goto('/login')
   await page.getByLabel('Role').selectOption(role)
-  await page.getByRole('button', { name: 'Continue to ward' }).click()
-  await expect(page).toHaveURL(/\/ward$/)
-  await expect(page.getByRole('heading', { level: 1, name: 'Live ward' })).toBeVisible()
+  await page.getByRole('button', { name: new RegExp(`Continue as`) }).click()
+  const homes: Record<TestRole, { path: string; heading: string }> = {
+    nurse: { path: '/ward', heading: 'Live ward' }, doctor: { path: '/census', heading: 'Doctor / tele-ICU census' },
+    it: { path: '/security', heading: 'Security operations' }, biomedical: { path: '/tickets', heading: 'Biomedical tickets' },
+    operator: { path: '/demo', heading: 'Demo control' },
+  }
+  await expect(page).toHaveURL(new RegExp(`${homes[role].path}$`))
+  await expect(page.getByRole('heading', { level: 1, name: homes[role].heading })).toBeVisible()
 }
 
 export async function navigateInApp(page: Page, path: string) {

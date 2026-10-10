@@ -7,7 +7,7 @@ export function WardSummaryRow({ summary }: WardSummaryRowProps) {
     { label: 'Beds', value: summary.totalBeds, detail: 'monitored' },
     { label: 'Active alarms', value: summary.activeAlarms, detail: 'need review', tone: 'alarm' },
     { label: 'Untrusted', value: summary.untrustedBeds, detail: 'verify readings', tone: 'warning' },
-    { label: 'Isolated', value: summary.isolatedBeds, detail: 'devices contained', tone: 'neutral' },
+    { label: 'Alarms stopped today', value: summary.stoppedAlarmsToday, detail: 'safe suppressions', tone: 'neutral' },
     { label: 'Average trust', value: `${summary.averageTrust}%`, detail: 'ward signal confidence' },
   ]
 

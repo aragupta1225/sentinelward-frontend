@@ -8,6 +8,7 @@ interface AlertRailProps {
   onToggle: () => void
   onAcknowledge: (bedId: string) => void | Promise<unknown>
   onOpenBed: (bedId: string) => void
+  canAcknowledge?: boolean
 }
 
 function relativeTime(timestamp: number) {
@@ -18,7 +19,7 @@ function relativeTime(timestamp: number) {
 
 const priorityOrder: Record<Bed['priority'], number> = { high: 0, medium: 1, low: 2, none: 3 }
 
-export function AlertRail({ beds, activities, collapsed, onToggle, onAcknowledge, onOpenBed }: AlertRailProps) {
+export function AlertRail({ beds, activities, collapsed, onToggle, onAcknowledge, onOpenBed, canAcknowledge = true }: AlertRailProps) {
   const alerts = beds
     .filter((bed) => bed.priority !== 'none')
     .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
@@ -43,7 +44,7 @@ export function AlertRail({ beds, activities, collapsed, onToggle, onAcknowledge
                 <small>{VERDICT_PRESENTATION[bed.verdict].label}</small>
                 <p>{bed.reason}</p>
               </button>
-              <button className="alert-card__ack" type="button" disabled={bed.acknowledgement !== 'none'} onClick={() => onAcknowledge(bed.id)}>
+              <button className="alert-card__ack" type="button" disabled={!canAcknowledge || bed.acknowledgement !== 'none'} onClick={() => onAcknowledge(bed.id)}>
                 {bed.acknowledgement === 'acknowledged' ? 'Acknowledged' : bed.acknowledgement === 'pending' ? 'Acknowledging…' : 'Acknowledge alert'}
               </button>
             </article>

@@ -24,6 +24,9 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - Bed Detail overview, mock 30-minute uPlot trends, append-only actions, separate “On my way” and bedside confirmation, immediate high alert for “Patient NOT OK,” isolation, and referencing undo actions.
 - S3 Bed Detail explanation: top three reasons, all six named model checks, confidence, body/network witnesses, recent actions, manual escalation, and exact typed command paths for bedside and hand-check requests.
 - Untrusted Bed Detail safely separates frozen last-trusted values from a grey patterned “incoming (not trusted)” box and provides a five-minute hand-check countdown with validated HR, portable-device SpO₂, notes, and an append-only record.
+- S2 Ward privacy is on by default and can be deliberately revealed; the summary includes the mock stopped-alarm count and the authenticated frame keeps high clinical alarms visible across screens.
+- Locked Ward behavior assigns `LOOSE_SENSOR` low priority and `DEVICE_ATTACK` no clinical priority, with textual sensor-silenced, IT-investigating, and manual-check cues on tiles.
+- All five roles land on their specified home screens and protected routes follow the Drive access matrix; doctor and IT Ward views are read-only, Bed actions are nurse-only, and operator access is limited to Demo and the all-role log.
 - Deterministic timed scenarios for emergency, loose sensor, drifting sensor, tampering, BOTH, and connection loss.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
@@ -48,12 +51,10 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 ## Incomplete Features
 
 - S0 and S1 are partial: the landing mini-ward/cards/offline state and role-card login/loading/retry/session persistence are not implemented.
-- S2 and the authenticated app frame are partial: no privacy toggle, stopped-alarm metric, or global high-alert strip.
 - S5 is partial: trust and bedside-check columns, untrusted warning, doctor escalation state, and call-bedside-nurse action are missing.
 - S6-S8 are partial: device/network inventory, fleet hunt, incident timeline/fingerprints/downloads/countdown, and editable/checklisted report workflow are missing.
 - S9-S12 are partial: ticket board/repeat-device details, Blind Time/workload chart, log search/filter/undo, and demo pause/speed/full scenario controls are missing.
 - Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
-- Locked verdict priorities and role access still need correction; `LOOSE_SENSOR` and `DEVICE_ATTACK` currently differ from doc 00 v1.
 - Automatic-action Undo is only implemented for isolation rather than every applicable automatic action.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
@@ -71,7 +72,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F3 — S2 Ward frame, locked priorities, and privacy behavior (active).**
+**R8-F4 — S6-S8 security, incident evidence, and CERT-In report workflows (active).**
 
 The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 45-50% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
@@ -140,12 +141,21 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Escalation and manual readings dispatch through typed mock/backend command boundaries using the locked `/api/alerts/:id/escalate`, `/api/beds/:id/bedside-check`, and `/api/beds/:id/manual-reading` paths.
 - Unit/component and browser tests cover the explanation count, untrusted boundary, permissions, escalation, hand-check persistence, and adapter paths; the full quality gate passes.
 
+### R8-F3 Verified Result — S2 Ward Frame and Locked Access
+
+- Ward names are hidden by default as initials plus age, with an explicit privacy control to reveal them.
+- The five specified summary metrics include “Alarms stopped today,” and a persistent alarm-only strip keeps active high-priority beds visible across authenticated screens.
+- Locked priorities are enforced: loose sensor is low/cyan, device attack has no nurse priority, and emergency/BOTH remain high without suppressing clinical escalation.
+- Tile text distinguishes a safely silenced sensor alarm, an IT-only investigation, and a due manual check without relying on color alone.
+- Nurse, doctor, IT, biomedical, and operator sessions land on their specified home routes; unrelated protected routes return each role to its own home instead of Ward.
+- Ward acknowledgement is nurse-only, S3 actions are nurse-only, doctor and IT retain their specified read access, and operator no longer has broad clinical/security access.
+- Unit, route, axe, browser role/privacy workflow, responsive tablet, TypeScript, and production-build checks pass.
+
 ## Prioritized Roadmap
 
-1. Complete S2/app-frame privacy, stopped-alarm, and global high-alert requirements plus locked role/priority corrections.
-2. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
-3. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
-4. Begin the separate UI-polish phase only after functional scope is verified.
+1. Complete S6-S8 security, incident/evidence, and CERT-In report requirements.
+2. Complete remaining S0-S1 and S5-S12 functional gaps, then exact Telegram frontend behavior.
+3. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
 
@@ -164,14 +174,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 22 files passed; 84 tests passed.
-- Browser regression: 24 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 22 files passed; 86 tests passed.
+- Browser regression: 25 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 172 modules; CSS 34.33 kB (7.96 kB gzip); initial JavaScript 458.66 kB (147.88 kB gzip), plus five lazy route-family chunks and three small shared chunks.
+- Build output: 172 modules; CSS 35.16 kB (8.12 kB gzip); initial JavaScript 459.51 kB (148.25 kB gzip), plus five lazy route-family chunks and three small shared chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F3 S2 privacy, stopped-alarm, high-alert frame, and exact verdict priorities as a typed mock-first vertical slice.
-2. Preserve the current safety invariants and role boundaries while correcting the Ward frame.
+1. Implement R8-F4 S6-S8 security inventory, incident evidence, and report workflow as typed mock-first vertical slices.
+2. Preserve the current safety invariants and IT-only access while extending security workflows.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.

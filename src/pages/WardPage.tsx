@@ -23,6 +23,7 @@ export function WardPage() {
   const currentRole = useBedDetailStore((state) => state.currentRole)
   const [railCollapsed, setRailCollapsed] = useState(false)
   const [announcement, setAnnouncement] = useState('')
+  const [hideNames, setHideNames] = useState(true)
   const previousHigh = useRef(new Set(beds.filter((bed) => bed.priority === 'high').map((bed) => bed.id)))
   const previousConnection = useRef(connection)
   const summary = useMemo(() => getWardSummary(beds), [beds])
@@ -58,6 +59,7 @@ export function WardPage() {
         title="Live ward"
         description="Clinical priority, signal trust, freshness, and device status remain independent."
         actions={<>
+          <label className="privacy-toggle"><input type="checkbox" checked={hideNames} onChange={(event) => setHideNames(event.target.checked)} /><span>Hide names</span></label>
           <StatusChip tone={connection === 'live' ? 'positive' : connection === 'connecting' ? 'warning' : 'critical'} dot>{connection === 'live' ? 'LIVE' : connection.toUpperCase()}</StatusChip>
           <ActionButton onClick={() => setConnection(connection === 'live' ? 'disconnected' : 'live')}>{connection === 'live' ? 'Simulate connection loss' : 'Restore connection'}</ActionButton>
         </>}
@@ -73,8 +75,8 @@ export function WardPage() {
       </button>
 
       <div className="ward-layout">
-        <WardGrid beds={beds} onOpenBed={openBed} />
-        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeFromRail} onOpenBed={openBed} />
+        <WardGrid beds={beds} onOpenBed={openBed} hideNames={hideNames} />
+        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeFromRail} onOpenBed={openBed} canAcknowledge={currentRole === 'nurse'} />
       </div>
     </main>
   )

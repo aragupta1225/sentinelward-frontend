@@ -9,7 +9,7 @@ export type Permission =
   | 'contain_incident'
   | 'resolve_incident'
   | 'review_report'
-export type ScreenId = 'ward' | 'alerts' | 'census' | 'security' | 'tickets' | 'briefing' | 'log' | 'demo' | 'telegram'
+export type ScreenId = 'ward' | 'bed' | 'alerts' | 'census' | 'security' | 'tickets' | 'briefing' | 'log' | 'demo' | 'telegram'
 
 export const ROLE_LABELS: Record<Role, string> = {
   nurse: 'Nurse', doctor: 'Doctor / tele-ICU', it: 'IT',
@@ -19,18 +19,22 @@ export const ROLE_LABELS: Record<Role, string> = {
 // Provisional configuration pending Aditya Singh's final role matrix.
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   nurse: ['acknowledge_alert', 'confirm_bedside_status'],
-  doctor: ['acknowledge_alert', 'confirm_bedside_status'],
-  it: ['acknowledge_alert', 'isolate_device', 'undo_isolation', 'capture_incident_evidence', 'contain_incident', 'resolve_incident', 'review_report'],
-  biomedical: ['acknowledge_alert'],
-  operator: ['acknowledge_alert', 'isolate_device', 'undo_isolation', 'capture_incident_evidence', 'contain_incident', 'resolve_incident', 'review_report'],
+  doctor: ['acknowledge_alert'],
+  it: ['isolate_device', 'undo_isolation', 'capture_incident_evidence', 'contain_incident', 'resolve_incident', 'review_report'],
+  biomedical: [],
+  operator: [],
 }
 
 export const ROLE_SCREENS: Record<Role, readonly ScreenId[]> = {
-  nurse: ['ward', 'alerts', 'log', 'telegram'],
-  doctor: ['ward', 'alerts', 'census', 'briefing', 'log', 'telegram'],
-  it: ['ward', 'security', 'log'],
-  biomedical: ['ward', 'tickets', 'log'],
-  operator: ['ward', 'census', 'security', 'tickets', 'briefing', 'log', 'demo', 'telegram'],
+  nurse: ['ward', 'bed', 'alerts', 'briefing', 'log', 'telegram'],
+  doctor: ['ward', 'bed', 'alerts', 'census', 'briefing', 'log', 'telegram'],
+  it: ['ward', 'bed', 'security', 'log', 'telegram'],
+  biomedical: ['tickets', 'log'],
+  operator: ['log', 'demo'],
+}
+
+export const ROLE_HOME: Record<Role, string> = {
+  nurse: '/ward', doctor: '/census', it: '/security', biomedical: '/tickets', operator: '/demo',
 }
 
 export function can(role: Role, permission: Permission) {

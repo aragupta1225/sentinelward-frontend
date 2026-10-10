@@ -8,18 +8,18 @@ const publicRoutes = [
 ] as const
 
 const protectedRoutes = [
-  ['/ward', 'Live ward', 'operator'],
+  ['/ward', 'Live ward', 'nurse'],
   ['/bed/B08', 'Bed 8', 'nurse'],
   ['/alerts', 'Alerts and escalation', 'nurse'],
-  ['/census', 'Doctor / tele-ICU census', 'operator'],
-  ['/security', 'Security operations', 'operator'],
-  ['/incident/B08', 'Incident', 'operator'],
-  ['/incident/B08/report', 'CERT-In report draft', 'operator'],
-  ['/tickets', 'Biomedical tickets', 'operator'],
-  ['/briefing', 'Briefing and workload', 'operator'],
-  ['/log', 'Action log', 'operator'],
+  ['/census', 'Doctor / tele-ICU census', 'doctor'],
+  ['/security', 'Security operations', 'it'],
+  ['/incident/B08', 'Incident', 'it'],
+  ['/incident/B08/report', 'CERT-In report draft', 'it'],
+  ['/tickets', 'Biomedical tickets', 'biomedical'],
+  ['/briefing', 'Briefing and workload', 'nurse'],
+  ['/log', 'Action log', 'nurse'],
   ['/demo', 'Demo control', 'operator'],
-  ['/telegram', 'Telegram message templates', 'operator'],
+  ['/telegram', 'Telegram message templates', 'nurse'],
 ] as const
 
 async function expectAccessible(page: Page) {

@@ -10,6 +10,7 @@ interface BedTileProps {
   tileRef?: Ref<HTMLDivElement>
   onNavigate?: KeyboardEventHandler<HTMLElement>
   onOpen?: (bedId: string) => void
+  hideNames?: boolean
 }
 
 function formatReading(value: number | null) { return value === null ? '—' : String(value) }
@@ -22,7 +23,7 @@ function freshnessLabel(bed: Bed, now: number) {
   return seconds === 0 ? 'Updated now' : `Updated ${seconds} s ago`
 }
 
-export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNavigate, onOpen }: BedTileProps) {
+export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNavigate, onOpen, hideNames = false }: BedTileProps) {
   const [clock, setClock] = useState(() => suppliedNow ?? Date.now())
   const effectiveClock = suppliedNow ?? clock
   const presentation = VERDICT_PRESENTATION[bed.verdict]
@@ -46,7 +47,7 @@ export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNav
     ? 'Unassigned bed — awaiting admission'
     : bed.occupancy === 'loading'
       ? 'Patient data loading — identity not yet available'
-      : `${bed.patient.displayName}${bed.patient.age === null ? '' : `, age ${bed.patient.age}`}`
+      : `${hideNames ? bed.patient.initials : bed.patient.displayName}${bed.patient.age === null ? '' : `, age ${bed.patient.age}`}`
 
   return (
     <div
@@ -95,6 +96,7 @@ export function BedTile({ bed, now: suppliedNow, compact = false, tileRef, onNav
       </div>
 
       <div className="bed-tile__message"><strong>{bed.reason}</strong><span>{bed.requestedAction}</span></div>
+      {(bed.verdict === 'LOOSE_SENSOR' || bed.verdict === 'DEVICE_ATTACK' || bed.trustState === 'untrusted') && <div className="bed-tile__flags">{bed.verdict === 'LOOSE_SENSOR' && <span>🔕 alarm silenced (sensor) · refit clip</span>}{bed.verdict === 'DEVICE_ATTACK' && <span>🛡 IT investigating · no nurse alarm</span>}{bed.trustState === 'untrusted' && bed.verdict !== 'DEVICE_ATTACK' && <span>⏱ manual check due</span>}</div>}
       <footer className="bed-tile__footer">
         <span className={`freshness ${isNoData ? 'freshness--stale' : ''}`}><i aria-hidden="true" /> {freshness}</span>
         <span>{bed.acknowledgement === 'acknowledged' ? 'Acknowledged' : 'Not acknowledged'}</span>

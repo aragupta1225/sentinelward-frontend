@@ -32,7 +32,7 @@ let sequence = 10
 let manualReadingSequence = 0
 const responseFor = (state: BedDetailState, bedId: string): BedResponseState => state.responses[bedId] ?? { responseAcknowledgedAt: null, bedsideStatus: 'pending', bedsideConfirmedAt: null }
 const actor = (role: Role) => role === 'operator' ? 'Demo operator' : 'Antara Gupta'
-const isClinicalRole = (role: Role) => role === 'nurse' || role === 'doctor'
+const isClinicalRole = (role: Role) => role === 'nurse'
 
 function newAction(input: Omit<BedAction, 'id'>): BedAction {
   sequence += 1

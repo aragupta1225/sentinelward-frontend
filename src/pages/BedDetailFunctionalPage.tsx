@@ -42,7 +42,6 @@ export function BedDetailFunctionalPage() {
   const escalateAlert = useBedDetailStore((state) => state.escalateAlert)
   const confirmPatient = useBedDetailStore((state) => state.confirmPatient)
   const recordManualReading = useBedDetailStore((state) => state.recordManualReading)
-  const isolateDevice = useBedDetailStore((state) => state.isolateDevice)
   const undoAction = useBedDetailStore((state) => state.undoAction)
   const trend = useMemo(() => bed ? createThirtyMinuteTrend(bed) : null, [bed])
   const analysis = useMemo(() => bed ? createMockBedAnalysis(bed) : null, [bed])
@@ -61,7 +60,7 @@ export function BedDetailFunctionalPage() {
   const bedActions = actions.filter((action) => action.bedId === bed.id)
   const responseState = response ?? { responseAcknowledgedAt: null, bedsideStatus: 'pending', bedsideConfirmedAt: null }
   const undoableIsolation = bedActions.find((action) => action.type === 'device_isolated' && action.undoable && !bedActions.some((candidate) => candidate.referencesActionId === action.id))
-  const clinicalActionsAllowed = currentRole === 'nurse' || currentRole === 'doctor'
+  const clinicalActionsAllowed = currentRole === 'nurse'
   const latestManualReading = manualReadings?.[0]
 
   const submitManualReading = async (event: FormEvent<HTMLFormElement>) => {
@@ -117,9 +116,8 @@ export function BedDetailFunctionalPage() {
               <Panel className="workflow-card" aria-labelledby="device-title">
                 <p className="eyebrow">Device integrity</p><h2 id="device-title">Isolation status</h2>
                 <p>{bed.isolated ? 'Device isolated from the ward network.' : 'Device is not isolated.'} Treatment is never changed by this control.</p>
-                {!bed.isolated && <ActionButton disabled={!can(currentRole, 'isolate_device')} onClick={() => isolateDevice(bed.id)}>Request device isolation</ActionButton>}
                 {bed.isolated && undoableIsolation && <ActionButton disabled={!can(currentRole, 'undo_isolation')} onClick={() => undoAction(undoableIsolation.id)}>Undo isolation action</ActionButton>}
-                {!can(currentRole, 'isolate_device') && !bed.isolated && <small>Current role cannot isolate devices.</small>}
+                {!bed.isolated && <small>Manage device isolation from the IT Security screen.</small>}
               </Panel>
             </div>
           </div>

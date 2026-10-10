@@ -63,8 +63,8 @@ export const VERDICT_PRESENTATION: Record<Verdict, VerdictPresentation> = {
   TAMPERING: { label: 'Possible tampering', priority: 'medium', icon: '⌁' },
   UNSURE: { label: 'Assessment unsure', priority: 'medium', icon: '?' },
   DRIFTING: { label: 'Sensor drifting', priority: 'medium', icon: '↗' },
-  LOOSE_SENSOR: { label: 'Loose sensor', priority: 'medium', icon: '◇' },
-  DEVICE_ATTACK: { label: 'Device attack', priority: 'high', icon: '⊘' },
+  LOOSE_SENSOR: { label: 'Loose sensor', priority: 'low', icon: '◇' },
+  DEVICE_ATTACK: { label: 'Device attack', priority: 'none', icon: '⊘' },
 }
 
 export const SAFE_PATIENT_FALLBACK: PatientIdentity = {

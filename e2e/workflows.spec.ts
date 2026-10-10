@@ -6,12 +6,13 @@ test('login applies role routing and protected-route rules', async ({ page }) =>
   await expect(page).toHaveURL(/\/login$/)
 
   await page.getByLabel('Role').selectOption('doctor')
-  await page.getByRole('button', { name: 'Continue to ward' }).click()
+  await page.getByRole('button', { name: 'Continue as Doctor / tele-ICU' }).click()
+  await expect(page).toHaveURL(/\/census$/)
   await expect(page.getByRole('link', { name: 'Census' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Security' })).toHaveCount(0)
 
   await navigateInApp(page, '/security')
-  await expect(page).toHaveURL(/\/ward$/)
+  await expect(page).toHaveURL(/\/census$/)
 })
 
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
@@ -24,6 +25,19 @@ test('Ward-to-Bed navigation restores keyboard focus to the originating tile', a
   await page.getByRole('button', { name: /Back to ward/ }).click()
   await expect(page).toHaveURL(/\/ward$/)
   await expect(bedTile).toBeFocused()
+})
+
+test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2', async ({ page }) => {
+  await signIn(page, 'nurse')
+  await expect(page.getByText(/high-priority alarms/)).toBeVisible()
+  await expect(page.getByText('Alarms stopped today')).toBeVisible()
+  await expect(page.getByText('37', { exact: true })).toBeVisible()
+
+  const bed = page.getByRole('link', { name: /Bed 3:/ })
+  await expect(bed).toContainText('NS, age 72')
+  await expect(bed).not.toContainText('N. Singh')
+  await page.getByLabel('Hide names').uncheck()
+  await expect(bed).toContainText('N. Singh, age 72')
 })
 
 test('response acknowledgement remains separate from bedside confirmation', async ({ page }) => {
@@ -75,21 +89,20 @@ test('Bed Detail explains the verdict and records an untrusted hand check', asyn
 })
 
 test('device isolation can be undone without removing the original action', async ({ page }) => {
-  await signIn(page, 'operator')
-  await navigateInApp(page, '/bed/B07')
+  await signIn(page, 'it')
+  await navigateInApp(page, '/bed/B08')
 
-  await page.getByRole('button', { name: 'Request device isolation' }).click()
   await expect(page.getByText('Device isolated from the ward network.')).toBeVisible()
   await page.getByRole('button', { name: 'Undo isolation action' }).click()
   await expect(page.getByText('Device is not isolated.')).toBeVisible()
 
   await page.getByRole('button', { name: 'actions' }).click()
-  await expect(page.getByText(/Device isolation requested/)).toBeVisible()
+  await expect(page.getByText(/Compromised device isolated automatically/)).toBeVisible()
   await expect(page.getByText(/Isolation action .* undone/)).toBeVisible()
 })
 
 test('security incident moves through evidence, containment, and resolution', async ({ page }) => {
-  await signIn(page, 'operator')
+  await signIn(page, 'it')
   await navigateInApp(page, '/incident/B07')
   await expect(page.getByText('OPEN', { exact: true })).toBeVisible()
 
@@ -104,7 +117,7 @@ test('security incident moves through evidence, containment, and resolution', as
 
 test('keyboard, alert discoverability, live regions, and reduced motion hold at each target viewport @responsive', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await signIn(page, 'operator')
+  await signIn(page, 'nurse')
 
   const viewport = page.viewportSize()
   expect(viewport).not.toBeNull()

@@ -1,12 +1,13 @@
-import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { BedDetailFunctionalPage } from './pages/BedDetailFunctionalPage'
 import { LandingPage, LoginPage } from './pages/operational/PublicPages'
 import { WardPage } from './pages/WardPage'
 import { useBedDetailStore } from './store/bedDetailStore'
-import { canViewScreen, ROLE_LABELS, type ScreenId } from './domain/access'
+import { canViewScreen, ROLE_HOME, ROLE_LABELS, type ScreenId } from './domain/access'
 import { useSessionStore } from './store/sessionStore'
 import { subscribeCommandFailures } from './adapters/commandGateway'
+import { useWardDashboardStore } from './store/wardDashboardStore'
 
 const navigation = [
   ['/ward', 'Ward', 'ward'], ['/alerts', 'Alerts', 'alerts'], ['/census', 'Census', 'census'], ['/security', 'Security', 'security'],
@@ -40,7 +41,7 @@ function ProtectedRoute({ screen, children }: { screen: ScreenId; children: Reac
   const authenticated = useSessionStore((state) => state.authenticated)
   const role = useBedDetailStore((state) => state.currentRole)
   if (!authenticated) return <Navigate to="/login" replace />
-  if (!canViewScreen(role, screen)) return <Navigate to="/ward" replace />
+  if (!canViewScreen(role, screen)) return <Navigate to={ROLE_HOME[role]} replace />
   return children
 }
 
@@ -52,6 +53,8 @@ export default function App() {
   const role = useBedDetailStore((state) => state.currentRole)
   const authenticated = useSessionStore((state) => state.authenticated)
   const signOut = useSessionStore((state) => state.signOut)
+  const wardBeds = useWardDashboardStore((state) => state.beds)
+  const highAlerts = useMemo(() => wardBeds.filter((bed) => bed.priority === 'high'), [wardBeds])
   const navigate = useNavigate()
   return (
     <div className="app-shell">
@@ -62,13 +65,14 @@ export default function App() {
         {authenticated && <nav className="primary-nav" aria-label="Primary">{navigation.filter(([, , screen]) => canViewScreen(role, screen as ScreenId)).map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>}
         {authenticated && <div className="topbar__context"><WardClock /><span className="topbar__divider" aria-hidden="true" /><span>{ROLE_LABELS[role]} · Antara Gupta</span><button className="logout-link" type="button" onClick={() => { signOut(); navigate('/login') }}>Logout</button></div>}
       </header>
+      {authenticated && highAlerts.length > 0 && <div className="global-high-alert" role="status"><strong>▲ {highAlerts.length} high-priority {highAlerts.length === 1 ? 'alarm' : 'alarms'}</strong><span>{highAlerts.map((bed) => bed.label).join(' · ')}</span><Link to="/ward">Open ward</Link></div>}
       <Suspense fallback={<RouteLoading />}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/ward" element={<ProtectedRoute screen="ward"><WardPage /></ProtectedRoute>} />
           <Route path="/alerts" element={<ProtectedRoute screen="alerts"><AlertsPage /></ProtectedRoute>} />
-          <Route path="/bed/:id" element={<ProtectedRoute screen="ward"><BedDetailFunctionalPage /></ProtectedRoute>} />
+          <Route path="/bed/:id" element={<ProtectedRoute screen="bed"><BedDetailFunctionalPage /></ProtectedRoute>} />
           <Route path="/census" element={<ProtectedRoute screen="census"><CensusPage /></ProtectedRoute>} />
           <Route path="/security" element={<ProtectedRoute screen="security"><SecurityPage /></ProtectedRoute>} />
           <Route path="/incident/:id" element={<ProtectedRoute screen="security"><IncidentPage /></ProtectedRoute>} />
