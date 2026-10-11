@@ -297,6 +297,12 @@ test('keyboard, alert discoverability, live regions, and reduced motion hold at 
   expect(viewport).not.toBeNull()
   const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
   expect(horizontalOverflow).toBeLessThanOrEqual(1)
+  const firstVitals = page.locator('[data-testid="bed-tile"]').first().locator('.vitals > div')
+  for (const index of [0, 1]) {
+    const vital = firstVitals.nth(index)
+    expect(Number.parseFloat(await vital.locator('strong').evaluate((element) => getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(40)
+    expect(await vital.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1)
+  }
 
   const firstTile = page.getByRole('link', { name: /Bed 1:/ })
   await firstTile.focus()

@@ -142,8 +142,12 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
 .bed-tile--compact .dual-alert span { font-size: 8px; }
 .bed-tile--compact .waveform { height: 76px; }
 .bed-tile--compact .waveform__label--ppg { top: 42px; }
-.bed-tile--compact .vitals > div { min-height: 62px; padding: 9px 10px; }
-.bed-tile--compact .vitals strong { font-size: clamp(17px, 1.45vw, 23px); }
+.bed-tile--compact .vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.bed-tile--compact .vitals > div { min-width: 0; min-height: 72px; padding: 9px 10px; }
+.bed-tile--compact .vitals > div:nth-child(2) { border-right: 0; }
+.bed-tile--compact .vitals > div:nth-child(3) { grid-column: 1 / -1; min-height: 58px; border-top: 1px solid #244357; }
+.bed-tile--compact .vitals strong { min-width: 0; font-size: 40px; }
+.bed-tile--compact .vitals > div:nth-child(3) strong { font-size: 28px; }
 .bed-tile--compact .vitals small { font-size: 7px; }
 .bed-tile--compact .trust-row { padding: 10px 12px; }
 .bed-tile--compact .verdict { min-height: 50px; padding: 8px 12px; }
@@ -215,5 +219,6 @@ h1 { margin-bottom: 8px; color: #f4f9fc; font-size: clamp(30px, 4vw, 48px); line
   .ward-page, .bed-detail-page { width: min(100% - 20px, 520px); }
   .ward-summary { grid-template-columns: repeat(2, 1fr); }
   .ward-grid { grid-template-columns: 1fr; }
-  .bed-tile--compact .vitals strong { font-size: 23px; }
+  .bed-tile--compact .vitals strong { font-size: 40px; }
+  .bed-tile--compact .vitals > div:nth-child(3) strong { font-size: 28px; }
 }
