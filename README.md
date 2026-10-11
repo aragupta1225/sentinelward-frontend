@@ -10,6 +10,7 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 - Five-card development login with typed session adapters, per-role loading and retry, sessionStorage restoration, role-home routing, and logout cleanup.
 - Protected routes, home screens, and read/action boundaries for all five specified demo roles.
 - Ward dashboard with twelve beds, default-on name privacy, stopped-alarm summary, global high-alert strip, alert queue, live mock telemetry, keyboard navigation, and focus return.
+- Alarm-only red/yellow/cyan priority tokens with high/medium flashing at the specified rates, steady low priority, and a non-flashing thick-border reduced-motion fallback.
 - Bed Detail response, verdict explanation, six model checks, body/network witnesses, bedside confirmation, hand-check recording, escalation, isolation, undo, trend, and append-only action workflows.
 - Alerts and escalation, census, security inventory, incident evidence, editable CERT-In report, biomedical ticket, briefing, action log, demo, and Telegram-template screens.
 - Nurse/doctor alert workflow with Open, Acknowledged, and All views, a three-step escalation ladder, response history, and simulated Telegram message editing.

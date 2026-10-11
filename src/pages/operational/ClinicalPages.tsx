@@ -59,7 +59,7 @@ export function CensusPage() {
             <tr key={bed.id} className={untrusted ? 'census-row--untrusted' : undefined}>
               <td><button className="table-link" onClick={() => navigate(`/bed/${bed.id}`)}>{bed.label}</button></td>
               <td>{bed.patient.initials}{bed.patient.age === null ? '' : `, age ${bed.patient.age}`}</td>
-              <td><StatusChip tone={bed.priority === 'high' ? 'critical' : bed.priority === 'medium' ? 'warning' : bed.priority === 'low' ? 'info' : 'neutral'}>{VERDICT_PRESENTATION[bed.verdict].label}</StatusChip></td>
+              <td><StatusChip tone={bed.priority === 'high' ? 'alarm-high' : bed.priority === 'medium' ? 'alarm-medium' : bed.priority === 'low' ? 'alarm-low' : 'neutral'}>{VERDICT_PRESENTATION[bed.verdict].label}</StatusChip></td>
               <td><div className={untrusted ? 'census-trust census-trust--untrusted' : 'census-trust'}><strong>{untrusted ? 'UNTRUSTED' : 'Trusted'}</strong><span>{bed.trust}%</span></div></td>
               <td>{formatVital(readings.heartRate, untrusted)}</td>
               <td>{formatVital(readings.spo2, untrusted)}</td>

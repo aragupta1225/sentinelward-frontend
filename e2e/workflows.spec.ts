@@ -170,6 +170,13 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   await expect(page.getByText(/high-priority alarms/)).toBeVisible()
   await expect(page.getByText('Alarms stopped today')).toBeVisible()
   await expect(page.getByText('37', { exact: true })).toBeVisible()
+  expect(await page.evaluate(() => {
+    const style = getComputedStyle(document.documentElement)
+    return ['--alarm-high', '--alarm-med', '--alarm-low', '--accent'].map((token) => style.getPropertyValue(token).trim())
+  })).toEqual(['#ff4d4f', '#ffd166', '#22d3ee', '#4a90e2'])
+  expect(await page.locator('.bed-tile--high').first().evaluate((element) => getComputedStyle(element).animationDuration)).toBe('0.5s')
+  expect(await page.locator('.bed-tile--medium').first().evaluate((element) => getComputedStyle(element).animationDuration)).toBe('1.5s')
+  expect(await page.locator('.bed-tile--low').first().evaluate((element) => getComputedStyle(element).animationName)).toBe('none')
 
   const bed = page.getByRole('link', { name: /Bed 3:/ })
   await expect(bed).toContainText('NS, age 72')
@@ -301,6 +308,11 @@ test('keyboard, alert discoverability, live regions, and reduced motion hold at 
   await page.waitForTimeout(1_100)
   await expect(assertiveRegion).toHaveText('')
   expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true)
+  for (const priority of ['high', 'medium']) {
+    const tile = page.locator(`.bed-tile--${priority}`).first()
+    await expect(tile).toBeVisible()
+    expect(await tile.evaluate((element) => ({ animationName: getComputedStyle(element).animationName, borderTopWidth: getComputedStyle(element).borderTopWidth }))).toEqual({ animationName: 'none', borderTopWidth: '8px' })
+  }
 
   if ((viewport?.width ?? 0) <= 900) {
     const mobileAlerts = page.getByRole('button', { name: /Alerts .* high priority/ })

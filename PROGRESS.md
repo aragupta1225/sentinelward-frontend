@@ -8,7 +8,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional Drive requirements. Antara Gupta's confirmed frontend functionality is complete in mock mode; the final Drive audit has moved to the specified alarm-colour safety rule before broader UI polish.
+The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional Drive requirements. Antara Gupta's confirmed frontend functionality is complete in mock mode; the final Drive visual audit has moved to the specified two-metre Ward readability rule.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -62,7 +62,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 ## Incomplete Features
 
 - Telegram behavior is fully represented in the frontend, but delivery to the real Telegram API remains an external integration and is deliberately not claimed by this mock-driven repository.
-- The colour-token audit found legacy generic uses of cyan, yellow, and red outside alarm semantics. Correcting that Drive safety rule is the active frontend milestone.
+- The Ward's compact tile typography still renders HR and SpO₂ below the Drive-specified 40 px minimum. Correcting that exact readability rule without breaking the tablet layouts is the active frontend milestone.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
@@ -78,9 +78,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F13 — Alarm-colour safety audit (active).**
+**R8-F14 — Ward two-metre readability (active).**
 
-The exact Antara Gupta frontend functional scope is complete in mock mode. The Drive done-checklist audit found and corrected the cross-channel callback gap; the remaining audit item is to reserve red, yellow, and cyan for clinical alarm semantics throughout the shared visual system.
+The exact Antara Gupta frontend functional scope is complete in mock mode. The Drive audit has corrected cross-channel callbacks and alarm-colour semantics; the remaining exact visual item is the Ward's 40 px minimum for HR and SpO₂.
 
 ### M1 Verified Result
 
@@ -240,11 +240,21 @@ The exact Antara Gupta frontend functional scope is complete in mock mode. The D
 - Unit and browser regression coverage proves the message edit and shared clinical state change happen together, while rejected commands cannot create false success.
 - The full quality gate passes with 115 unit/component tests and 33 Playwright tests, including 14 route axe scans and desktop/tablet workflows.
 
+### R8-F13 Verified Result — Alarm-colour Safety and Motion
+
+- The locked product tokens now distinguish calm blue accent and neutral status colours from the exact alarm-only red, yellow, and cyan tokens.
+- Generic navigation, loading, trust, freshness, workload, security, connection, report, and button states no longer reuse clinical alarm colours.
+- Bed tiles, alert priority chips, the alarm rail, activity markers, the global high-alert strip, and the landing alarm preview retain alarm colours because they represent real clinical priority.
+- High tiles flash at 2 Hz and medium tiles at 0.67 Hz, within the specified frequency ranges; low tiles remain steady.
+- Reduced-motion mode removes all flashing and replaces high/medium motion with a steady 8 px priority border, preserving urgency without animation.
+- Browser tests verify exact alarm tokens, timing, steady low priority, reduced-motion fallback, and desktop/tablet behavior. All 14 route axe scans pass with colour contrast enabled.
+- The full quality gate passes with 116 unit/component tests and 33 Playwright tests.
+
 ## Prioritized Roadmap
 
-1. Replace legacy generic alarm-colour uses with calm blue or neutral tokens while preserving red/yellow/cyan only for alarm priority.
-2. Rerun all route contrast, reduced-motion, and responsive checks after the token correction.
-3. Continue broader UI polish only after the alarm-colour safety rule is verified.
+1. Raise Ward HR and SpO₂ typography to at least 40 px while keeping BP readable and preventing overflow.
+2. Verify the 40 px computed size and all desktop, landscape-tablet, and portrait-tablet layouts.
+3. Close the Drive checklist after the full contrast, reduced-motion, responsive, and production-build gate passes.
 
 ## Provisional Backend Dependencies
 
@@ -263,14 +273,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 31 files passed; 115 tests passed.
+- Tests: 31 files passed; 116 tests passed.
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 185 modules; CSS 55.47 kB (11.77 kB gzip); initial JavaScript 365.18 kB (120.87 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 185 modules; CSS 56.56 kB (12.05 kB gzip); initial JavaScript 365.18 kB (120.87 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Complete R8-F13 by separating alarm-priority tokens from generic accent, status, trust, freshness, and security colours.
+1. Complete R8-F14 by enforcing the 40 px Ward HR and SpO₂ minimum with responsive overflow checks.
 2. Keep real backend, Telegram delivery, deployment, and team-repository integration outside this frontend-only completion claim.
-3. Preserve all exact clinical copy, non-colour cues, and functional behavior while correcting the palette.
+3. Preserve all exact clinical copy, alarm semantics, non-colour cues, and functional behavior while correcting the typography.

@@ -14,7 +14,7 @@ const FILTERS: ReadonlyArray<{ id: AlertFilter; label: string }> = [
 ]
 
 const PRIORITY_TONES: Record<WardAlert['priority'], StatusTone> = {
-  high: 'critical', medium: 'warning', low: 'neutral',
+  high: 'alarm-high', medium: 'alarm-medium', low: 'alarm-low',
 }
 
 function formatClock(timestamp: number) {

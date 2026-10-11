@@ -18,6 +18,12 @@ describe('shared UI primitives', () => {
     expect(container.querySelector('i')).toHaveAttribute('aria-hidden', 'true')
   })
 
+  it('keeps clinical alarm tones separate from generic status tones', () => {
+    const { container } = render(<StatusChip tone="alarm-high" dot>High</StatusChip>)
+    expect(screen.getByText('High')).toHaveClass('ui-status-chip--alarm-high')
+    expect(container.querySelector('.ui-status-chip--critical')).not.toBeInTheDocument()
+  })
+
   it('keeps actions as native buttons with safe default type', () => {
     const onClick = vi.fn()
     render(<ActionButton tone="primary" onClick={onClick}>Acknowledge</ActionButton>)
