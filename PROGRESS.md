@@ -8,7 +8,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens represented. S0-S10 now implement their functional Drive requirements. The remaining S11-S12 supporting screens still implement only a subset of the Drive specification.
+The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens represented. S0-S11 now implement their functional Drive requirements. The remaining S12 Demo Control screen still implements only a subset of the Drive specification.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -35,6 +35,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - S1 Login now provides five described one-click role cards, chosen-button loading, inline failure and Retry, typed mock/backend session adapters, sessionStorage persistence, role-home routing, and logout cleanup with the required demo-account disclosure.
 - S9 Biomedical Tickets now provides the New/In progress/Done board, device/bed problem cards, suggested fixes, 30-day issue counters, repeat-problem device list, and note-required status updates through the typed PATCH boundary.
 - S10 Briefing and Workload now provides the IBM Granite-labelled handover since 08:00, incident/untrusted-bed/open-ticket totals, per-bed Blind Time, and a two-hour nurse alarm-load chart with a textual threshold warning at 40.
+- S11 Action Log now provides the exact six-column, 200-entry typed view, free-text search, automatic/person/undoable filtering, all-role read access, and IT-only append-only Undo for reversible automatic actions.
 - Deterministic timed scenarios for emergency, loose sensor, drifting sensor, tampering, BOTH, and connection loss.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
@@ -58,9 +59,8 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Incomplete Features
 
-- S11-S12 are partial: log search/filter/undo and demo pause/speed/full scenario controls are missing.
+- S12 is partial: demo pause, speed, full-script, fake-flatline, flood, and complete timeline controls are missing.
 - Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
-- Automatic-action Undo is only implemented for isolation rather than every applicable automatic action.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
@@ -76,9 +76,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F9 — S11 append-only action log workflow (active).**
+**R8-F10 — S12 demo-control workflow (active).**
 
-The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 80-85% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
+The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 85-90% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
 
 ### M1 Verified Result
 
@@ -200,10 +200,19 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Typed mock and Zod-validated HTTP adapters isolate the provisional `GET /api/briefing?since=` and `GET /api/workload?hours=2` contracts; mock mode remains the safe default.
 - The full quality gate passes with 101 unit/component tests and 30 Playwright tests, including all-route axe scans and desktop/tablet workflows.
 
+### R8-F9 Verified Result — S11 Append-only Action Log
+
+- All five roles can read the same action log, while Undo controls appear only for the IT role.
+- The log uses the required Time, Agent or person, Action, Bed / device, Approved by, and Undo columns, with free-text search and All/Automatic/People/Undoable filters.
+- A typed mock/backend adapter requests `GET /api/actions?limit=200`, validates the provisional response, and preserves deterministic mock behavior until backend confirmation.
+- Reversible automatic isolation can be undone through the locked command boundary; the original row remains and a new human-approved record references it.
+- Non-reversible clinical alert creation stays visible and cannot be undone, preserving the rule that tampering or operator actions must never suppress an emergency.
+- The full quality gate passes with 106 unit/component tests and 31 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+
 ## Prioritized Roadmap
 
-1. Complete S11 action-log search, filter, and applicable undo requirements.
-2. Complete S12 demo-control requirements, then exact Telegram frontend behavior.
+1. Complete S12 demo-control scenario, pause, speed, reset, and timeline requirements.
+2. Complete exact Telegram frontend templates and interaction behavior.
 3. Begin the separate UI-polish phase only after functional scope is verified.
 
 ## Provisional Backend Dependencies
@@ -223,14 +232,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 27 files passed; 101 tests passed.
-- Browser regression: 30 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 29 files passed; 106 tests passed.
+- Browser regression: 31 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 178 modules; CSS 51.31 kB (11.02 kB gzip); initial JavaScript 361.76 kB (120.00 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 181 modules; CSS 52.23 kB (11.17 kB gzip); initial JavaScript 363.96 kB (120.57 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F9 S11 action-log behavior as a typed mock-first vertical slice.
-2. Preserve append-only evidence, role boundaries, and referencing Undo actions while adding search and filtering.
+1. Implement R8-F10 S12 demo-control behavior as a typed mock-first vertical slice.
+2. Preserve operator-only access and the existing safety invariants while adding scenario timing controls.
 3. Rerun the complete unit, axe, browser, and production-build gate before delivery.

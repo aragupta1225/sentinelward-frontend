@@ -91,6 +91,24 @@ test('shift briefing and workload follow the S10 handover rules', async ({ page 
   await expect(page.locator('.workload-warning')).toHaveCount(2)
 })
 
+test('action log search, filters, and IT-only undo follow S11', async ({ page }) => {
+  await signIn(page, 'it')
+  await navigateInApp(page, '/log')
+  for (const heading of ['Time', 'Agent or person', 'Action', 'Bed / device', 'Approved by', 'Undo']) await expect(page.getByRole('columnheader', { name: heading, exact: true })).toBeVisible()
+
+  await page.getByLabel('Search actions').fill('evidence')
+  await expect(page.getByRole('row').filter({ hasText: 'Incident evidence snapshot' })).toBeVisible()
+  await expect(page.getByRole('row').filter({ hasText: 'High clinical alert' })).toHaveCount(0)
+
+  await page.getByLabel('Search actions').fill('')
+  await page.getByLabel('Filter').selectOption('undoable')
+  const isolation = page.getByRole('row').filter({ hasText: 'Compromised device isolated automatically' })
+  await expect(isolation).toContainText('B08 / MON-08')
+  await isolation.getByRole('button', { name: 'Undo' }).click()
+  await expect(isolation).toContainText('Undone · log-undo-')
+  await expect(isolation.getByRole('button', { name: 'Undo' })).toHaveCount(0)
+})
+
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
   await signIn(page, 'nurse')
   const bedTile = page.getByRole('link', { name: /Bed 3:/ })

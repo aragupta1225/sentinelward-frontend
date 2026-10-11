@@ -1,4 +1,5 @@
 import type { CommandAdapter } from '../adapters/commandContracts'
+import { HttpActionLogAdapter, MockActionLogAdapter, type ActionLogAdapter } from '../adapters/actionLogAdapters'
 import { HttpBriefingAdapter, MockBriefingAdapter, type BriefingAdapter } from '../adapters/briefingAdapters'
 import { createWardAdapters, type WardAdapterSet } from '../adapters/createWardAdapters'
 import { HttpCommandAdapter } from '../adapters/httpCommandAdapter'
@@ -13,6 +14,7 @@ export interface ApplicationRuntime {
   commands: CommandAdapter
   public: PublicAdapter
   briefing: BriefingAdapter
+  actionLog: ActionLogAdapter
 }
 
 export interface RuntimeLocation {
@@ -38,5 +40,8 @@ export function createApplicationRuntime(
     briefing: config.mode === 'mock'
       ? new MockBriefingAdapter()
       : new HttpBriefingAdapter(config.apiBaseUrl),
+    actionLog: config.mode === 'mock'
+      ? new MockActionLogAdapter()
+      : new HttpActionLogAdapter(config.apiBaseUrl),
   }
 }

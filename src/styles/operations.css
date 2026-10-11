@@ -127,6 +127,13 @@
 .workload-bar-track { height: 18px; overflow: hidden; border: 1px solid #365064; border-radius: 4px; background: #0a1926; }
 .workload-bar-track span { height: 100%; display: block; background: #4a90b6; }
 .workload-warning { border-color: #7a8991; color: #f0f3f4; background: repeating-linear-gradient(135deg, #28343b, #28343b 5px, #323f47 5px, #323f47 10px); }
+.action-log-note { display: flex; align-items: center; gap: 14px; margin: 18px 0 12px; padding: 14px 16px; }
+.action-log-note strong { flex: 0 0 auto; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+.action-log-note span { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.action-log-tools { display: grid; grid-template-columns: minmax(260px, 1fr) 190px; gap: 10px; max-width: 720px; }
+.action-log-tools label { display: grid; gap: 5px; color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .04em; }
+.action-log-tools input, .action-log-tools select { min-height: 44px; border: 1px solid #31566e; border-radius: 7px; padding: 0 11px; color: var(--text); background: #0d2231; font: 11px var(--font-sans); text-transform: none; }
+.table-subline { display: block; margin-top: 4px; color: var(--muted); font-size: 8px; line-height: 1.4; text-transform: capitalize; }
 .plain-list { list-style: none; margin: 15px 0; padding: 0; border: 1px solid var(--line); border-radius: 10px; }
 .plain-list li { display: flex; justify-content: space-between; gap: 20px; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 11px; }
 .plain-list small { color: var(--muted); }
@@ -315,6 +322,8 @@
   .workload-row { grid-template-columns: 1fr; }
   .workload-row .ui-status-chip { grid-column: auto; }
   .workload-threshold { display: none; }
+  .action-log-note { align-items: flex-start; flex-direction: column; }
+  .action-log-tools { grid-template-columns: 1fr; }
   .alert-sheet { top: 150px; padding: 18px; }
   .alert-sheet__facts { grid-template-columns: 1fr; }
   .alerts-scope-note { display: grid; }

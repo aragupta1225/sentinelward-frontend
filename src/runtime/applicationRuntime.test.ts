@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { HttpActionLogAdapter, MockActionLogAdapter } from '../adapters/actionLogAdapters'
 import { HttpCommandAdapter } from '../adapters/httpCommandAdapter'
 import { HttpBriefingAdapter, MockBriefingAdapter } from '../adapters/briefingAdapters'
 import { HttpWardRestAdapter } from '../adapters/httpWardAdapter'
@@ -21,6 +22,7 @@ describe('application runtime composition', () => {
     expect(runtime.commands).toBeInstanceOf(MockCommandAdapter)
     expect(runtime.public).toBeInstanceOf(MockPublicAdapter)
     expect(runtime.briefing).toBeInstanceOf(MockBriefingAdapter)
+    expect(runtime.actionLog).toBeInstanceOf(MockActionLogAdapter)
   })
 
   it('selects all backend adapters from validated configuration', () => {
@@ -39,6 +41,7 @@ describe('application runtime composition', () => {
     expect(runtime.commands).toBeInstanceOf(HttpCommandAdapter)
     expect(runtime.public).toBeInstanceOf(HttpPublicAdapter)
     expect(runtime.briefing).toBeInstanceOf(HttpBriefingAdapter)
+    expect(runtime.actionLog).toBeInstanceOf(HttpActionLogAdapter)
   })
 
   it('rejects an unknown runtime mode instead of silently enabling a transport', () => {

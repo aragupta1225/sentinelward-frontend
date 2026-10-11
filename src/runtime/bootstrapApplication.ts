@@ -1,4 +1,5 @@
 import { configureCommandAdapter } from '../adapters/commandGateway'
+import { configureActionLogAdapter } from '../adapters/actionLogGateway'
 import { configureBriefingAdapter } from '../adapters/briefingGateway'
 import { configurePublicAdapter } from '../adapters/publicGateway'
 import { configureWardDashboardAdapters } from '../store/wardDashboardStore'
@@ -11,6 +12,7 @@ export function bootstrapApplication(
 ): ApplicationRuntime {
   const runtime = createApplicationRuntime(environment, location, onRecoveryRequired)
   configureCommandAdapter(runtime.commands)
+  configureActionLogAdapter(runtime.actionLog)
   configureBriefingAdapter(runtime.briefing)
   configurePublicAdapter(runtime.public)
   configureWardDashboardAdapters(runtime.ward)

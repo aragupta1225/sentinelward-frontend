@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loadBriefing, loadWorkload } from '../../adapters/briefingGateway'
 import { ActionButton, Panel, StatusChip } from '../../components/ui'
 import { can } from '../../domain/access'
+import type { ActionLogRecord } from '../../domain/actionLog'
 import type { NurseWorkload, ShiftBriefing } from '../../domain/briefing'
 import { VERDICT_PRESENTATION, type Bed, type VitalReadings } from '../../domain/ward'
 import { useAlertStore } from '../../store/alertStore'
+import { useActionLogStore } from '../../store/actionLogStore'
 import { useBedDetailStore } from '../../store/bedDetailStore'
 import { useClinicalWorkflowStore } from '../../store/clinicalWorkflowStore'
 import { useSessionStore } from '../../store/sessionStore'
@@ -148,17 +150,56 @@ export function BriefingPage() {
 }
 
 export function ActionLogPage() {
-  const actions = useBedDetailStore((state) => state.actions)
-  const activities = useWardDashboardStore((state) => state.activities)
+  const liveActions = useBedDetailStore((state) => state.actions)
+  const role = useBedDetailStore((state) => state.currentRole)
+  const approvedBy = useSessionStore((state) => state.displayName) ?? 'Antara Gupta'
+  const records = useActionLogStore((state) => state.records)
+  const loading = useActionLogStore((state) => state.loading)
+  const error = useActionLogStore((state) => state.error)
+  const pendingUndoId = useActionLogStore((state) => state.pendingUndoId)
+  const load = useActionLogStore((state) => state.load)
+  const undo = useActionLogStore((state) => state.undo)
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState<'all' | 'automatic' | 'person' | 'undoable'>('all')
+
+  useEffect(() => {
+    const controller = new AbortController()
+    void load(controller.signal)
+    return () => controller.abort()
+  }, [load])
+
+  const allRecords = useMemo(() => {
+    const mappedLiveActions: ActionLogRecord[] = liveActions.map((action) => ({
+      id: action.id, occurredAt: action.occurredAt, actor: action.actor, actionCode: action.type, action: action.description,
+      bedId: action.bedId, deviceId: `MON-${action.bedId.slice(1)}`,
+      approvedBy: action.automatic ? 'Safety policy v1' : action.actor,
+      mode: action.automatic ? 'automatic' : 'person', undoable: action.undoable, referencesActionId: action.referencesActionId,
+    }))
+    return [...new Map([...records, ...mappedLiveActions].map((record) => [record.id, record])).values()]
+      .sort((left, right) => right.occurredAt - left.occurredAt)
+  }, [liveActions, records])
+
+  const visibleRecords = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase()
+    return allRecords
+      .filter((record) => filter === 'all' || (filter === 'undoable' ? record.undoable : record.mode === filter))
+      .filter((record) => !normalizedSearch || [record.actor, record.action, record.bedId, record.deviceId, record.approvedBy].some((value) => value?.toLowerCase().includes(normalizedSearch)))
+  }, [allRecords, filter, search])
+
   return (
-    <OperationalPage title="Action log" eyebrow="S11 · Append-only" description="Manual and automatic events remain visible; undo actions reference rather than erase history.">
-      <h2>Explicit and automatic actions</h2>
-      <DataTable headers={['Time', 'Bed', 'Action', 'Actor', 'Reference']} emptyMessage={actions.length === 0 ? 'No explicit actions have been recorded.' : undefined}>
-        {actions.map((action) => <tr key={action.id}><td>{formatTime(action.occurredAt)}</td><td>{action.bedId}</td><td>{action.description}</td><td>{action.actor}</td><td>{action.referencesActionId ?? '—'}</td></tr>)}
-      </DataTable>
-      <h2>Ward event stream</h2>
-      <DataTable headers={['Time', 'Bed', 'Event', 'Kind', 'Priority']} emptyMessage={activities.length === 0 ? 'No ward events have been received.' : undefined}>
-        {activities.map((activity) => <tr key={activity.id}><td>{formatTime(activity.occurredAt)}</td><td>{activity.bedId ?? 'Ward'}</td><td>{activity.message}</td><td>{activity.kind}</td><td>{activity.priority}</td></tr>)}
+    <OperationalPage title="Action log" eyebrow="S11 · Append-only" description="Every automatic and person-approved action remains visible; undo adds a reference and never erases history.">
+      <Panel className="action-log-note"><strong>Append-only safety record</strong><span>All roles can read this log. Only IT can undo an applicable automatic action.</span></Panel>
+      <div className="action-log-tools">
+        <label>Search actions<input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Agent, action, bed, or device" /></label>
+        <label>Filter<select value={filter} onChange={(event) => setFilter(event.target.value as typeof filter)}><option value="all">All actions</option><option value="automatic">Automatic</option><option value="person">People</option><option value="undoable">Undoable</option></select></label>
+      </div>
+      {loading && <p className="briefing-state" role="status">Loading up to 200 actions…</p>}
+      {error && <p className="command-error" role="alert">{error}</p>}
+      <DataTable headers={['Time', 'Agent or person', 'Action', 'Bed / device', 'Approved by', 'Undo']} emptyMessage={!loading && visibleRecords.length === 0 ? 'No actions match this search and filter.' : undefined}>
+        {visibleRecords.map((record) => {
+          const undoRecord = allRecords.find((candidate) => candidate.referencesActionId === record.id)
+          return <tr key={record.id}><td><time dateTime={new Date(record.occurredAt).toISOString()}>{formatTime(record.occurredAt)}</time></td><td>{record.actor}<small className="table-subline">{record.mode}</small></td><td>{record.action}{record.referencesActionId && <small className="table-subline">References {record.referencesActionId}</small>}</td><td>{[record.bedId, record.deviceId].filter(Boolean).join(' / ') || 'Ward'}</td><td>{record.approvedBy ?? '—'}</td><td>{undoRecord ? <span>Undone · {undoRecord.id}</span> : record.undoable && record.mode === 'automatic' ? role === 'it' ? <ActionButton tone="quiet" disabled={pendingUndoId === record.id} onClick={() => undo(record, role, approvedBy)}>{pendingUndoId === record.id ? 'Undoing…' : 'Undo'}</ActionButton> : <span>IT only</span> : '—'}</td></tr>
+        })}
       </DataTable>
     </OperationalPage>
   )
