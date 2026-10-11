@@ -8,7 +8,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens implementing their functional Drive requirements. The remaining functional scope is the exact secondary Telegram templates and interactions.
+The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional Drive requirements. Antara Gupta's confirmed frontend functionality is complete in mock mode; the current task is a final Drive checklist audit before the separate UI-polish phase.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -38,6 +38,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - S11 Action Log now provides the exact six-column, 200-entry typed view, free-text search, automatic/person/undoable filtering, all-role read access, and IT-only append-only Undo for reversible automatic actions.
 - S12 Demo Control now provides the exact seven scenarios, operator-only Run/Pause/Resume/Reset controls, 1×/2×/5× playback, and a live completed/next/upcoming timeline through typed run/reset boundaries.
 - Deterministic timed scenarios cover the full 12-minute ward script, real emergency, loose sensor, drift, replay attack, fake flatline, and flood.
+- The Telegram route now provides all eight specified event templates with their exact recipients, message copy, role-aware callback buttons, 12-second waveform previews for high alerts, same-message acknowledgement/escalation edits, and a one-message-per-second repeat-merging queue.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
 - M1 runtime hardening: validated environment configuration selects one mock or backend adapter set for Ward REST, Ward events, and commands; mock mode is the safe default.
@@ -60,7 +61,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Incomplete Features
 
-- Telegram delivery is not implemented; the current page has only three simplified templates and lacks exact templates, waveform image, callbacks, message editing, repeat merging, and escalation behavior.
+- Telegram behavior is fully represented in the frontend, but delivery to the real Telegram API remains an external integration and is deliberately not claimed by this mock-driven repository.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
@@ -72,13 +73,13 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - No failing product bug was found during this inspection.
 - Application state is memory-only and resets on refresh; this is acceptable for mocks but must remain clearly presented as simulated.
-- The initial production JavaScript chunk is about 459 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
+- The initial production JavaScript chunk is 365.04 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
 
 ## Active Milestone
 
-**R8-F11 — Exact Telegram frontend behavior (active).**
+**R8-F12 — Drive completion audit (active).**
 
-The Drive audit supersedes the earlier completion assessment. The exact Antara Gupta frontend scope is approximately 90-95% complete. Functional Drive requirements will be completed in mock mode before the separate UI-polish phase.
+The exact Antara Gupta frontend functional scope is complete in mock mode. The final audit is checking every Drive requirement against the implemented routes, tests, and documented external dependencies before the separate UI-polish phase begins.
 
 ### M1 Verified Result
 
@@ -218,11 +219,21 @@ The Drive audit supersedes the earlier completion assessment. The exact Antara G
 - Typed mock and Zod-validated HTTP adapters isolate the locked `POST /api/demo/run {scenario, speed}` and `POST /api/demo/reset` contracts; rejected commands do not change ward fixtures.
 - The full quality gate passes with 110 unit/component tests and 32 Playwright tests, including all-route axe scans and desktop/tablet workflows.
 
+### R8-F11 Verified Result — Exact Telegram Frontend Behavior
+
+- The secondary Telegram screen now presents all eight specified events: real emergency, timed escalation, loose sensor, drifting sensor, untrusted monitor, combined emergency and tampering, IT-only device attack, and unclear readings.
+- Each template preserves the specified recipient, bold first line, reason/action copy, time, and role-aware callback controls. Every callback payload is measured and remains within Telegram's 64-byte limit.
+- High clinical alerts include a 12-second waveform preview and a measured photo caption below Telegram's 1,024-character limit.
+- A callback edits the existing message instead of creating a duplicate; escalation also updates the same emergency message and advances its recipient.
+- The per-chat queue releases at most one message per second and merges repeated notifications for the same bed into the existing message with a visible repeat count.
+- Telegram remains a secondary representation of central Ward state and cannot suppress a clinical alarm or imply independent treatment action.
+- The full quality gate passes with 114 unit/component tests and 33 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+
 ## Prioritized Roadmap
 
-1. Complete exact Telegram frontend templates and interaction behavior.
-2. Verify the Drive done checklist end to end.
-3. Begin the separate UI-polish phase only after functional scope is verified.
+1. Verify the Drive done checklist end to end against the implemented mock-mode frontend.
+2. Record any evidence-backed gaps without expanding beyond Antara Gupta's assignment.
+3. Begin the separate UI-polish phase only after the functional audit is closed.
 
 ## Provisional Backend Dependencies
 
@@ -241,14 +252,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 30 files passed; 110 tests passed.
-- Browser regression: 32 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
+- Tests: 31 files passed; 114 tests passed.
+- Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 183 modules; CSS 53.79 kB (11.46 kB gzip); initial JavaScript 365.01 kB (120.80 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 185 modules; CSS 55.47 kB (11.77 kB gzip); initial JavaScript 365.04 kB (120.82 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Implement R8-F11 exact Telegram templates, buttons, waveform preview, same-message acknowledgement, repeat merging, and demo escalation behavior.
-2. Preserve the secondary-channel boundary: Telegram mirrors app state and never replaces S4 or suppresses clinical alarms.
-3. Rerun the complete unit, axe, browser, and production-build gate before delivery.
+1. Complete the Drive done-checklist audit and reconcile every Antara-owned item with implementation or an explicit external dependency.
+2. Keep real backend, Telegram delivery, deployment, and team-repository integration outside this frontend-only completion claim.
+3. Start UI polish only after the audit confirms there are no remaining functional gaps.

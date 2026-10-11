@@ -127,6 +127,25 @@ test('operator demo controls follow the complete S12 scenario and playback rules
   await expect(page.getByText('idle · 0:00 · 5×')).toBeVisible()
 })
 
+test('Telegram templates keep exact limits, waveform, same-message edits, and repeat merging', async ({ page }) => {
+  await signIn(page, 'nurse')
+  await navigateInApp(page, '/telegram')
+  await expect(page.getByTestId('telegram-message')).toHaveCount(8)
+  await expect(page.getByText(/At most 1 message per second per chat/)).toBeVisible()
+  const emergency = page.getByTestId('telegram-message').filter({ hasText: 'Real emergency' })
+  await expect(emergency.getByRole('img', { name: '12-second ECG and PPG waveform snapshot' })).toBeVisible()
+  await expect(emergency).toContainText('caption 112/1024 characters')
+
+  await emergency.getByRole('button', { name: 'On my way' }).click()
+  await expect(page.getByTestId('telegram-message')).toHaveCount(8)
+  await expect(emergency).toContainText('Acknowledged by Antara Gupta')
+
+  await emergency.getByRole('button', { name: 'Simulate repeat' }).click()
+  await emergency.getByRole('button', { name: 'Simulate repeat' }).click()
+  await expect(emergency).toContainText('2 repeats queued as one edit')
+  await expect(emergency).toContainText('2 repeats merged into this message', { timeout: 2_500 })
+})
+
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
   await signIn(page, 'nurse')
   const bedTile = page.getByRole('link', { name: /Bed 3:/ })

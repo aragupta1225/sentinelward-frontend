@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { WaveformData } from '../domain/ward'
 
-interface WaveformCanvasProps { data: WaveformData; muted?: boolean }
+interface WaveformCanvasProps { data: WaveformData; muted?: boolean; durationSeconds?: number }
 
 function drawSignal(context: CanvasRenderingContext2D, values: number[], top: number, height: number, color: string) {
   if (values.length < 2) return
@@ -17,7 +17,7 @@ function drawSignal(context: CanvasRenderingContext2D, values: number[], top: nu
   context.stroke()
 }
 
-export function WaveformCanvas({ data, muted = false }: WaveformCanvasProps) {
+export function WaveformCanvas({ data, muted = false, durationSeconds = 6 }: WaveformCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export function WaveformCanvas({ data, muted = false }: WaveformCanvasProps) {
   }, [data, muted])
 
   return (
-    <div className="waveform" aria-label="Six-second ECG and PPG waveform snapshot" role="img">
+    <div className="waveform" aria-label={`${durationSeconds}-second ECG and PPG waveform snapshot`} role="img">
       <span className="waveform__label waveform__label--ecg">ECG</span>
       <span className="waveform__label waveform__label--ppg">PPG</span>
       <canvas ref={canvasRef} />

@@ -19,6 +19,7 @@ The repository is a working, mock-driven React frontend. It keeps clinical urgen
 - All-role append-only action log with the exact audit columns, search and filters, plus IT-only linked Undo for reversible automatic actions.
 - IT security workflow with a 12-device inventory, live attack feed, network witness, fleet hunt, confirmed isolation/reconnect, incident timelines, downloadable evidence fingerprints, and human-controlled CERT-In reporting.
 - Operator-only Demo Control with the exact seven scenarios, Run/Pause/Resume/Reset, 1×/2×/5× playback, and a live scheduled timeline.
+- Secondary Telegram view with all eight exact event templates, 12-second waveform previews for high alerts, role-aware callbacks, same-message edits, and one-per-second repeat merging.
 - Validated REST, WebSocket, and command adapter boundaries with mock mode as the safe default.
 - Route-family code splitting keeps noncritical clinical, security, support, and demo screens out of the initial bundle.
 - Resilient system font stacks avoid a runtime dependency on an external font service.
@@ -73,7 +74,7 @@ Run the complete gate:
 npm run check
 ```
 
-The gate runs lint, the unit/component suite, 32 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
+The gate runs lint, the unit/component suite, 33 Playwright tests, TypeScript compilation, and the production build. Playwright covers critical workflows, all material routes with axe color-contrast checks, and desktop plus tablet viewports.
 
 ## Source scope
 

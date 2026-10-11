@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { ActionButton, EmptyState, Panel } from '../../components/ui'
+import { WaveformCanvas } from '../../components/WaveformCanvas'
 import type { BiomedicalTicket } from '../../domain/operations'
+import type { TelegramMessage } from '../../domain/telegram'
+import { getFixture } from '../../mocks/fixtures'
+import { useBedDetailStore } from '../../store/bedDetailStore'
 import { useOperationsStore } from '../../store/operationsStore'
+import { useSessionStore } from '../../store/sessionStore'
+import { useTelegramStore } from '../../store/telegramStore'
 import { OperationalPage } from './shared'
 
 const columns: Array<{ status: BiomedicalTicket['status']; label: string }> = [
@@ -45,17 +51,45 @@ export function TicketsPage() {
 }
 
 export function TelegramPage() {
-  const templates = [
-    'HIGH ALERT · Bed 3 · Possible clinical emergency. Open SentinelWard for trusted context.',
-    'DEVICE INTEGRITY · Bed 7 · Incoming data is untrusted. Verify patient and equipment at bedside.',
-    'BOTH · Bed 8 · Clinical emergency remains active. Device isolated. Use trusted bedside equipment.',
-  ]
+  const messages = useTelegramStore((state) => state.messages)
+  const queue = useTelegramStore((state) => state.queue)
+  const pressButton = useTelegramStore((state) => state.pressButton)
+  const queueRepeat = useTelegramStore((state) => state.queueRepeat)
+  const role = useBedDetailStore((state) => state.currentRole)
+  const actor = useSessionStore((state) => state.displayName) ?? 'Antara Gupta'
+
+  const renderMessage = (message: TelegramMessage) => {
+    const queued = queue.find((item) => item.messageId === message.id)?.repeats ?? 0
+    const captionLength = [message.firstLine, message.body, message.time].filter(Boolean).join('\n').length
+    const waveform = message.bedId ? getFixture(message.bedId).waveform : null
+    return (
+      <Panel as="article" className="telegram-card" data-testid="telegram-message" key={message.id}>
+        <header><div><p className="eyebrow">{message.event}</p><h2>{message.recipient}</h2></div><span>rev {message.revision}</span></header>
+        {message.highAlert && waveform && <figure className="telegram-waveform"><WaveformCanvas data={waveform} durationSeconds={12} /><figcaption>sendPhoto · 12-second waveform · caption {captionLength}/1024 characters</figcaption></figure>}
+        <div className="telegram-bubble">
+          {message.editedStatus && <p className="telegram-edited" role="status">{message.editedStatus}</p>}
+          <strong>{message.firstLine}</strong>
+          {message.body && <p>{message.body}</p>}
+          <time>{message.time}</time>
+          {message.repeatCount > 0 && <small>{message.repeatCount} repeat{message.repeatCount === 1 ? '' : 's'} merged into this message.</small>}
+        </div>
+        <div className="telegram-buttons">
+          {message.buttons.map((button) => {
+            const allowed = button.allowedRoles.includes(role)
+            return <div key={button.callbackData}><ActionButton disabled={!allowed} onClick={() => pressButton(message.id, button.callbackData, actor, role)}>{button.label}</ActionButton><code>{button.callbackData} · {new TextEncoder().encode(button.callbackData).length}/64 bytes</code>{!allowed && <small>{button.allowedRoles.includes('it') ? 'IT only' : 'Clinical role only'}</small>}</div>
+          })}
+        </div>
+        <ActionButton tone="quiet" onClick={() => queueRepeat(message.id)}>Simulate repeat</ActionButton>
+        {queued > 0 && <p className="telegram-queue" role="status">{queued} repeat{queued === 1 ? '' : 's'} queued as one edit · delivery limited to 1 message/s per chat</p>}
+      </Panel>
+    )
+  }
+
   return (
-    <OperationalPage title="Telegram message templates" eyebrow="Secondary channel" description="Minimal notifications point recipients back to the central interface without exposing patient names.">
+    <OperationalPage title="Telegram message templates" eyebrow="Secondary channel" description="Exact mock notifications, callback controls, and edit-in-place behavior without patient names.">
       <p className="scope-note">Telegram is secondary. The central Ward remains fully operational without it.</p>
-      <div className="template-list">
-        {templates.map((message) => <Panel as="article" key={message}><span>SentinelWard</span><p>{message}</p><small>No patient name included · central interface is source of truth</small></Panel>)}
-      </div>
+      <Panel className="telegram-policy"><strong>Delivery policy</strong><span>At most 1 message per second per chat. Extra messages queue; repeats for the same bed and event merge into the existing message.</span></Panel>
+      <div className="telegram-template-grid">{messages.map(renderMessage)}</div>
     </OperationalPage>
   )
 }
