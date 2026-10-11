@@ -8,7 +8,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 ## Current Status
 
-The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional Drive requirements. Antara Gupta's confirmed frontend functionality is complete in mock mode; the current task is a final Drive checklist audit before the separate UI-polish phase.
+The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional Drive requirements. Antara Gupta's confirmed frontend functionality is complete in mock mode; the final Drive audit has moved to the specified alarm-colour safety rule before broader UI polish.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -62,6 +62,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 ## Incomplete Features
 
 - Telegram behavior is fully represented in the frontend, but delivery to the real Telegram API remains an external integration and is deliberately not claimed by this mock-driven repository.
+- The colour-token audit found legacy generic uses of cyan, yellow, and red outside alarm semantics. Correcting that Drive safety rule is the active frontend milestone.
 - Backend mode is selectable but remains provisional and unverified against a real service. Configuration uses `VITE_SENTINELWARD_RUNTIME_MODE`, `VITE_SENTINELWARD_API_BASE_URL`, and optional `VITE_SENTINELWARD_WS_URL`; mock mode remains the default.
 - Authentication, authorization, persistence, telemetry, incidents, evidence, reports, tickets, assignments, and Telegram delivery are not backed by real services.
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
@@ -77,9 +78,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**R8-F12 — Drive completion audit (active).**
+**R8-F13 — Alarm-colour safety audit (active).**
 
-The exact Antara Gupta frontend functional scope is complete in mock mode. The final audit is checking every Drive requirement against the implemented routes, tests, and documented external dependencies before the separate UI-polish phase begins.
+The exact Antara Gupta frontend functional scope is complete in mock mode. The Drive done-checklist audit found and corrected the cross-channel callback gap; the remaining audit item is to reserve red, yellow, and cyan for clinical alarm semantics throughout the shared visual system.
 
 ### M1 Verified Result
 
@@ -227,13 +228,23 @@ The exact Antara Gupta frontend functional scope is complete in mock mode. The f
 - A callback edits the existing message instead of creating a duplicate; escalation also updates the same emergency message and advances its recipient.
 - The per-chat queue releases at most one message per second and merges repeated notifications for the same bed into the existing message with a visible repeat count.
 - Telegram remains a secondary representation of central Ward state and cannot suppress a clinical alarm or imply independent treatment action.
-- The full quality gate passes with 114 unit/component tests and 33 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+- Telegram acknowledgement now dispatches through the same typed command path as S4 and synchronizes the central alert and Ward state. Patient OK / NOT OK dispatches through the same bedside-check path as S3; rejection leaves both the message and clinical state unchanged.
+- The full quality gate passes with 115 unit/component tests and 33 Playwright tests, including all-route axe scans and desktop/tablet workflows.
+
+### R8-F12 Verified Result — Drive Functional Completion Audit
+
+- Every S0-S12 route, role boundary, mock data path, safety invariant, and Telegram template was reconciled against the live R8 document and its Part H done checklist.
+- The audit identified one functional gap: Telegram buttons edited their preview but did not update the central clinical source of truth.
+- Telegram On my way now acknowledges the matching central alert and Ward bed only after typed command acceptance.
+- Telegram Patient OK / NOT OK now records the same bedside response and append-only action as Bed Detail; NOT OK immediately preserves or raises the high clinical alert.
+- Unit and browser regression coverage proves the message edit and shared clinical state change happen together, while rejected commands cannot create false success.
+- The full quality gate passes with 115 unit/component tests and 33 Playwright tests, including 14 route axe scans and desktop/tablet workflows.
 
 ## Prioritized Roadmap
 
-1. Verify the Drive done checklist end to end against the implemented mock-mode frontend.
-2. Record any evidence-backed gaps without expanding beyond Antara Gupta's assignment.
-3. Begin the separate UI-polish phase only after the functional audit is closed.
+1. Replace legacy generic alarm-colour uses with calm blue or neutral tokens while preserving red/yellow/cyan only for alarm priority.
+2. Rerun all route contrast, reduced-motion, and responsive checks after the token correction.
+3. Continue broader UI polish only after the alarm-colour safety rule is verified.
 
 ## Provisional Backend Dependencies
 
@@ -252,14 +263,14 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 31 files passed; 114 tests passed.
+- Tests: 31 files passed; 115 tests passed.
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 185 modules; CSS 55.47 kB (11.77 kB gzip); initial JavaScript 365.04 kB (120.82 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 185 modules; CSS 55.47 kB (11.77 kB gzip); initial JavaScript 365.18 kB (120.87 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Complete the Drive done-checklist audit and reconcile every Antara-owned item with implementation or an explicit external dependency.
+1. Complete R8-F13 by separating alarm-priority tokens from generic accent, status, trust, freshness, and security colours.
 2. Keep real backend, Telegram delivery, deployment, and team-repository integration outside this frontend-only completion claim.
-3. Start UI polish only after the audit confirms there are no remaining functional gaps.
+3. Preserve all exact clinical copy, non-colour cues, and functional behavior while correcting the palette.

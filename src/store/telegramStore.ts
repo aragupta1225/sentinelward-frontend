@@ -2,12 +2,16 @@ import { create } from 'zustand'
 import type { Role } from '../domain/access'
 import type { TelegramMessage, TelegramTemplateId } from '../domain/telegram'
 import { TELEGRAM_TEMPLATES } from '../mocks/telegramTemplates'
+import { useAlertStore } from './alertStore'
+import { useBedDetailStore } from './bedDetailStore'
 
 interface QueuedRepeat { messageId: TelegramTemplateId; repeats: number }
 interface TelegramState {
   messages: TelegramMessage[]
   queue: QueuedRepeat[]
-  pressButton: (messageId: TelegramTemplateId, callbackData: string, actor: string, role: Role) => boolean
+  pendingCallbackData: string | null
+  callbackError: string | null
+  pressButton: (messageId: TelegramTemplateId, callbackData: string, actor: string, role: Role) => Promise<boolean>
   queueRepeat: (messageId: TelegramTemplateId) => void
   drainQueue: () => void
 }
@@ -25,18 +29,33 @@ function scheduleDrain() {
 }
 
 export const useTelegramStore = create<TelegramState>((set, get) => ({
-  messages: initialMessages(), queue: [],
-  pressButton: (messageId, callbackData, actor, role) => {
+  messages: initialMessages(), queue: [], pendingCallbackData: null, callbackError: null,
+  pressButton: async (messageId, callbackData, actor, role) => {
     if (new TextEncoder().encode(callbackData).length > 64) return false
     const message = get().messages.find((item) => item.id === messageId)
     const button = message?.buttons.find((item) => item.callbackData === callbackData)
     if (!message || !button?.allowedRoles.includes(role)) return false
+    set({ pendingCallbackData: callbackData, callbackError: null })
+    if (button.label === 'On my way' && message.bedId) {
+      const alert = useAlertStore.getState().alerts.find((item) => item.bedId === message.bedId && item.status === 'open')
+      if (!alert || !await useAlertStore.getState().acknowledgeAlert(alert.id, actor)) {
+        set({ pendingCallbackData: null, callbackError: `${message.event} acknowledgement was not accepted. The central alert remains open.` })
+        return false
+      }
+    }
+    if ((button.label === 'Patient OK' || button.label === 'Patient NOT OK') && message.bedId) {
+      const status = button.label === 'Patient OK' ? 'patient_ok' : 'patient_not_ok'
+      if (!await useBedDetailStore.getState().confirmPatient(message.bedId, status)) {
+        set({ pendingCallbackData: null, callbackError: `${message.event} bedside result was not accepted. The prior clinical state remains active.` })
+        return false
+      }
+    }
     set((state) => ({ messages: state.messages.map((item) => {
       if (item.id !== messageId) return item
       if (button.label === 'Escalate') return { ...item, recipient: 'next nurse + doctor', firstLine: `${item.firstLine.split(' — ')[0]} — emergency, not acknowledged for 30 s. Please go.`, body: '', buttons: [{ label: 'On my way', callbackData: `ack:${item.bedId?.toLowerCase() ?? 'ward'}:${item.id}`, allowedRoles: ['nurse', 'doctor'] }], revision: item.revision + 1, editedStatus: `Escalated by ${actor} at ${atTime()}` }
       const safetySuffix = button.label === 'Patient NOT OK' ? ' Patient NOT OK; high clinical alert remains active.' : ''
       return { ...item, revision: item.revision + 1, editedStatus: `✅ Acknowledged by ${actor} at ${atTime()}.${safetySuffix}` }
-    }) }))
+    }), pendingCallbackData: null }))
     return true
   },
   queueRepeat: (messageId) => {
@@ -60,5 +79,5 @@ export const useTelegramStore = create<TelegramState>((set, get) => ({
 export function resetTelegramStore() {
   if (queueTimer) clearTimeout(queueTimer)
   queueTimer = null
-  useTelegramStore.setState({ messages: initialMessages(), queue: [] })
+  useTelegramStore.setState({ messages: initialMessages(), queue: [], pendingCallbackData: null, callbackError: null })
 }

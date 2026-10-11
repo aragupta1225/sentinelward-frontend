@@ -140,6 +140,13 @@ test('Telegram templates keep exact limits, waveform, same-message edits, and re
   await expect(page.getByTestId('telegram-message')).toHaveCount(8)
   await expect(emergency).toContainText('Acknowledged by Antara Gupta')
 
+  const untrusted = page.getByTestId('telegram-message').filter({ hasText: 'Untrusted (tampering)' })
+  await untrusted.getByRole('button', { name: 'Patient NOT OK' }).click()
+  await expect(untrusted).toContainText('high clinical alert remains active')
+  await navigateInApp(page, '/bed/B07')
+  await expect(page.getByText(/Patient NOT OK.*high alert active/)).toBeVisible()
+  await navigateInApp(page, '/telegram')
+
   await emergency.getByRole('button', { name: 'Simulate repeat' }).click()
   await emergency.getByRole('button', { name: 'Simulate repeat' }).click()
   await expect(emergency).toContainText('2 repeats queued as one edit')

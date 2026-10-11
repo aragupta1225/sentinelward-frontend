@@ -53,6 +53,8 @@ export function TicketsPage() {
 export function TelegramPage() {
   const messages = useTelegramStore((state) => state.messages)
   const queue = useTelegramStore((state) => state.queue)
+  const pendingCallbackData = useTelegramStore((state) => state.pendingCallbackData)
+  const callbackError = useTelegramStore((state) => state.callbackError)
   const pressButton = useTelegramStore((state) => state.pressButton)
   const queueRepeat = useTelegramStore((state) => state.queueRepeat)
   const role = useBedDetailStore((state) => state.currentRole)
@@ -76,7 +78,7 @@ export function TelegramPage() {
         <div className="telegram-buttons">
           {message.buttons.map((button) => {
             const allowed = button.allowedRoles.includes(role)
-            return <div key={button.callbackData}><ActionButton disabled={!allowed} onClick={() => pressButton(message.id, button.callbackData, actor, role)}>{button.label}</ActionButton><code>{button.callbackData} · {new TextEncoder().encode(button.callbackData).length}/64 bytes</code>{!allowed && <small>{button.allowedRoles.includes('it') ? 'IT only' : 'Clinical role only'}</small>}</div>
+            return <div key={button.callbackData}><ActionButton disabled={!allowed || pendingCallbackData === button.callbackData} onClick={() => pressButton(message.id, button.callbackData, actor, role)}>{pendingCallbackData === button.callbackData ? 'Sending…' : button.label}</ActionButton><code>{button.callbackData} · {new TextEncoder().encode(button.callbackData).length}/64 bytes</code>{!allowed && <small>{button.allowedRoles.includes('it') ? 'IT only' : 'Clinical role only'}</small>}</div>
           })}
         </div>
         <ActionButton tone="quiet" onClick={() => queueRepeat(message.id)}>Simulate repeat</ActionButton>
@@ -88,6 +90,7 @@ export function TelegramPage() {
   return (
     <OperationalPage title="Telegram message templates" eyebrow="Secondary channel" description="Exact mock notifications, callback controls, and edit-in-place behavior without patient names.">
       <p className="scope-note">Telegram is secondary. The central Ward remains fully operational without it.</p>
+      {callbackError && <p className="command-error" role="alert">{callbackError}</p>}
       <Panel className="telegram-policy"><strong>Delivery policy</strong><span>At most 1 message per second per chat. Extra messages queue; repeats for the same bed and event merge into the existing message.</span></Panel>
       <div className="telegram-template-grid">{messages.map(renderMessage)}</div>
     </OperationalPage>

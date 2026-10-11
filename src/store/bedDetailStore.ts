@@ -22,7 +22,7 @@ interface BedDetailState {
   setRole: (role: Role) => void
   acknowledgeResponse: (bedId: string) => Promise<void>
   escalateAlert: (bedId: string) => Promise<boolean>
-  confirmPatient: (bedId: string, status: 'patient_ok' | 'patient_not_ok') => Promise<void>
+  confirmPatient: (bedId: string, status: 'patient_ok' | 'patient_not_ok') => Promise<boolean>
   recordManualReading: (bedId: string, reading: ManualReadingInput) => Promise<boolean>
   isolateDevice: (bedId: string) => Promise<void>
   undoAction: (actionId: string) => Promise<void>
@@ -81,17 +81,21 @@ export const useBedDetailStore = create<BedDetailState>((set, get) => ({
   },
   confirmPatient: async (bedId, status) => {
     const state = get()
-    if (!isClinicalRole(state.currentRole) || !can(state.currentRole, 'confirm_bedside_status')) return
+    if (!isClinicalRole(state.currentRole) || !can(state.currentRole, 'confirm_bedside_status')) return false
     const current = responseFor(state, bedId)
     const occurredAt = Date.now()
-    if (!await dispatchCommand({ type: 'confirm_bedside', bedId, status })) return
+    if (!await dispatchCommand({ type: 'confirm_bedside', bedId, status })) {
+      set({ commandError: `Bedside confirmation for ${bedId} was not accepted. The prior clinical state remains active.` })
+      return false
+    }
     if (status === 'patient_not_ok') {
       useWardDashboardStore.setState((ward) => ({ beds: ward.beds.map((bed) => bed.id === bedId ? {
         ...bed, priority: 'high', verdict: bed.verdict === 'TAMPERING' || bed.verdict === 'DEVICE_ATTACK' ? 'BOTH' : 'EMERGENCY',
         reason: 'Patient confirmed NOT OK at bedside', requestedAction: 'Immediate clinical assessment required',
       } : bed) }))
     }
-    set({ responses: { ...state.responses, [bedId]: { ...current, bedsideStatus: status, bedsideConfirmedAt: occurredAt } }, actions: appendUserAction(state, bedId, status, status === 'patient_ok' ? 'Patient confirmed OK at bedside' : 'Patient confirmed NOT OK; high alert raised') })
+    set({ responses: { ...state.responses, [bedId]: { ...current, bedsideStatus: status, bedsideConfirmedAt: occurredAt } }, actions: appendUserAction(state, bedId, status, status === 'patient_ok' ? 'Patient confirmed OK at bedside' : 'Patient confirmed NOT OK; high alert raised'), commandError: null })
+    return true
   },
   recordManualReading: async (bedId, reading) => {
     const state = get()
