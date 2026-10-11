@@ -177,6 +177,12 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   expect(await page.locator('.bed-tile--high').first().evaluate((element) => getComputedStyle(element).animationDuration)).toBe('0.5s')
   expect(await page.locator('.bed-tile--medium').first().evaluate((element) => getComputedStyle(element).animationDuration)).toBe('1.5s')
   expect(await page.locator('.bed-tile--low').first().evaluate((element) => getComputedStyle(element).animationName)).toBe('none')
+  const tileHeights = await page.locator('.bed-tile--compact').evaluateAll((tiles) => tiles.map((tile) => Math.round(tile.getBoundingClientRect().height)))
+  expect(tileHeights).toHaveLength(12)
+  expect(new Set(tileHeights).size).toBe(1)
+  expect(await page.locator('.bed-tile--compact').first().evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(248, 251, 255)')
+  expect(await page.locator('.bed-tile--compact .waveform').first().evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(7, 23, 37)')
+  expect(await page.locator('.primary-nav a.active').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(255, 255, 255)')
 
   const bed = page.getByRole('link', { name: /Bed 3:/ })
   await expect(bed).toContainText('NS, age 72')

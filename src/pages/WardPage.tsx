@@ -52,7 +52,7 @@ export function WardPage() {
   }
 
   return (
-    <main id="main-content" className="ward-page">
+    <main id="main-content" className="ward-page ward-page--concept">
       <div className="sr-only" aria-live="assertive" aria-atomic="true">{announcement}</div>
       <PageHeader
         eyebrow="Ward 6 · Critical Care"
@@ -68,16 +68,29 @@ export function WardPage() {
       {loadError && <p className="ward-status-message ward-status-message--error" role="alert">Ward refresh failed: {loadError}. Last known patient data remains visible.</p>}
       {commandError && <p className="ward-status-message ward-status-message--error" role="alert">{commandError}</p>}
 
-      <WardSummaryRow summary={summary} />
+      <section className="ward-console" aria-labelledby="ward-console-title">
+        <header className="ward-console__header">
+          <div>
+            <p className="eyebrow">Real-time bedside telemetry</p>
+            <h2 id="ward-console-title">Bed monitoring</h2>
+          </div>
+          <div className="ward-console__meta" aria-label="Monitoring status">
+            <span><i aria-hidden="true" />{summary.totalBeds} beds monitored</span>
+            <span>{summary.activeAlarms} active alarms</span>
+          </div>
+        </header>
 
-      <button className="mobile-alert-toggle" type="button" onClick={() => setRailCollapsed((value) => !value)} aria-expanded={!railCollapsed} aria-controls="alert-rail-content">
-        Alerts <strong>{summary.activeAlarms}</strong><span>{beds.filter((bed) => bed.priority === 'high').length} high priority</span>
-      </button>
+        <WardSummaryRow summary={summary} />
 
-      <div className="ward-layout">
-        <WardGrid beds={beds} onOpenBed={openBed} hideNames={hideNames} />
-        <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeFromRail} onOpenBed={openBed} canAcknowledge={currentRole === 'nurse'} />
-      </div>
+        <button className="mobile-alert-toggle" type="button" onClick={() => setRailCollapsed((value) => !value)} aria-expanded={!railCollapsed} aria-controls="alert-rail-content">
+          Alerts <strong>{summary.activeAlarms}</strong><span>{beds.filter((bed) => bed.priority === 'high').length} high priority</span>
+        </button>
+
+        <div className="ward-layout">
+          <WardGrid beds={beds} onOpenBed={openBed} hideNames={hideNames} />
+          <AlertRail beds={beds} activities={activities} collapsed={railCollapsed} onToggle={() => setRailCollapsed((value) => !value)} onAcknowledge={acknowledgeFromRail} onOpenBed={openBed} canAcknowledge={currentRole === 'nurse'} />
+        </div>
+      </section>
     </main>
   )
 }

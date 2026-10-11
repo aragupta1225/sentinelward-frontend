@@ -1,6 +1,6 @@
 # SentinelWard Frontend Progress
 
-Last verified: 2026-10-11
+Last verified: 2026-10-12
 
 Owner: Antara Gupta
 
@@ -9,6 +9,8 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 ## Current Status
 
 The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional and visual Drive requirements. Antara Gupta's confirmed frontend scope is complete in mock mode.
+
+An approved UI refresh is now in progress. The Ward establishes the new visual direction: a black application header with separate white oval navigation, a soft white/blue workspace, equal-size light bed cards, dark monitor-only waveforms, a light alert rail, and alarm colours reserved for clinical severity.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -40,6 +42,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - Deterministic timed scenarios cover the full 12-minute ward script, real emergency, loose sensor, drift, replay attack, fake flatline, and flood.
 - The Telegram route now provides all eight specified event templates with their exact recipients, message copy, role-aware callback buttons, 12-second waveform previews for high alerts, same-message acknowledgement/escalation edits, and a one-message-per-second repeat-merging queue.
 - Ward HR and SpO₂ numerals render at a verified minimum of 40 px on desktop, 1024×768, and 768×1024 layouts without horizontal overflow.
+- The approved Ward UI uses twelve equal-height light bed cards, dark monitor-only waveform panels, a light-blue alert rail, blue non-clinical accents, clinically meaningful green only inside bed monitoring, and the existing alarm-only red/yellow/cyan semantics.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
 - M1 runtime hardening: validated environment configuration selects one mock or backend adapter set for Ward REST, Ward events, and commands; mock mode is the safe default.
@@ -69,7 +72,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
 - Screenshot-based visual regression is not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
 - Production deployment, CI, monitoring, and backend infrastructure are not configured and are outside Antara Gupta's confirmed frontend assignment unless explicitly added later.
-- Final brand/design approval remains external; the current system is a consistent, accessible functional baseline.
+- The Ward direction is approved; the same visual system still needs to be applied to the remaining screens before final cross-screen design approval.
 
 ## Bugs and Technical Debt
 
@@ -79,9 +82,18 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**Antara frontend scope — complete in mock mode.**
+**UI-R2 — Apply the approved Ward visual system across the remaining screens.**
 
-The live R8 Part H checklist is fully reconciled against implementation and automated evidence. No further product behavior or visual rule should be added without a new frontend requirement or the team's integration contracts.
+The live R8 Part H functional checklist remains complete. The active work is visual only: preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant while bringing Bed Detail, Alerts, the remaining authenticated routes, Landing, and Login into the approved theme.
+
+### UI-R1 Verified Result — Ward Visual Direction
+
+- The application header is black with individual white oval navigation controls; the active route is a solid white pill with black text.
+- The Ward workspace is soft white and blue. Patient cards are light while ECG/PPG waveform panels remain dark like bedside monitors.
+- All twelve bed cards have the same measured height at the four-column desktop layout and retain responsive one-, two-, three-, and four-column behavior.
+- The alert rail is a light clinical side panel with blue action rows; alarm priority remains explicit through text and the exact red, yellow, and cyan clinical tokens.
+- Decorative green was replaced with blue. Green remains only where it communicates ECG, freshness, or trusted bed-monitoring state.
+- The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, desktop/tablet responsive coverage, TypeScript compilation, and the production build.
 
 ### M1 Verified Result
 
@@ -261,9 +273,10 @@ The live R8 Part H checklist is fully reconciled against implementation and auto
 
 ## Prioritized Roadmap
 
-1. No further Antara-owned frontend feature is required by the supplied Drive specification.
-2. When the team repository and services exist, integrate the typed adapters without changing the verified UI safety invariants.
-3. Treat any broader visual redesign as a new product decision; preserve exact clinical copy, alarm semantics, role boundaries, and accessibility behavior.
+1. Apply the approved Ward visual system to Bed Detail and Alerts without changing clinical behavior.
+2. Apply the shared theme to the remaining authenticated routes, then Landing and Login.
+3. Run the full cross-screen accessibility and workflow gate before final design approval.
+4. When the team repository and services exist, integrate the typed adapters without changing the verified UI safety invariants.
 
 ## Provisional Backend Dependencies
 
@@ -286,10 +299,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 185 modules; CSS 56.94 kB (12.08 kB gzip); initial JavaScript 365.18 kB (120.86 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 185 modules; CSS 64.49 kB (13.55 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Await the team repository and confirmed backend contracts before replacing mock adapters or merging this frontend.
-2. Keep real backend, Telegram delivery, deployment, and team-repository integration outside this frontend-only completion claim.
-3. Preserve the complete verified baseline; do not add work outside Antara Gupta's assigned scope without an explicit new decision.
+1. Continue UI-R2 with Bed Detail and Alerts, using the Ward as the approved reference.
+2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
+3. Re-run all route axe scans, workflows, responsive checks, and the production build after each cohesive UI milestone.
