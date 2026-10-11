@@ -15,7 +15,7 @@ describe('screen routes', () => {
     ['/incident/B08', 'Replay attack on MON-08, Bed 8', 'it'],
     ['/incident/B08/report', 'CERT-In report draft', 'it'],
     ['/tickets', 'Biomedical tickets', 'biomedical'],
-    ['/briefing', 'Briefing and workload', 'nurse'],
+    ['/briefing', 'Shift briefing and workload', 'nurse'],
     ['/log', 'Action log', 'nurse'],
     ['/demo', 'Demo control', 'operator'],
     ['/telegram', 'Telegram message templates', 'nurse'],

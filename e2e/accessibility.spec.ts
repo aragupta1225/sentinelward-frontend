@@ -16,7 +16,7 @@ const protectedRoutes = [
   ['/incident/B08', 'Replay attack', 'it'],
   ['/incident/B08/report', 'CERT-In report draft', 'it'],
   ['/tickets', 'Biomedical tickets', 'biomedical'],
-  ['/briefing', 'Briefing and workload', 'nurse'],
+  ['/briefing', 'Shift briefing and workload', 'nurse'],
   ['/log', 'Action log', 'nurse'],
   ['/demo', 'Demo control', 'operator'],
   ['/telegram', 'Telegram message templates', 'nurse'],

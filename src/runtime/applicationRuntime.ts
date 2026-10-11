@@ -1,4 +1,5 @@
 import type { CommandAdapter } from '../adapters/commandContracts'
+import { HttpBriefingAdapter, MockBriefingAdapter, type BriefingAdapter } from '../adapters/briefingAdapters'
 import { createWardAdapters, type WardAdapterSet } from '../adapters/createWardAdapters'
 import { HttpCommandAdapter } from '../adapters/httpCommandAdapter'
 import { MockCommandAdapter } from '../adapters/mockCommandAdapter'
@@ -11,6 +12,7 @@ export interface ApplicationRuntime {
   ward: WardAdapterSet
   commands: CommandAdapter
   public: PublicAdapter
+  briefing: BriefingAdapter
 }
 
 export interface RuntimeLocation {
@@ -33,5 +35,8 @@ export function createApplicationRuntime(
     public: config.mode === 'mock'
       ? new MockPublicAdapter()
       : new HttpPublicAdapter(config.apiBaseUrl),
+    briefing: config.mode === 'mock'
+      ? new MockBriefingAdapter()
+      : new HttpBriefingAdapter(config.apiBaseUrl),
   }
 }

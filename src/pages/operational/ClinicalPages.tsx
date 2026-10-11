@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { loadBriefing, loadWorkload } from '../../adapters/briefingGateway'
 import { ActionButton, Panel, StatusChip } from '../../components/ui'
 import { can } from '../../domain/access'
+import type { NurseWorkload, ShiftBriefing } from '../../domain/briefing'
 import { VERDICT_PRESENTATION, type Bed, type VitalReadings } from '../../domain/ward'
 import { useAlertStore } from '../../store/alertStore'
 import { useBedDetailStore } from '../../store/bedDetailStore'
@@ -71,33 +74,75 @@ export function CensusPage() {
 }
 
 export function BriefingPage() {
-  const beds = useWardDashboardStore((state) => state.beds)
-  const highPriorityBeds = beds.filter((bed) => bed.priority === 'high')
-  const clinicians = useClinicalWorkflowStore((state) => state.clinicians)
-  const assignments = useClinicalWorkflowStore((state) => state.assignments)
+  const [activeTab, setActiveTab] = useState<'briefing' | 'workload'>('briefing')
+  const [briefing, setBriefing] = useState<ShiftBriefing | null>(null)
+  const [workload, setWorkload] = useState<NurseWorkload[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    Promise.all([loadBriefing('08:00', controller.signal), loadWorkload(2, controller.signal)])
+      .then(([nextBriefing, nextWorkload]) => {
+        setBriefing(nextBriefing)
+        setWorkload(nextWorkload)
+      })
+      .catch((reason: unknown) => {
+        if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : 'Shift briefing could not be loaded.')
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
+  }, [])
 
   return (
-    <OperationalPage title="Briefing and workload" eyebrow="S10" description="A shift-level view of clinical priority and active workload.">
-      <div className="record-grid">
-        <Panel as="article" className="record-card">
-          <h2>Shift priorities</h2>
-          <strong>{highPriorityBeds.length} high-priority beds</strong>
-          <ul>{highPriorityBeds.map((bed) => <li key={bed.id}>{bed.label} · {VERDICT_PRESENTATION[bed.verdict].label}</li>)}</ul>
-        </Panel>
-        <Panel as="article" className="record-card">
-          <h2>Operational queues</h2>
-          <p>Doctor / tele-ICU: {highPriorityBeds.length} priority reviews</p>
-          <p>IT: {beds.filter((bed) => bed.trustState === 'untrusted').length} integrity reviews</p>
-          <p>Biomedical: {beds.filter((bed) => ['LOOSE_SENSOR', 'DRIFTING'].includes(bed.verdict)).length} device checks</p>
-        </Panel>
+    <OperationalPage title="Shift briefing and workload" eyebrow="S10" description="Handover context and nurse alarm load for the current shift.">
+      <div className="briefing-tabs" role="tablist" aria-label="Briefing views">
+        <button id="briefing-tab" role="tab" aria-selected={activeTab === 'briefing'} aria-controls="briefing-panel" onClick={() => setActiveTab('briefing')}>Briefing</button>
+        <button id="workload-tab" role="tab" aria-selected={activeTab === 'workload'} aria-controls="workload-panel" onClick={() => setActiveTab('workload')}>Workload</button>
       </div>
-      <h2>Clinical assignments</h2>
-      <div className="workload-grid">
-        {clinicians.map((clinician) => {
-          const active = assignments.filter((item) => item.clinicianId === clinician.id && item.status !== 'complete')
-          return <Panel as="article" key={clinician.id}><strong>{clinician.displayName}</strong><span>{active.length} / {clinician.capacity} active beds</span><ul>{active.map((item) => <li key={item.bedId}>{item.bedId} · {item.status.replaceAll('_', ' ')}</li>)}</ul></Panel>
-        })}
-      </div>
+      {loading && <p className="briefing-state" role="status">Preparing the shift briefing…</p>}
+      {error && <p className="command-error" role="alert">{error}</p>}
+      {!loading && !error && activeTab === 'briefing' && briefing && (
+        <section id="briefing-panel" role="tabpanel" aria-labelledby="briefing-tab" className="briefing-panel">
+          <Panel as="article" className="briefing-summary">
+            <p className="eyebrow">AI-written handover · {briefing.generatedBy}</p>
+            <h2>Since {briefing.since}</h2>
+            <p>{briefing.summary}</p>
+          </Panel>
+          <div className="briefing-metrics" aria-label="Shift totals">
+            <Panel><span>Incidents</span><strong>{briefing.incidents}</strong></Panel>
+            <Panel><span>Untrusted beds</span><strong>{briefing.untrustedBeds}</strong></Panel>
+            <Panel><span>Tickets open</span><strong>{briefing.openTickets}</strong></Panel>
+          </div>
+          <section className="blind-time-section" aria-labelledby="blind-time-title">
+            <h2 id="blind-time-title">Blind Time per bed</h2>
+            <p>Minutes with no trusted data since {briefing.since}.</p>
+            <ul className="blind-time-list">
+              {briefing.blindTime.map((entry) => <li key={entry.bedId}><strong>{entry.bedId}</strong><span>{entry.minutes} minutes without trusted data</span></li>)}
+            </ul>
+          </section>
+        </section>
+      )}
+      {!loading && !error && activeTab === 'workload' && (
+        <section id="workload-panel" role="tabpanel" aria-labelledby="workload-tab" className="workload-panel">
+          <header><div><p className="eyebrow">A7 · Nurse alarm load</p><h2>Alarms received in the last 2 h</h2></div><span className="workload-legend"><i aria-hidden="true" />Warning threshold: 40</span></header>
+          <div className="workload-chart" role="img" aria-label="Bar chart of alarms received per nurse in the last two hours, with a warning threshold at 40 alarms">
+            <div className="workload-threshold" aria-hidden="true"><span>40</span></div>
+            {workload.map((entry) => {
+              const aboveThreshold = entry.alarmsLastTwoHours >= 40
+              return (
+                <article className="workload-row" key={entry.nurseId}>
+                  <div className="workload-row__label"><strong>{entry.nurseName}</strong><b>{entry.alarmsLastTwoHours}</b></div>
+                  <div className="workload-bar-track" aria-hidden="true"><span style={{ width: `${Math.min(entry.alarmsLastTwoHours / 60 * 100, 100)}%` }} /></div>
+                  <StatusChip className={aboveThreshold ? 'workload-warning' : undefined}>{aboveThreshold ? 'Workload warning · 40+ alarms' : 'Within research threshold'}</StatusChip>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+      )}
     </OperationalPage>
   )
 }

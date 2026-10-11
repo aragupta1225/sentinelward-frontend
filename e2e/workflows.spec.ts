@@ -72,6 +72,25 @@ test('biomedical ticket board follows S9 status, repair, and repeat-device rules
   await expect(page.locator('.repeat-devices')).toContainText('MON-05')
 })
 
+test('shift briefing and workload follow the S10 handover rules', async ({ page }) => {
+  await signIn(page, 'nurse')
+  await navigateInApp(page, '/briefing')
+  await expect(page.getByRole('heading', { level: 1, name: 'Shift briefing and workload' })).toBeVisible()
+  await expect(page.getByText('AI-written handover · IBM Granite')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Since 08:00' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Blind Time per bed' })).toBeVisible()
+  await expect(page.getByText('B07', { exact: true })).toBeVisible()
+  await expect(page.getByText('6 minutes without trusted data')).toBeVisible()
+
+  await page.getByRole('tab', { name: 'Workload' }).click()
+  await expect(page.getByRole('heading', { name: 'Alarms received in the last 2 h' })).toBeVisible()
+  await expect(page.getByText('Warning threshold: 40')).toBeVisible()
+  const priya = page.locator('.workload-row').filter({ hasText: 'Nurse Priya' })
+  await expect(priya).toContainText('46')
+  await expect(priya).toContainText('Workload warning · 40+ alarms')
+  await expect(page.locator('.workload-warning')).toHaveCount(2)
+})
+
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
   await signIn(page, 'nurse')
   const bedTile = page.getByRole('link', { name: /Bed 3:/ })

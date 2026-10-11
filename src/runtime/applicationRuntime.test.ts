@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { HttpCommandAdapter } from '../adapters/httpCommandAdapter'
+import { HttpBriefingAdapter, MockBriefingAdapter } from '../adapters/briefingAdapters'
 import { HttpWardRestAdapter } from '../adapters/httpWardAdapter'
 import { MockCommandAdapter } from '../adapters/mockCommandAdapter'
 import { NativeWardWebSocketEventSource } from '../adapters/nativeWardWebSocket'
@@ -19,6 +20,7 @@ describe('application runtime composition', () => {
     expect(runtime.ward.events).toBeInstanceOf(MockWardGridEventSource)
     expect(runtime.commands).toBeInstanceOf(MockCommandAdapter)
     expect(runtime.public).toBeInstanceOf(MockPublicAdapter)
+    expect(runtime.briefing).toBeInstanceOf(MockBriefingAdapter)
   })
 
   it('selects all backend adapters from validated configuration', () => {
@@ -36,6 +38,7 @@ describe('application runtime composition', () => {
     expect(runtime.ward.events).toBeInstanceOf(NativeWardWebSocketEventSource)
     expect(runtime.commands).toBeInstanceOf(HttpCommandAdapter)
     expect(runtime.public).toBeInstanceOf(HttpPublicAdapter)
+    expect(runtime.briefing).toBeInstanceOf(HttpBriefingAdapter)
   })
 
   it('rejects an unknown runtime mode instead of silently enabling a transport', () => {
