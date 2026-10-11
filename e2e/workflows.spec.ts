@@ -109,6 +109,24 @@ test('action log search, filters, and IT-only undo follow S11', async ({ page })
   await expect(isolation.getByRole('button', { name: 'Undo' })).toHaveCount(0)
 })
 
+test('operator demo controls follow the complete S12 scenario and playback rules', async ({ page }) => {
+  await signIn(page, 'operator')
+  for (const scenario of ['Full ward script (12 min)', 'Real emergency only', 'Loose sensor', 'Drift', 'Replay attack', 'Fake flatline', 'Flood']) await expect(page.locator('.scenario-grid').getByText(scenario, { exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Full ward script (12 min)' })).toBeVisible()
+  await expect(page.getByText('Live timeline · what will happen when')).toBeVisible()
+
+  await page.getByRole('radio', { name: /^Real emergency only/ }).check()
+  await page.getByRole('button', { name: '5×' }).click()
+  await page.getByRole('button', { name: 'Run', exact: true }).click()
+  await expect(page.getByText(/running · 0:0\d · 5×/)).toBeVisible()
+  await page.getByRole('button', { name: 'Pause' }).click()
+  await expect(page.getByText(/paused · 0:0\d · 5×/)).toBeVisible()
+  await page.getByRole('button', { name: 'Resume' }).click()
+  await expect(page.getByText(/running · 0:0\d · 5×/)).toBeVisible()
+  await page.getByRole('button', { name: 'Reset ward' }).click()
+  await expect(page.getByText('idle · 0:00 · 5×')).toBeVisible()
+})
+
 test('Ward-to-Bed navigation restores keyboard focus to the originating tile', async ({ page }) => {
   await signIn(page, 'nurse')
   const bedTile = page.getByRole('link', { name: /Bed 3:/ })

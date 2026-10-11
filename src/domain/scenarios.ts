@@ -1,13 +1,14 @@
 import type { Bed } from './ward'
 
-export type ScenarioId = 'emergency' | 'loose_sensor' | 'drifting' | 'tampering' | 'both' | 'connection_loss'
+export type ScenarioId = 'full_ward_script' | 'emergency' | 'loose_sensor' | 'drifting' | 'replay_attack' | 'fake_flatline' | 'flood'
+export type ScenarioSpeed = 1 | 2 | 5
 
 export interface ScenarioStep {
   atSecond: number
   label: string
-  kind: 'bed_update' | 'connection'
+  kind: 'bed_update' | 'event'
+  bedId?: string
   patch?: Partial<Bed>
-  connection?: 'live' | 'disconnected'
 }
 
 export interface DemoScenario {
