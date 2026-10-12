@@ -62,7 +62,7 @@ export default function App() {
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <CommandFailureAnnouncer />
       <header className="topbar">
-        <Link className="brand" to={authenticated ? '/ward' : '/'} aria-label={authenticated ? 'SentinelWard ward view' : 'SentinelWard home'}><span className="brand__mark" aria-hidden="true">S</span><span><strong>SentinelWard</strong><small>Clinical command interface</small></span></Link>
+        <Link className="brand" to={authenticated ? '/ward' : '/'} aria-label={authenticated ? 'SentinelWard ward view' : 'SentinelWard home'}><span className="brand__wordmark" aria-hidden="true"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></span></Link>
         {authenticated && <nav className="primary-nav" aria-label="Primary">{navigation.filter(([, , screen]) => canViewScreen(role, screen as ScreenId)).map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>}
         {authenticated ? <div className="topbar__context"><WardClock /><span className="topbar__divider" aria-hidden="true" /><span>{ROLE_LABELS[role]} · {displayName}</span><button className="logout-link" type="button" onClick={() => { signOut(); navigate('/login') }}>Logout</button></div> : <Link className="logout-link public-login-link" to="/login">Log in</Link>}
       </header>

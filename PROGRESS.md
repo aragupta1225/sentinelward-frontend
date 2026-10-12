@@ -10,7 +10,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional and visual Drive requirements. Antara Gupta's confirmed frontend scope is complete in mock mode.
 
-The approved visual system now spans every public and authenticated screen: a black application header with a restrained borderless navigation dock, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity.
+The approved visual system now spans every public and authenticated screen: a slim black application header with an editorial wordmark and inline navigation, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -61,7 +61,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - Operational page hierarchy and responsive presentation are consistent while clinical copy, non-color status cues, 44-pixel actions, and mock-only boundaries remain intact.
 - Noncritical clinical, security, support, and demo route families are lazy-loaded behind an accessible status fallback; Ward and Bed Detail remain in the initial safety-critical bundle.
 - The external Google Fonts request has been removed in favor of resilient system sans and monospace stacks.
-- UI-R3 polishes the shared interface without changing the approved palette: the header uses a unified dark navigation dock with borderless labels and a restrained macOS-style hover lift/magnification, while reduced-motion users receive a static treatment.
+- UI-R4 refines the shared header from the supplied `headerInspo.png`: a compact SentinelWard wordmark, open inline navigation, and a separated account area replace the enclosed dock while retaining the restrained macOS-style hover lift/magnification and reduced-motion fallback.
 - Typography, casing, spacing, radii, and shadows are normalized across public, Ward, Bed Detail, and operational routes so clinical copy remains readable and the hierarchy feels authored rather than templated.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
@@ -85,9 +85,18 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**UI-R3 - Final cross-screen design review.**
+**UI-R4 - Header reference refinement and review.**
 
-The live R8 Part H functional checklist remains complete. UI-R3 is implemented and verified across all routes. The remaining step is Antara Gupta's subjective review of the polished design; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+The live R8 Part H functional checklist remains complete. UI-R4 is implemented and verified across all routes. The remaining step is Antara Gupta's subjective review of the reference-led header; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+
+### UI-R4 Verified Result - Reference-led Header
+
+- `headerInspo.png` was fetched from Antara Gupta's supplied Drive folder and used as the structural reference: the header is a slim uninterrupted dark bar with a strong left wordmark, open inline route labels, generous horizontal spacing, and a right utility area separated by a quiet vertical rule.
+- SentinelWard keeps its own identity through a custom white-and-blue `SentinelWard` wordmark and the already approved near-black palette; no WebMD branding or healthcare-site copy was reproduced.
+- Route labels have no outline or persistent active fill. Hover alone reveals the subtle background, underline, lift, and macOS-style magnification, including the softer response on neighboring items.
+- The account role, clock, and Logout remain functional, keyboard focus remains visible, tablet wrapping is preserved, and reduced-motion mode removes the movement.
+- The lazy-route test boundary now allows the existing code-split screens up to five seconds to resolve under full-suite resource contention while retaining the same heading assertions.
+- Visual inspection covered the 1440 px authenticated header. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R3 Verified Result - Interface Polish
 
@@ -318,10 +327,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 187 modules; CSS 91.27 kB (18.30 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 187 modules; CSS 91.82 kB (18.45 kB gzip); initial JavaScript 365.79 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the completed UI-R3 polish in the running application and collect only specific visual refinements.
+1. Review the completed UI-R4 reference-led header in the running application and collect only specific visual refinements.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.

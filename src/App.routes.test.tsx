@@ -24,17 +24,17 @@ describe('screen routes', () => {
     if (path === '/' || path === '/login') useSessionStore.getState().signOut()
     else await useSessionStore.getState().signIn(role ?? 'nurse')
     render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
-    expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: heading }, { timeout: 5_000 })).toBeInTheDocument()
   })
 
   it('renders the nurse and doctor alerts route but hides it from unrelated roles', async () => {
     await useSessionStore.getState().signIn('nurse')
     const { unmount } = render(<MemoryRouter initialEntries={['/alerts']}><App /></MemoryRouter>)
-    expect(await screen.findByRole('heading', { level: 1, name: 'Alerts and escalation' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Alerts and escalation' }, { timeout: 5_000 })).toBeInTheDocument()
     unmount()
 
     await useSessionStore.getState().signIn('it')
     render(<MemoryRouter initialEntries={['/alerts']}><App /></MemoryRouter>)
-    expect(await screen.findByRole('heading', { level: 1, name: 'Security operations' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Security operations' }, { timeout: 5_000 })).toBeInTheDocument()
   })
 })

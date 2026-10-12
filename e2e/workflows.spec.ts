@@ -185,10 +185,13 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   const activeNav = page.locator('.primary-nav a.active')
   expect(await activeNav.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)')
   expect(await activeNav.evaluate((element) => getComputedStyle(element).borderTopWidth)).toBe('0px')
+  expect(await activeNav.evaluate((element) => getComputedStyle(element, '::after').opacity)).toBe('0')
   await activeNav.hover()
   expect(await activeNav.evaluate((element) => getComputedStyle(element).transform)).not.toBe('none')
+  await expect.poll(() => activeNav.evaluate((element) => getComputedStyle(element, '::after').opacity)).toBe('1')
   await page.getByRole('heading', { level: 1, name: 'Live ward' }).hover()
   await expect.poll(() => activeNav.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)')
+  await expect.poll(() => activeNav.evaluate((element) => getComputedStyle(element, '::after').opacity)).toBe('0')
 
   const bed = page.getByRole('link', { name: /Bed 3:/ })
   await expect(bed).toContainText('NS, age 72')
