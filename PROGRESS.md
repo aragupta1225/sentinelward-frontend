@@ -10,7 +10,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional and visual Drive requirements. Antara Gupta's confirmed frontend scope is complete in mock mode.
 
-An approved UI refresh is now in progress. The Ward establishes the new visual direction: a black application header with separate white oval navigation, a soft white/blue workspace, equal-size light bed cards, dark monitor-only waveforms, a light alert rail, and alarm colours reserved for clinical severity.
+The approved visual system now spans every public and authenticated screen: a black application header with separate white oval navigation, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -43,6 +43,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - The Telegram route now provides all eight specified event templates with their exact recipients, message copy, role-aware callback buttons, 12-second waveform previews for high alerts, same-message acknowledgement/escalation edits, and a one-message-per-second repeat-merging queue.
 - Ward HR and SpO₂ numerals render at a verified minimum of 40 px on desktop, 1024×768, and 768×1024 layouts without horizontal overflow.
 - The approved Ward UI uses twelve equal-height light bed cards, dark monitor-only waveform panels, a light-blue alert rail, blue non-clinical accents, clinically meaningful green only inside bed monitoring, and the existing alarm-only red/yellow/cyan semantics.
+- Bed Detail, Alerts, Census, Security, Incident, CERT-In Report, Tickets, Briefing, Action Log, Demo Control, Telegram, Landing, and Login now use the same approved black-header and light-workspace visual system without changing their workflows or safety boundaries.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
 - M1 runtime hardening: validated environment configuration selects one mock or backend adapter set for Ward REST, Ward events, and commands; mock mode is the safe default.
@@ -72,7 +73,7 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 - WebSocket missed-event recovery invokes a hook, but recovery fetching and reconciliation are not implemented.
 - Screenshot-based visual regression is not configured; responsive behavior is covered functionally at desktop, landscape tablet, and portrait tablet viewports.
 - Production deployment, CI, monitoring, and backend infrastructure are not configured and are outside Antara Gupta's confirmed frontend assignment unless explicitly added later.
-- The Ward direction is approved; the same visual system still needs to be applied to the remaining screens before final cross-screen design approval.
+- Final subjective design approval remains with Antara Gupta; the implemented cross-screen system has passed automated accessibility, workflow, responsive, and production-build verification.
 
 ## Bugs and Technical Debt
 
@@ -82,9 +83,9 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**UI-R2 — Apply the approved Ward visual system across the remaining screens.**
+**UI-R3 - Final cross-screen design review.**
 
-The live R8 Part H functional checklist remains complete. The active work is visual only: preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant while bringing Bed Detail, Alerts, the remaining authenticated routes, Landing, and Login into the approved theme.
+The live R8 Part H functional checklist remains complete. UI-R2 is implemented and verified across all routes. The remaining step is Antara Gupta's subjective review of the cohesive design; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
 
 ### UI-R1 Verified Result — Ward Visual Direction
 
@@ -94,6 +95,14 @@ The live R8 Part H functional checklist remains complete. The active work is vis
 - The alert rail is a light clinical side panel with blue action rows; alarm priority remains explicit through text and the exact red, yellow, and cyan clinical tokens.
 - Decorative green was replaced with blue. Green remains only where it communicates ECG, freshness, or trusted bed-monitoring state.
 - The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, desktop/tablet responsive coverage, TypeScript compilation, and the production build.
+
+### UI-R2 Verified Result - Cross-screen Visual System
+
+- Bed Detail and Telegram retain dark waveform monitors while their surrounding clinical controls, evidence panels, forms, and cards use readable white and soft-blue surfaces.
+- Alerts, Census, Briefing, Action Log, Demo Control, Security, Incident, CERT-In Report, and Biomedical Tickets share the approved hierarchy, blue actions, light tables, and black header with role-specific white oval navigation.
+- Landing and Login use the same light blue foundation, white cards, dark readable typography, and blue calls to action.
+- Red, yellow, and cyan remain reserved for clinical alarm priority. Green remains only for meaningful monitored ECG, freshness, trust, or confirmation cues.
+- Visual inspection covered all route families at 1440 px. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### M1 Verified Result
 
@@ -273,10 +282,9 @@ The live R8 Part H functional checklist remains complete. The active work is vis
 
 ## Prioritized Roadmap
 
-1. Apply the approved Ward visual system to Bed Detail and Alerts without changing clinical behavior.
-2. Apply the shared theme to the remaining authenticated routes, then Landing and Login.
-3. Run the full cross-screen accessibility and workflow gate before final design approval.
-4. When the team repository and services exist, integrate the typed adapters without changing the verified UI safety invariants.
+1. Obtain Antara Gupta's final cross-screen design approval and apply only requested visual refinements.
+2. Preserve the verified functional and accessibility baseline during any UI refinement.
+3. When the team repository and services exist, integrate the typed adapters without changing the verified UI safety invariants.
 
 ## Provisional Backend Dependencies
 
@@ -299,10 +307,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 185 modules; CSS 64.49 kB (13.55 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 186 modules; CSS 81.01 kB (16.48 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Continue UI-R2 with Bed Detail and Alerts, using the Ward as the approved reference.
+1. Review the completed UI-R2 route set in the running application and collect only specific visual refinements.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
-3. Re-run all route axe scans, workflows, responsive checks, and the production build after each cohesive UI milestone.
+3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.

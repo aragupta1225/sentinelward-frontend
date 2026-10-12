@@ -1,0 +1,280 @@
+/* Approved SentinelWard visual direction: dark application header, light workspaces, blue UI accents. */
+.app-shell { background: #edf4fb; }
+
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) { color: #17243a; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) h1,
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) h2 { color: #14243a; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .eyebrow { color: #315f9b; }
+
+:is(.operational-page, .bed-detail-page) .ui-page-header { border-bottom-color: #c8d8e7; }
+:is(.operational-page, .bed-detail-page) .ui-page-header__description { color: #4c6680; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-panel { border-color: #bfd1e1; color: #17243a; background: #fff; box-shadow: 0 10px 26px rgba(39, 77, 113, .08); }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-action { border-color: #9ebbd5; color: #194f80; background: #e3eef8; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-action:hover:not(:disabled) { background: #d3e5f5; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-action--primary { border-color: #2d6eae; color: #fff; background: #2d6eae; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-action--primary:hover:not(:disabled) { background: #245c92; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-action--danger { border-color: #527ca8; color: #fff; background: #365f89; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-action--quiet { border-color: transparent; color: #315f8c; background: transparent; box-shadow: none; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip { border-color: #abc3d9; color: #365775; background: #eef5fb; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--positive { border-color: #9dbdd9; color: #1f5689; background: #dcecf9; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--positive i { background: #3e82c2; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--info { border-color: #9dbdd9; color: #1f5689; background: #dcecf9; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--warning { border-color: #b6aecb; color: #584d75; background: #eeeaf6; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--critical { border-color: #b9abc8; color: #5e496f; background: #f1eaf5; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--alarm-low { border-color: #4f9baa; color: #075b68; background: #dff5f7; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--alarm-medium { border-color: #b5953e; color: #674e00; background: #fff6d8; }
+:is(.operational-page, .bed-detail-page, .landing-page, .login-page) .ui-status-chip--alarm-high { border-color: #ca676d; color: #8f2029; background: #fde9eb; }
+:is(.operational-page, .bed-detail-page) .ui-empty-state { color: #506b85; }
+
+.simple-page { color: #17243a; }
+.simple-page > p:not(.eyebrow, .scope-note) { color: #536d86; }
+.scope-note { color: #4c6780; }
+.page-actions a, .button-link, .table-actions a { border-color: #9ab8d2; color: #194f80; background: #e2eef8; }
+.field { color: #405f7b; }
+.operational-page .close-incident label,
+.operational-page .editable-report label,
+.operational-page .report-checklist label { color: #405f7b; }
+.field select, .inline-form input,
+.action-log-tools input, .action-log-tools select,
+.close-incident input, .editable-report input, .editable-report textarea,
+.report-checklist input:not([type='checkbox']), .ticket-update textarea { border-color: #a9c0d6; color: #17243a; background: #fff; }
+
+/* Bed Detail keeps only live signal visualizations dark. */
+.bed-detail-page .detail-tabs { border-bottom-color: #bfd1e1; }
+.bed-detail-page .detail-tabs button { color: #55708a; }
+.bed-detail-page .detail-tabs button[aria-current='page'] { border-bottom-color: #2f72b7; color: #1f5d96; }
+.bed-detail-page .bed-tile { border-right-color: #9fb8d2; border-bottom-color: #9fb8d2; border-left-color: #9fb8d2; color: #17243a; background: #f8fbff; box-shadow: 0 14px 32px rgba(36, 73, 110, .13); }
+.bed-detail-page .bed-tile--untrusted::after { opacity: .055; background: repeating-linear-gradient(-45deg, #173f68 0, #173f68 5px, transparent 5px, transparent 12px); }
+.bed-detail-page .bed-tile__header { border-bottom-color: #c8d7e6; background: #fff; }
+.bed-detail-page .bed-tile__header h2 { color: #17243a; }
+.bed-detail-page .bed-tile .eyebrow { color: #315f9b; }
+.bed-detail-page .bed-tile .waveform { border-bottom-color: #29465e; background: #071725; }
+.bed-detail-page .bed-tile .vitals { border-bottom-color: #c9d8e7; background: #f2f7fc; }
+.bed-detail-page .bed-tile .vitals > div { border-right-color: #c9d8e7; }
+.bed-detail-page .bed-tile .vitals span { color: #45698f; }
+.bed-detail-page .bed-tile .vitals strong { color: #14243a; }
+.bed-detail-page .bed-tile .vitals small { color: #395570; }
+.bed-detail-page .bed-tile .trust-row { border-bottom-color: #c9d8e7; background: #fff; }
+.bed-detail-page .bed-tile .trust-row__labels { color: #334d6b; }
+.bed-detail-page .bed-tile .trust-row__labels strong { color: #14243a; }
+.bed-detail-page .bed-tile .trust-meter { background: #dbe6f1; }
+.bed-detail-page .bed-tile .trust-row > small { color: #526f8e; }
+.bed-detail-page .bed-tile .verdict { border-bottom: 1px solid #c9d8e7; background: #e8f2fc; }
+.bed-detail-page .bed-tile .verdict--medium { background: #fff8df; }
+.bed-detail-page .bed-tile .verdict--high { background: #fae9eb; }
+.bed-detail-page .bed-tile .verdict div span { color: #526b86; }
+.bed-detail-page .bed-tile .verdict div strong { color: #17243a; }
+.bed-detail-page .bed-tile .bed-tile__message { border-bottom-color: #c9d8e7; color: #17243a; background: #fff; }
+.bed-detail-page .bed-tile .bed-tile__message span { color: #4d6680; }
+.bed-detail-page .bed-tile .bed-tile__flags { border-bottom-color: #c9d8e7; color: #244e79; background: #e7f1fb; }
+.bed-detail-page .bed-tile .bed-tile__footer { color: #405f7e; background: #f2f7fc; }
+.bed-detail-page .bed-tile .freshness--stale { color: #3d5873; }
+.bed-detail-page .workflow-card > p:not(.eyebrow),
+.bed-detail-page .workflow-card small,
+.bed-detail-page .bedside-result { color: #4e6983; }
+.bed-detail-page .bedside-result--patient_ok { color: #256a50; }
+.bed-detail-page .bedside-result--patient_not_ok { color: #9c2831; }
+.bed-detail-page .why-panel > header > strong,
+.bed-detail-page .why-panel h3 { color: #4e6c88; }
+.bed-detail-page .why-panel > ol,
+.bed-detail-page .analysis-scores span { color: #304b66; }
+.bed-detail-page .analysis-scores span strong,
+.bed-detail-page .why-actions time { color: #2e679e; }
+.bed-detail-page .analysis-scores progress,
+.bed-detail-page .analysis-scores progress::-webkit-progress-bar { background: #dce7f1; }
+.bed-detail-page .analysis-scores em { color: #45627d; }
+.bed-detail-page .why-actions li,
+.bed-detail-page .witness-panel article { border-top-color: #c7d8e7; }
+.bed-detail-page .witness-panel article > strong { color: #28638f; }
+.bed-detail-page .witness-panel article > span { color: #334f69; }
+.bed-detail-page .witness-panel article > em { color: #326b54; }
+.bed-detail-page .incoming-untrusted { background-image: repeating-linear-gradient(135deg, rgb(64 97 128 / 7%) 0, rgb(64 97 128 / 7%) 8px, transparent 8px, transparent 16px); }
+.bed-detail-page .incoming-untrusted > p:not(.eyebrow) { color: #4d6881; }
+.bed-detail-page .incoming-untrusted > div { border-color: #9fb4c7; background: #eef3f7; }
+.bed-detail-page .incoming-untrusted > div > strong,
+.bed-detail-page .incoming-untrusted dt { color: #52677b; }
+.bed-detail-page .incoming-untrusted dd { color: #30485f; }
+.bed-detail-page .manual-check-panel > header > strong,
+.bed-detail-page .manual-check-panel label { color: #4c6780; }
+.bed-detail-page .manual-check-panel input,
+.bed-detail-page .manual-check-panel textarea { border-color: #a9c0d6; color: #17243a; background: #fff; }
+.bed-detail-page .manual-check-panel__saved { color: #315f8a; }
+.bed-detail-page .trend-panel,
+.bed-detail-page .action-panel { border-color: #bfd1e1; color: #17243a; background: #fff; box-shadow: 0 10px 26px rgba(39, 77, 113, .08); }
+.bed-detail-page .trend-panel p,
+.bed-detail-page .action-panel p { color: #506b84; }
+.bed-detail-page .trend-chart { border-radius: 10px; padding: 14px; background: #071725; }
+.bed-detail-page .action-panel th { border-bottom-color: #aac1d7; color: #45637e; background: #e9f2fa; }
+.bed-detail-page .action-panel td { border-bottom-color: #d1deea; color: #263f58; }
+.bed-detail-page .action-panel td small { color: #536f88; }
+.bed-detail-page .treatment-boundary { border-color: #b2c7da; color: #42617e; background: #eaf2f9; }
+
+/* Shared operational tables, cards, filters, and form surfaces. */
+.operational-page .record-card p,
+.operational-page .record-card li,
+.operational-page .record-card__meta,
+.operational-page .incident-severity,
+.operational-page .incident-detected,
+.operational-page .record-card dt { color: #4b6680; }
+.operational-page .record-card > a { color: #1f65a5; }
+.operational-page .security-summary { border-color: #bfd1e1; background: #fff; box-shadow: 0 8px 22px rgba(39, 77, 113, .07); }
+.operational-page .security-summary strong { color: #17243a; }
+.operational-page .security-summary span { color: #506a83; }
+.operational-page .data-table-wrap { border-color: #b8ccde; background: #fff; box-shadow: 0 10px 24px rgba(39, 77, 113, .07); }
+.operational-page .data-table th { color: #405e79; background: #dfebf6; }
+.operational-page .data-table td { border-top-color: #ceddea; color: #243d56; }
+.operational-page .data-table tbody tr:nth-child(even) { background: #f7fafd; }
+.operational-page .data-table select { border-color: #a9c0d6; color: #17243a; background: #fff; }
+.operational-page .census-filters button,
+.operational-page .alert-filters button,
+.operational-page .demo-speed button { border-color: #a9c1d7; color: #4b6680; background: #eef5fb; }
+.operational-page .census-filters button[aria-pressed='true'],
+.operational-page .alert-filters button[aria-pressed='true'],
+.operational-page .demo-speed button[aria-pressed='true'] { border-color: #2f72b7; color: #fff; background: #2f72b7; }
+.operational-page .census-trust-warning,
+.operational-page .blind-time-list li,
+.operational-page .workload-warning { border-color: #aab9c6; color: #30495f; background: repeating-linear-gradient(135deg, #eef2f5, #eef2f5 8px, #e4eaf0 8px, #e4eaf0 16px); }
+.operational-page .census-trust-warning strong,
+.operational-page .census-trust-warning span,
+.operational-page .blind-time-list span { color: #30495f; }
+.operational-page .census-trust { border-color: #a9c0d6; background: #eef5fb; }
+.operational-page .census-trust strong { color: #274761; }
+.operational-page .census-trust span { color: #506d86; }
+.operational-page .census-trust--untrusted { border-color: #9faeb9; background: repeating-linear-gradient(135deg, #edf1f4, #edf1f4 6px, #e1e7eb 6px, #e1e7eb 12px); }
+
+.operational-page .briefing-tabs { border-color: #b8ccde; background: #e5eff8; }
+.operational-page .briefing-tabs button { color: #506b84; }
+.operational-page .briefing-tabs button[aria-selected='true'] { color: #fff; background: #2f72b7; box-shadow: none; }
+.operational-page .briefing-state { border-color: #bfd1e1; color: #506a83; background: #fff; }
+.operational-page .briefing-summary > p:last-child,
+.operational-page .workload-grid ul { color: #3f5b75; }
+.operational-page .briefing-metrics span,
+.operational-page .blind-time-section > p { color: #4b6680; }
+.operational-page .workload-chart { border-color: #bdd0e1; background: #e7f0f8; }
+.operational-page .workload-row { border-color: #b6cada; background: #fff; }
+.operational-page .workload-bar-track { border-color: #9eb8cf; background: #dce7f1; }
+.operational-page .workload-threshold span { color: #4c6680; }
+.operational-page .action-log-note span,
+.operational-page .action-log-tools label,
+.operational-page .table-subline,
+.operational-page .plain-list small,
+.operational-page .inline-form label { color: #4d6881; }
+.operational-page .plain-list { border-color: #bfd1e1; background: #fff; }
+.operational-page .report-draft p { color: #3c5872; }
+
+.operational-page .scenario-runner { border-color: #b6cada; background: #fff; }
+.operational-page .scenario-runner--active { border-color: #2f72b7; box-shadow: inset 0 0 0 1px #2f72b7; }
+.operational-page .scenario-runner label small,
+.operational-page .demo-controls > div:first-child > span { color: #506b84; }
+.operational-page .scenario-console { border-color: #b8ccde; background: #e7f0f8; }
+.operational-page .demo-progress { border-color: #a9c0d6; background: #dce7f1; }
+.operational-page .demo-progress > span { background: #4382be; }
+.operational-page .demo-progress small { color: #07111c; }
+.operational-page .scenario-console li { border-bottom-color: #c5d6e5; color: #4d6881; }
+.operational-page .scenario-console time { color: #2c659e; }
+.operational-page .scenario-console li em { color: #4f6982; }
+.operational-page .scenario-console .demo-timeline--done { color: #3c5872; }
+.operational-page .scenario-console .demo-timeline--done em { color: #3f647f; }
+.operational-page .scenario-console .demo-timeline--next { color: #17243a; background: #d9e9f7; }
+
+.operational-page .ticket-column { border-color: #b8ccde; background: #e3edf6; }
+.operational-page .ticket-column > header span { color: #fff; background: #3b76ad; }
+.operational-page .ticket-card dd,
+.operational-page .ticket-note { color: #3f5b75; }
+.operational-page .ticket-card > header span,
+.operational-page .ticket-card dt,
+.operational-page .ticket-update label { color: #506b84; }
+.operational-page .ticket-repeat-count { border-color: #b5cadd; color: #46637e; background: #edf4fa; }
+.operational-page .ticket-repeat-count strong { color: #183d63; }
+.operational-page .repeat-devices { border-color: #bfd1e1; background: #fff; }
+.operational-page .repeat-devices small { color: #506b84; }
+
+.operational-page .template-list article { border-color: #b5cada; background: #fff; }
+.operational-page .template-list article > span { color: #24669f; }
+.operational-page .telegram-card > header > span,
+.operational-page .telegram-buttons code { color: #4b6680; }
+.operational-page .template-list small,
+.operational-page .telegram-policy span { color: #4f6982; }
+.operational-page .telegram-bubble { border-color: #a9c2d8; background: #e7f1fa; }
+.operational-page .telegram-bubble p { color: #294964; }
+.operational-page .telegram-bubble time { color: #506c85; }
+.operational-page .telegram-bubble small,
+.operational-page .telegram-edited { border-color: #b8cce0; color: #2e678f !important; }
+.operational-page .telegram-waveform { border-radius: 8px; padding: 8px; background: #071725; }
+.operational-page .telegram-queue,
+.operational-page .telegram-buttons small { color: #46637c; }
+
+/* Alerts and escalation. */
+.alerts-page .alert-table td > small { color: #4f6982; }
+.alert-sheet { border-left-color: #aac0d5; color: #17243a; background: #f8fbfe; box-shadow: -18px 0 42px rgb(37 69 101 / 20%); }
+.alert-sheet h2 { color: #17243a; }
+.alert-sheet__reason { color: #35516b; }
+.alert-sheet__facts div { border-color: #bfd1e1; background: #eaf3fa; }
+.alert-sheet__facts dt,
+.alert-ladder__step small { color: #506b84; }
+.alert-ladder__step { border-bottom-color: #c7d8e7; color: #56718a; }
+.alert-ladder__step > span { border-color: #8da9c1; }
+.alert-ladder__step--reached { color: #173f67; }
+.alert-ladder__step--reached > span { border-color: #2f72b7; color: #fff; background: #2f72b7; }
+.alert-history time { color: #2c659e; }
+.telegram-preview { border-left-color: #3f82bc; color: #274761; background: #e4eff8; }
+.alert-sheet__acknowledged { border-color: #94b6d2; color: #245d8d; background: #dcebf7; }
+.alerts-scope-note strong { color: #274761; }
+.alerts-scope-note span { color: #506b84; }
+
+/* Security, incident, evidence, and reporting. */
+.operational-page .security-metrics span,
+.operational-page .attack-feed time,
+.operational-page .attack-feed span,
+.operational-page .network-witness dt,
+.operational-page .incident-timeline span,
+.operational-page .evidence-list p,
+.operational-page .editable-report header span,
+.operational-page .report-deadline span,
+.operational-page .report-checklist p { color: #4f6982; }
+.operational-page .table-link { color: #1d629f; }
+.operational-page .table-link[aria-pressed='true'] { color: #154d7c; }
+.operational-page .fleet-result,
+.operational-page .attack-feed { border-color: #b9cddd; color: #3e5a73; background: #fff; }
+.operational-page .network-witness svg { border-color: #294b68; background: #071725; }
+.operational-page .network-witness dl div { border-color: #bfd1e1; background: #f4f8fc; }
+.confirmation-dialog { border-color: #abc2d6; color: #17243a; background: #fff; }
+.confirmation-dialog p { color: #4e6982; }
+.operational-page .report-clock,
+.operational-page .report-deadline strong { color: #244d74; }
+.operational-page .incident-timeline { border-left-color: #8db0cf; }
+.operational-page .incident-timeline time { color: #2c659e; }
+.operational-page .evidence-list code { color: #405e78; }
+.operational-page .evidence-list a { color: #1d629f; }
+
+/* Public landing and role selection. */
+.landing-page { color: #17243a; }
+.landing-hero > p:not(.eyebrow) { color: #405d78; }
+.landing-primary-action { border-color: #2f72b7 !important; color: #fff !important; background: #2f72b7 !important; }
+.landing-preview { border-color: #b8ccde; background: #e1edf7; box-shadow: 0 16px 34px rgba(39, 77, 113, .11); }
+.preview-state { border-color: #a9c1d7; color: #3d5c77; background: #f7fbfe; }
+.preview-state--live { border-color: #8eb4d4; color: #245d8e; }
+.preview-state--offline { border-color: #a4b1bb; color: #354b5c; background: repeating-linear-gradient(135deg, #e9edf0, #e9edf0 6px, #dfe5e9 6px, #dfe5e9 12px); }
+.landing-bed { border-color: #aac0d5; color: #17243a; background: #fff; }
+.landing-bed > header { border-bottom-color: #b8ccde; }
+.landing-bed > header span,
+.landing-bed small,
+.landing-bed footer { color: #49657e; }
+.landing-bed--high > header { border-bottom-color: var(--alarm-high); background: #fdecee; }
+.landing-bed--high > header span { color: #9e2630; }
+.landing-card-grid p,
+.landing-footer { color: #4d6881; }
+.landing-footer { border-top-color: #bfd1e1; }
+.landing-footer a { color: #1d629f; }
+
+.login-page { background: radial-gradient(circle at 20% 0, rgba(151, 195, 244, .3), transparent 36%); }
+.login-card { border-color: #b8ccde; color: #17243a; background: #fff; box-shadow: 0 20px 50px rgba(39, 77, 113, .12); }
+.login-card > p:not(.eyebrow, .scope-note) { color: #4d6881; }
+.login-role { border-color: #b7cbdd; color: #17243a; background: #f5f9fc; }
+.login-role:hover:not(:disabled), .login-role:focus-visible { border-color: #2f72b7; background: #e7f1fa; }
+.login-role span { color: #4f6982; }
+.login-role em { color: #1f6099; }
+.login-role--preset { border-color: #2f72b7; box-shadow: inset 0 0 0 1px #2f72b7; }
+.login-error { border-color: #a8b5bf; color: #30495f; background: #edf1f4; }
+
+.route-loading { color: #3f5d78; background: #edf4fb; }
