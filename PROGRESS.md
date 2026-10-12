@@ -1,6 +1,6 @@
 # SentinelWard Frontend Progress
 
-Last verified: 2026-10-12
+Last verified: 2026-10-13
 
 Owner: Antara Gupta
 
@@ -10,7 +10,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional and visual Drive requirements. Antara Gupta's confirmed frontend scope is complete in mock mode.
 
-The approved visual system now spans every public and authenticated screen: a black application header with separate white oval navigation, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity.
+The approved visual system now spans every public and authenticated screen: a black application header with a restrained borderless navigation dock, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -61,6 +61,8 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - Operational page hierarchy and responsive presentation are consistent while clinical copy, non-color status cues, 44-pixel actions, and mock-only boundaries remain intact.
 - Noncritical clinical, security, support, and demo route families are lazy-loaded behind an accessible status fallback; Ward and Bed Detail remain in the initial safety-critical bundle.
 - The external Google Fonts request has been removed in favor of resilient system sans and monospace stacks.
+- UI-R3 polishes the shared interface without changing the approved palette: the header uses a unified dark navigation dock with borderless labels and a restrained macOS-style hover lift/magnification, while reduced-motion users receive a static treatment.
+- Typography, casing, spacing, radii, and shadows are normalized across public, Ward, Bed Detail, and operational routes so clinical copy remains readable and the hierarchy feels authored rather than templated.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
 
@@ -79,13 +81,21 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - No failing product bug was found during this inspection.
 - Application state is memory-only and resets on refresh; this is acceptable for mocks but must remain clearly presented as simulated.
-- The initial production JavaScript chunk is 365.04 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
+- The initial production JavaScript chunk is 365.80 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
 
 ## Active Milestone
 
 **UI-R3 - Final cross-screen design review.**
 
-The live R8 Part H functional checklist remains complete. UI-R2 is implemented and verified across all routes. The remaining step is Antara Gupta's subjective review of the cohesive design; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+The live R8 Part H functional checklist remains complete. UI-R3 is implemented and verified across all routes. The remaining step is Antara Gupta's subjective review of the polished design; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+
+### UI-R3 Verified Result - Interface Polish
+
+- The black header now presents navigation as one subtle dock instead of a row of white-outlined text pills; hover raises and slightly enlarges the target, with a softer neighboring-item response that evokes a macOS dock without disrupting layout.
+- Current routes remain unfilled at rest, keyboard focus stays visible, and the entire hover treatment becomes static when reduced motion is requested.
+- Shared page titles, descriptions, labels, table text, status text, Bed Detail copy, Ward summaries, and compact tile metadata now use a more legible and consistent type scale with less mechanical uppercase tracking.
+- Cards, actions, inputs, tables, and panels use calmer radii, borders, spacing, and shadows while preserving the existing light-blue workspace, dark monitor surfaces, and exact alarm semantics.
+- Visual inspection covered Landing, Login, Ward, Bed Detail, Security, Tickets, and Telegram at desktop size. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R1 Verified Result — Ward Visual Direction
 
@@ -308,10 +318,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 186 modules; CSS 80.87 kB (16.45 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 187 modules; CSS 91.27 kB (18.30 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the completed UI-R2 route set in the running application and collect only specific visual refinements.
+1. Review the completed UI-R3 polish in the running application and collect only specific visual refinements.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.
