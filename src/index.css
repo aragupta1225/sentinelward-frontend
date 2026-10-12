@@ -29,7 +29,6 @@ button, [href] { touch-action: manipulation; }
 .primary-nav { display: flex; align-items: center; gap: 8px; border: 0; padding: 0; background: transparent; box-shadow: none; }
 .primary-nav a { min-height: 38px; display: inline-flex; align-items: center; border: 1px solid rgba(255, 255, 255, .78); border-radius: 999px; padding: 0 16px; color: #fff; background: transparent; font-size: 9px; text-decoration: none; text-transform: uppercase; letter-spacing: .07em; }
 .primary-nav a:hover { color: #08090b; background: #e8ebef; }
-.primary-nav a.active { color: #08090b; background: #fff; box-shadow: 0 5px 16px rgba(255, 255, 255, .12); }
 .topbar__context { display: flex; gap: 12px; align-items: center; color: #e6eff8; font-size: 12px; }
 .topbar__context > span:not(.topbar__divider) { min-height: 40px; display: inline-flex; align-items: center; border: 1px solid rgba(255, 255, 255, .7); border-radius: 999px; padding: 0 13px; background: transparent; }
 .topbar__divider { height: 20px; width: 1px; background: #44464d; }

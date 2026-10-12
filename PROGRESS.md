@@ -89,7 +89,7 @@ The live R8 Part H functional checklist remains complete. UI-R2 is implemented a
 
 ### UI-R1 Verified Result — Ward Visual Direction
 
-- The application header is black with individual white oval navigation controls; the active route is a solid white pill with black text.
+- The application header is black with individual white oval navigation controls; every route stays outlined at rest and gains the light fill only while hovered.
 - The Ward workspace is soft white and blue. Patient cards are light while ECG/PPG waveform panels remain dark like bedside monitors.
 - All twelve bed cards have the same measured height at the four-column desktop layout and retain responsive one-, two-, three-, and four-column behavior.
 - The alert rail is a light clinical side panel with blue action rows; alarm priority remains explicit through text and the exact red, yellow, and cyan clinical tokens.
@@ -101,6 +101,7 @@ The live R8 Part H functional checklist remains complete. UI-R2 is implemented a
 - Bed Detail and Telegram retain dark waveform monitors while their surrounding clinical controls, evidence panels, forms, and cards use readable white and soft-blue surfaces.
 - Alerts, Census, Briefing, Action Log, Demo Control, Security, Incident, CERT-In Report, and Biomedical Tickets share the approved hierarchy, blue actions, light tables, and black header with role-specific white oval navigation.
 - Landing and Login use the same light blue foundation, white cards, dark readable typography, and blue calls to action.
+- Header route pills remain outlined and transparent at rest, including the current route, and receive the light fill only on pointer hover; keyboard focus retains the global visible focus outline.
 - Red, yellow, and cyan remain reserved for clinical alarm priority. Green remains only for meaningful monitored ECG, freshness, trust, or confirmation cues.
 - Visual inspection covered all route families at 1440 px. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
@@ -307,7 +308,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 186 modules; CSS 81.01 kB (16.48 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 186 modules; CSS 80.87 kB (16.45 kB gzip); initial JavaScript 365.80 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 

@@ -1,6 +1,5 @@
 .primary-nav { display: flex; align-items: center; gap: 3px; }
 .primary-nav a { min-height: 40px; display: inline-flex; align-items: center; border-radius: 6px; padding: 0 9px; color: #89a4b5; font-size: 10px; text-decoration: none; text-transform: uppercase; letter-spacing: .06em; }
-.primary-nav a.active { color: #dff6fd; background: #133148; }
 .simple-page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 52px 0 70px; }
 .simple-page > h1 { margin-bottom: 18px; }
 .simple-page > p:not(.eyebrow, .scope-note) { max-width: 720px; color: var(--muted); line-height: 1.65; }
