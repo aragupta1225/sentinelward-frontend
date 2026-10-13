@@ -441,7 +441,7 @@
   background: rgb(255 255 255 / 94%);
   box-shadow: 0 14px 32px rgb(37 69 101 / 12%);
 }
-.landing-network-role > b { width: 40px; height: 40px; display: grid; flex: 0 0 40px; place-items: center; border: 1px solid #aac6df; border-radius: 50%; color: #fff; background: linear-gradient(145deg, #5e9bd1, #245f9f); font-size: 11px; }
+.landing-network-role > b { width: 40px; height: 40px; display: grid; flex: 0 0 40px; place-items: center; border: 1px solid rgb(255 255 255 / 48%); border-radius: 50%; color: #fff; font-size: 11px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 36%), 0 7px 16px rgb(32 55 94 / 22%); }
 .landing-network-role > span { display: grid; gap: 2px; }
 .landing-network-role strong { color: #183c61; font-size: 11px; }
 .landing-network-role small { color: #6a8198; font-size: 9px; }
@@ -450,8 +450,11 @@
 .landing-network-role--biomed { top: 7%; left: 50%; transform: translateX(-50%); }
 .landing-network-role--it { top: 23%; right: 6%; }
 .landing-network-role--operator { right: 9%; bottom: 10%; }
-.landing-network-role--nurse > b { background: linear-gradient(145deg, #345fc0, #071e7d); }
-.landing-network-role--it > b { background: linear-gradient(145deg, #294c88, #102344); }
+.landing-network-role--nurse > b { background: linear-gradient(145deg, #698cff, #2d4fba); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(50 79 184 / 28%); }
+.landing-network-role--doctor > b { background: linear-gradient(145deg, #a980eb, #6a43aa); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(106 67 170 / 25%); }
+.landing-network-role--biomed > b { background: linear-gradient(145deg, #f5a367, #be5a2f); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(190 90 47 / 24%); }
+.landing-network-role--it > b { background: linear-gradient(145deg, #55a1a8, #26636d); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(38 99 109 / 25%); }
+.landing-network-role--operator > b { background: linear-gradient(145deg, #d979a7, #97476e); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(151 71 110 / 24%); }
 .landing-network-dot { position: absolute; width: 10px; height: 10px; border: 3px solid #f7fbff; border-radius: 50%; background: #173f70; box-shadow: 0 4px 12px rgb(23 63 112 / 22%); }
 .landing-network-dot--one { top: 19%; left: 33%; }
 .landing-network-dot--two { right: 27%; bottom: 18%; width: 14px; height: 14px; }
