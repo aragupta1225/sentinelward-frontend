@@ -167,6 +167,7 @@ test('Ward-to-Bed navigation restores keyboard focus to the originating tile', a
 
 test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2', async ({ page }) => {
   await signIn(page, 'nurse')
+  expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(7, 30, 125)')
   await expect(page.getByText(/high-priority alarms/)).toBeVisible()
   await expect(page.getByText('Alarms stopped today')).toBeVisible()
   await expect(page.getByText('37', { exact: true })).toBeVisible()
@@ -198,6 +199,8 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   await expect(bed).not.toContainText('N. Singh')
   await page.getByLabel('Hide names').uncheck()
   await expect(bed).toContainText('N. Singh, age 72')
+  await navigateInApp(page, '/alerts')
+  expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 12, 20)')
 })
 
 test('response acknowledgement remains separate from bedside confirmation', async ({ page }) => {

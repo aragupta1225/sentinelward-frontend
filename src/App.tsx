@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Link, NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { BedDetailFunctionalPage } from './pages/BedDetailFunctionalPage'
 import { LandingPage, LoginPage } from './pages/operational/PublicPages'
 import { WardPage } from './pages/WardPage'
@@ -57,11 +57,13 @@ export default function App() {
   const wardBeds = useWardDashboardStore((state) => state.beds)
   const highAlerts = useMemo(() => wardBeds.filter((bed) => bed.priority === 'high'), [wardBeds])
   const navigate = useNavigate()
+  const location = useLocation()
+  const previewBlueHeader = location.pathname === '/ward'
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <CommandFailureAnnouncer />
-      <header className="topbar">
+      <header className={`topbar${previewBlueHeader ? ' topbar--ward-blue-preview' : ''}`}>
         <Link className="brand" to={authenticated ? '/ward' : '/'} aria-label={authenticated ? 'SentinelWard ward view' : 'SentinelWard home'}><span className="brand__wordmark" aria-hidden="true"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></span></Link>
         {authenticated && <nav className="primary-nav" aria-label="Primary">{navigation.filter(([, , screen]) => canViewScreen(role, screen as ScreenId)).map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>}
         {authenticated ? <div className="topbar__context"><WardClock /><span className="topbar__divider" aria-hidden="true" /><span>{ROLE_LABELS[role]} · {displayName}</span><button className="logout-link" type="button" onClick={() => { signOut(); navigate('/login') }}>Logout</button></div> : <Link className="logout-link public-login-link" to="/login">Log in</Link>}

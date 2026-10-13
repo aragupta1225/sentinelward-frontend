@@ -10,7 +10,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional and visual Drive requirements. Antara Gupta's confirmed frontend scope is complete in mock mode.
 
-The approved visual system now spans every public and authenticated screen: a slim black application header with an editorial wordmark and inline navigation, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity.
+The approved visual system now spans every public and authenticated screen: a slim editorial header with inline navigation, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity. The Ward route alone currently previews the deep-blue `headerInspo.png` colour; all other routes retain the black header pending Antara Gupta's approval.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -43,7 +43,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - The Telegram route now provides all eight specified event templates with their exact recipients, message copy, role-aware callback buttons, 12-second waveform previews for high alerts, same-message acknowledgement/escalation edits, and a one-message-per-second repeat-merging queue.
 - Ward HR and SpO₂ numerals render at a verified minimum of 40 px on desktop, 1024×768, and 768×1024 layouts without horizontal overflow.
 - The approved Ward UI uses twelve equal-height light bed cards, dark monitor-only waveform panels, a light-blue alert rail, blue non-clinical accents, clinically meaningful green only inside bed monitoring, and the existing alarm-only red/yellow/cyan semantics.
-- Bed Detail, Alerts, Census, Security, Incident, CERT-In Report, Tickets, Briefing, Action Log, Demo Control, Telegram, Landing, and Login now use the same approved black-header and light-workspace visual system without changing their workflows or safety boundaries.
+- Bed Detail, Alerts, Census, Security, Incident, CERT-In Report, Tickets, Briefing, Action Log, Demo Control, Telegram, Landing, and Login retain the approved black-header and light-workspace visual system without changing their workflows or safety boundaries; Ward alone carries the blue-header review variant.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
 - M1 runtime hardening: validated environment configuration selects one mock or backend adapter set for Ward REST, Ward events, and commands; mock mode is the safe default.
@@ -85,9 +85,16 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**UI-R4 - Header reference refinement and review.**
+**UI-R5 - Ward-only blue header preview and review.**
 
-The live R8 Part H functional checklist remains complete. UI-R4 is implemented and verified across all routes. The remaining step is Antara Gupta's subjective review of the reference-led header; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+The live R8 Part H functional checklist remains complete. UI-R5 is implemented and verified on Ward only. The remaining step is Antara Gupta's decision to approve the deep-blue header for all routes or keep/revise the preview; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+
+### UI-R5 Verified Result - Ward-only Blue Header Preview
+
+- `/ward` alone uses the deep reference blue `#071e7d`, matching the supplied `headerInspo.png` direction while retaining the SentinelWard wordmark, spacing, role context, and hover magnification.
+- Alerts and every other route retain the existing near-black `#090c14` header; browser regression explicitly verifies both route-specific computed colours.
+- The alarm strip, clinical priority colours, light workspace, keyboard focus, reduced-motion behavior, and all functional workflows are unchanged.
+- Visual inspection covered the 1440 px Ward preview. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R4 Verified Result - Reference-led Header
 
@@ -327,10 +334,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 187 modules; CSS 91.82 kB (18.45 kB gzip); initial JavaScript 365.79 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 187 modules; CSS 92.04 kB (18.51 kB gzip); initial JavaScript 365.85 kB (121.02 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the completed UI-R4 reference-led header in the running application and collect only specific visual refinements.
+1. Review the Ward-only deep-blue header preview and decide whether to extend it unchanged across all screens.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.

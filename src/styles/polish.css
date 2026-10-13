@@ -21,6 +21,13 @@ p, li { text-wrap: pretty; }
   background: #090c14;
   box-shadow: 0 9px 30px rgb(9 12 20 / 18%);
 }
+.topbar--ward-blue-preview {
+  border-bottom-color: rgb(157 184 255 / 26%);
+  background: #071e7d;
+  box-shadow: 0 10px 32px rgb(7 30 125 / 24%);
+}
+.topbar--ward-blue-preview .primary-nav a:hover,
+.topbar--ward-blue-preview .logout-link:hover { background: rgb(255 255 255 / 12%); }
 .brand {
   min-width: max-content;
   gap: 0;
