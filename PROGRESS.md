@@ -93,6 +93,7 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 ### UI-R7 Verified Result - Product-led Landing Experience
 
 - The unchanged SentinelWard header wordmark now opens into a split hero with the exact `Patient, Sensor, or Hacker?` message, a live four-bed mock command surface, restrained floating trust/human-decision cards, and a clear primary ward action.
+- The desktop hero now uses the full 1240 px content width and the exact viewport space below the 72 px header at 1366×768, keeping the complete introduction visible without scrolling; its reduced top spacing begins the story closer to navigation. The footer now mirrors the header as a full-width navy bar with the same wordmark colours and high-contrast link treatment.
 - The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
 - The three cause cards now combine adapted React Bits `TiltedCard`, `SpotlightCard`, and `BorderGlow` patterns on dark navy glass surfaces, with custom layered glass heart, sensor, and shield icons and no added runtime dependency. Motion is decorative, has a static reduced-motion fallback, and never carries status meaning.
 - The five-role section now translates the supplied `Connectivity.png` composition into a responsive shared-event network: one Bed 08 high alarm connects to concise nurse, doctor, biomedical, IT, and operator actions while mobile collapses to a readable role list. Each role icon now has a distinct restrained colour identity—blue, violet, orange, teal, and rose—while the text labels retain meaning independently of colour.
@@ -357,7 +358,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 189 modules; CSS 116.90 kB (24.03 kB gzip); initial JavaScript 376.49 kB (123.40 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 189 modules; CSS 117.56 kB (24.17 kB gzip); initial JavaScript 376.49 kB (123.40 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
