@@ -83,10 +83,10 @@ export function LandingPage() {
       <section className="landing-safety" aria-labelledby="safety-title">
         <div className="landing-safety__copy"><p className="eyebrow">Designed for dangerous ambiguity</p><h2 id="safety-title">Doubtful data never makes the ward go dark.</h2><p>Last-trusted values stay visible, emergencies keep escalating, and treatment stays human.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
         <ol className="landing-safety__steps">
-          <li><span>01</span><div><strong>See the patient</strong><p>Clinical urgency stays separate from device confidence.</p></div></li>
-          <li><span>02</span><div><strong>Question the signal</strong><p>Trust, freshness, and witness evidence remain explicit.</p></div></li>
-          <li><span>03</span><div><strong>Preserve the alarm</strong><p>Tampering can never silence a real emergency.</p></div></li>
-          <li><span>04</span><div><strong>Keep care human</strong><p>The interface supports decisions; it never changes treatment.</p></div></li>
+          <li className="landing-safety-card"><span>01</span><div><strong>See the patient</strong><p>Clinical urgency stays separate from device confidence.</p></div></li>
+          <li className="landing-safety-card"><span>02</span><div><strong>Question the signal</strong><p>Trust, freshness, and witness evidence remain explicit.</p></div></li>
+          <li className="landing-safety-card"><span>03</span><div><strong>Preserve the alarm</strong><p>Tampering can never silence a real emergency.</p></div></li>
+          <li className="landing-safety-card"><span>04</span><div><strong>Keep care human</strong><p>The interface supports decisions; it never changes treatment.</p></div></li>
         </ol>
       </section>
 

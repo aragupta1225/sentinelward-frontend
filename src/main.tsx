@@ -5,6 +5,7 @@ import './index.css'
 import './styles/light-theme.css'
 import './styles/polish.css'
 import './styles/landing.css'
+import './styles/dock-motion.css'
 import App from './App.tsx'
 import { bootstrapApplication } from './runtime/bootstrapApplication'
 

@@ -8,6 +8,7 @@ import { canViewScreen, ROLE_HOME, ROLE_LABELS, type ScreenId } from './domain/a
 import { useSessionStore } from './store/sessionStore'
 import { subscribeCommandFailures } from './adapters/commandGateway'
 import { useWardDashboardStore } from './store/wardDashboardStore'
+import { DockMotion } from './components/DockMotion'
 
 const navigation = [
   ['/ward', 'Ward', 'ward'], ['/alerts', 'Alerts', 'alerts'], ['/census', 'Census', 'census'], ['/security', 'Security', 'security'],
@@ -60,6 +61,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">Skip to main content</a>
+      <DockMotion />
       <CommandFailureAnnouncer />
       <header className="topbar">
         <Link className="brand" to={authenticated ? '/ward' : '/'} aria-label={authenticated ? 'SentinelWard ward view' : 'SentinelWard home'}><span className="brand__wordmark" aria-hidden="true"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></span></Link>

@@ -20,6 +20,7 @@ describe('S0 and S1 public workflows', () => {
     expect(container.querySelectorAll('.tilted-card')).toHaveLength(3)
     expect(screen.getByRole('heading', { name: 'SentinelWard separates what looks the same.' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Doubtful data never makes the ward go dark.' })).toBeInTheDocument()
+    expect(container.querySelectorAll('.landing-safety-card')).toHaveLength(4)
     expect(screen.getByLabelText('One Bed 08 high alarm shared across five SentinelWard roles')).toHaveTextContent('Bed 08 · High alarm')
     expect(screen.getByLabelText('One Bed 08 high alarm shared across five SentinelWard roles').querySelectorAll('.landing-network-role')).toHaveLength(5)
   })

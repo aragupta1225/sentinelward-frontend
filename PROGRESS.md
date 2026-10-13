@@ -96,6 +96,8 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 - The desktop hero now uses the full 1240 px content width and the exact viewport space below the 72 px header at 1366×768, keeping the complete introduction visible without scrolling; its reduced top spacing begins the story closer to navigation. The footer now mirrors the header as a full-width navy bar with the same wordmark colours and high-contrast link treatment.
 - The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
 - The three cause cards now combine adapted React Bits `TiltedCard`, `SpotlightCard`, and `BorderGlow` patterns on dark navy glass surfaces, with custom layered glass heart, sensor, and shield icons and no added runtime dependency. Motion is decorative, has a static reduced-motion fallback, and never carries status meaning.
+- The former full-width navy safety block is replaced by a lightweight statement plus four individual floating glass cards for See the patient, Question the signal, Preserve the alarm, and Keep care human. Their restrained blue, teal, violet, and amber accents are decorative, and motion is removed when reduced motion is requested.
+- A shared React Bits Dock-inspired proximity controller now gives every rendered button and action-style link smooth cursor-distance magnification, lift, keyboard-focus feedback, and press response. Large card-buttons receive a restrained scale; touch and reduced-motion environments receive no Dock animation. Browser QA confirmed 5/5 Login buttons, 16/16 Ward buttons, and all sampled action links are covered without changing semantics or permissions.
 - The five-role section now translates the supplied `Connectivity.png` composition into a responsive shared-event network: one Bed 08 high alarm connects to concise nurse, doctor, biomedical, IT, and operator actions while mobile collapses to a readable role list. Each role icon now has a distinct restrained colour identity—blue, violet, orange, teal, and rose—while the text labels retain meaning independently of colour.
 - On desktop, the five role cards and their connectors follow a synchronized 12-second orbital drift around the fixed Bed 08 event while each card counter-rotates to remain level. The motion pauses on hover, stays within the diagram at both extremes, and is removed on mobile and whenever reduced motion is requested.
 - The shared-event network now sits directly on the landing-page background; the former rounded grid panel, border, shadow, and decorative blue dots were removed while preserving the role cards, connectors, and central event.
@@ -356,11 +358,11 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 31 files passed; 116 tests passed.
+- Tests: 32 files passed; 117 tests passed.
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 189 modules; CSS 117.96 kB (24.14 kB gzip); initial JavaScript 376.55 kB (123.38 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 119.78 kB (24.51 kB gzip); initial JavaScript 378.43 kB (124.03 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 

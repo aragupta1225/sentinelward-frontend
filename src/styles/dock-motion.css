@@ -1,0 +1,24 @@
+/* React Bits Dock-inspired proximity motion, adapted to existing clinical actions. */
+[data-dock-motion] {
+  transform: translate3d(0, var(--dock-lift, 0), 0) scale(var(--dock-scale, 1)) !important;
+  transform-origin: center bottom;
+  transition: transform 180ms cubic-bezier(.2, .8, .2, 1), box-shadow 180ms ease !important;
+}
+
+[data-dock-motion]:focus-visible {
+  --dock-lift: -3px;
+  --dock-scale: 1.055;
+}
+
+[data-dock-motion]:active:not(:disabled) {
+  --dock-lift: 0;
+  --dock-scale: .97;
+  transition-duration: 70ms !important;
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  [data-dock-motion] {
+    transform: none !important;
+    transition: none !important;
+  }
+}
