@@ -100,9 +100,6 @@ export function LandingPage() {
             <path d="M650 226C770 185 858 134 979 132" />
             <path d="M650 261C768 292 862 349 1016 360" />
           </svg>
-          <span className="landing-network-dot landing-network-dot--one" aria-hidden="true" />
-          <span className="landing-network-dot landing-network-dot--two" aria-hidden="true" />
-          <span className="landing-network-dot landing-network-dot--three" aria-hidden="true" />
           <div className="landing-network-event">
             <span><i aria-hidden="true" /> Shared event · 09:42</span>
             <strong>Bed 08 · High alarm</strong>
