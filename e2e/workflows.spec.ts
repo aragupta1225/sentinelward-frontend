@@ -36,6 +36,9 @@ test('public landing and development session follow S0-S1', async ({ page }) => 
   await expect(page).toHaveURL(/\/login$/)
   await page.reload()
   await expect(page).toHaveURL(/\/login$/)
+  await page.getByRole('link', { name: 'Back to SentinelWard home' }).click()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('heading', { level: 1, name: 'Patient, Sensor, or Hacker?' })).toBeVisible()
 })
 
 test('doctor census follows S5 trust, bedside-check, escalation, and call-nurse rules', async ({ page }) => {

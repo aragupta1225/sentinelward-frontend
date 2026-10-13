@@ -118,6 +118,7 @@ export function LoginPage() {
   return (
     <main id="main-content" className="login-page">
       <section className="login-card" aria-labelledby="login-title">
+        <Link className="login-back-link" to="/" aria-label="Back to SentinelWard home"><span aria-hidden="true">←</span> Back to home</Link>
         <p className="eyebrow">Development authentication</p>
         <h1 id="login-title">Pick a demo role</h1>
         <p>Choose one role to open its home screen. Permissions in this demo follow the frontend specification.</p>

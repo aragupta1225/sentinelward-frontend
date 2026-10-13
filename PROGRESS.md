@@ -96,6 +96,7 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 - The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
 - The three cause cards use an adapted React Bits `SpotlightCard` pointer-light pattern without adding a runtime dependency. Motion is decorative, has a reduced-motion fallback, and never carries status meaning.
 - The four-bed preview still loads through the typed public adapter, retains deterministic fixtures on failure, labels the mock/offline state, preserves one high clinical alarm, and never implies real backend availability.
+- Login now includes a visible, keyboard-accessible `Back to home` arrow link that returns to the public landing route; browser coverage verifies the complete landing-to-login-to-Ward-to-login-to-landing path.
 - Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R6 Verified Result - Cross-screen Ward Visual System
@@ -354,7 +355,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 189 modules; CSS 111.95 kB (22.88 kB gzip); initial JavaScript 373.26 kB (122.61 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 189 modules; CSS 112.56 kB (22.99 kB gzip); initial JavaScript 373.44 kB (122.66 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 

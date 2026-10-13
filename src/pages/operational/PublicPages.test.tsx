@@ -25,6 +25,7 @@ describe('S0 and S1 public workflows', () => {
     const user = userEvent.setup()
     configurePublicAdapter({ createSession: async () => { throw new Error('offline') }, getWardPreview: async () => [] })
     render(<MemoryRouter><LoginPage /></MemoryRouter>)
+    expect(screen.getByRole('link', { name: 'Back to SentinelWard home' })).toHaveAttribute('href', '/')
     await user.click(screen.getByRole('button', { name: /^Doctor \/ tele-ICU/ }))
     expect(await screen.findByRole('alert')).toHaveTextContent(/retry/i)
     configurePublicAdapter(new MockPublicAdapter())
