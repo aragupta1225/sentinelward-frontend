@@ -168,6 +168,8 @@ test('Ward-to-Bed navigation restores keyboard focus to the originating tile', a
 test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2', async ({ page }) => {
   await signIn(page, 'nurse')
   expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(7, 30, 125)')
+  expect(await page.locator('.global-high-alert').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(16, 25, 54)')
+  expect(await page.locator('.global-high-alert strong').evaluate((element) => getComputedStyle(element).color)).toBe('rgb(255, 194, 196)')
   await expect(page.getByText(/high-priority alarms/)).toBeVisible()
   await expect(page.getByText('Alarms stopped today')).toBeVisible()
   await expect(page.getByText('37', { exact: true })).toBeVisible()

@@ -28,6 +28,22 @@ p, li { text-wrap: pretty; }
 }
 .topbar--ward-blue-preview .primary-nav a:hover,
 .topbar--ward-blue-preview .logout-link:hover { background: rgb(255 255 255 / 12%); }
+.topbar--ward-blue-preview + .global-high-alert {
+  border-bottom: 1px solid #263d7a;
+  color: #eef4ff;
+  background: #101936;
+  box-shadow: inset 0 -1px 0 rgb(139 188 255 / 12%);
+}
+.topbar--ward-blue-preview + .global-high-alert strong {
+  border: 1px solid rgb(255 77 79 / 28%);
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: #ffc2c4;
+  background: rgb(255 77 79 / 11%);
+  letter-spacing: .035em;
+}
+.topbar--ward-blue-preview + .global-high-alert span { color: #c8d6f3; }
+.topbar--ward-blue-preview + .global-high-alert a { color: #fff; text-underline-offset: 3px; }
 .brand {
   min-width: max-content;
   gap: 0;

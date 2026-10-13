@@ -93,7 +93,8 @@ The live R8 Part H functional checklist remains complete. UI-R5 is implemented a
 
 - `/ward` alone uses the deep reference blue `#071e7d`, matching the supplied `headerInspo.png` direction while retaining the SentinelWard wordmark, spacing, role context, and hover magnification.
 - Alerts and every other route retain the existing near-black `#090c14` header; browser regression explicitly verifies both route-specific computed colours.
-- The alarm strip, clinical priority colours, light workspace, keyboard focus, reduced-motion behavior, and all functional workflows are unchanged.
+- On Ward, the global high-priority strip now uses a calm navy surface instead of a full maroon fill; red is confined to the compact alarm capsule so severity remains explicit without visually overwhelming the blue header and light workspace.
+- Alarm content and semantics, clinical priority tokens, keyboard focus, reduced-motion behavior, and all functional workflows are unchanged.
 - Visual inspection covered the 1440 px Ward preview. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R4 Verified Result - Reference-led Header
@@ -334,7 +335,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 187 modules; CSS 92.04 kB (18.51 kB gzip); initial JavaScript 365.85 kB (121.02 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 187 modules; CSS 92.51 kB (18.63 kB gzip); initial JavaScript 365.85 kB (121.01 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
