@@ -10,7 +10,7 @@ Repository status at Drive-spec audit: `main` matched `origin/main` at `b46a607`
 
 The repository is a working, mock-driven React frontend with all 13 specified S0-S12 screens and the secondary Telegram channel implementing their functional and visual Drive requirements. Antara Gupta's confirmed frontend scope is complete in mock mode.
 
-The approved visual system now spans every public and authenticated screen: a slim editorial header with inline navigation, soft white/blue workspaces and cards, dark surfaces only for monitoring visualizations, and alarm colours reserved for clinical severity. The Ward route alone currently previews the deep-blue `headerInspo.png` colour; all other routes retain the black header pending Antara Gupta's approval.
+The approved visual system now spans every public and authenticated screen: a deep-blue editorial header with inline navigation, compact grid-and-ECG page intros, soft white/blue workspaces, dark surfaces for monitoring visualizations and decisive actions, and alarm colours reserved for clinical severity.
 
 The authoritative scope is the Drive folder supplied by the user, especially Antara Gupta's work plan v3, R8 screens spec v2, and locked integration doc 00 v1. Telegram is a secondary channel in addition to S0-S12; it does not replace S4.
 
@@ -43,7 +43,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - The Telegram route now provides all eight specified event templates with their exact recipients, message copy, role-aware callback buttons, 12-second waveform previews for high alerts, same-message acknowledgement/escalation edits, and a one-message-per-second repeat-merging queue.
 - Ward HR and SpO₂ numerals render at a verified minimum of 40 px on desktop, 1024×768, and 768×1024 layouts without horizontal overflow.
 - The approved Ward UI uses twelve equal-height light bed cards, dark monitor-only waveform panels, a light-blue alert rail, blue non-clinical accents, clinically meaningful green only inside bed monitoring, and the existing alarm-only red/yellow/cyan semantics.
-- Bed Detail, Alerts, Census, Security, Incident, CERT-In Report, Tickets, Briefing, Action Log, Demo Control, Telegram, Landing, and Login retain the approved black-header and light-workspace visual system without changing their workflows or safety boundaries; Ward alone carries the blue-header review variant.
+- Bed Detail, Alerts, Census, Security, Incident, CERT-In Report, Tickets, Briefing, Action Log, Demo Control, Telegram, Landing, and Login now share Ward's deep-blue header, compact clinical visual language, readable typography, and dark/blue action hierarchy without changing their workflows or safety boundaries.
 - Stateful mock workflows for clinical assignments, security incident lifecycle, evidence metadata, biomedical tickets, report review, briefing/workload, and activity logs.
 - Typed domain models, Zod payload mapping, REST and native WebSocket adapter implementations, reconnect policy, command adapter/gateway, and deterministic mock adapters.
 - M1 runtime hardening: validated environment configuration selects one mock or backend adapter set for Ward REST, Ward events, and commands; mock mode is the safe default.
@@ -85,9 +85,18 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**UI-R5 - Ward-only blue header preview and review.**
+**UI-R6 - Cross-screen Ward visual system.**
 
-The live R8 Part H functional checklist remains complete. UI-R5 is implemented and verified on Ward only. The remaining step is Antara Gupta's decision to approve the deep-blue header for all routes or keep/revise the preview; any requested refinements must continue to preserve every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+The live R8 Part H functional checklist remains complete. UI-R6 extends the approved Ward direction to every public and authenticated route while preserving every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+
+### UI-R6 Verified Result - Cross-screen Ward Visual System
+
+- The deep-blue `#071e7d` header and restrained navy high-alert strip now remain consistent across every route and role; red stays confined to explicit high-priority clinical alarm treatment.
+- Ward, Bed Detail, and every operational screen use the same compact translucent page intro with a subtle medical grid and static ECG trace, removing the broad empty upper band without competing with page content.
+- Shared actions now use a deliberate ink/blue/quiet hierarchy. Tables use deep-blue headers, ticket columns use stronger blue top accents, and disabled controls remain visibly neutral.
+- Landing uses the same grid-and-ECG visual language, Login has a continuous full-width background and blue structural accent, and typography remains on one readable system stack across all screens.
+- Clinical red, yellow, and cyan meanings are unchanged; green remains limited to meaningful monitored/trusted states. All interactions, role restrictions, mock disclosures, and safety behavior are unchanged.
+- Visual inspection covered Landing, Login, Ward, Alerts, Census, Tickets, Security, and Demo at 1440 px. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R5 Verified Result - Ward-only Blue Header Preview
 
@@ -311,7 +320,7 @@ The live R8 Part H functional checklist remains complete. UI-R5 is implemented a
 
 ## Prioritized Roadmap
 
-1. Obtain Antara Gupta's final cross-screen design approval and apply only requested visual refinements.
+1. Obtain Antara Gupta's final visual approval of the unified cross-screen system and apply only requested refinements.
 2. Preserve the verified functional and accessibility baseline during any UI refinement.
 3. When the team repository and services exist, integrate the typed adapters without changing the verified UI safety invariants.
 
@@ -336,10 +345,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 187 modules; CSS 93.85 kB (19.13 kB gzip); initial JavaScript 365.85 kB (121.01 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 187 modules; CSS 96.77 kB (19.50 kB gzip); initial JavaScript 365.79 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the Ward-only deep-blue header preview and decide whether to extend it unchanged across all screens.
+1. Review the unified deep-blue header, compact page intros, and dark/blue control hierarchy across representative routes.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.

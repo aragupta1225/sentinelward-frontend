@@ -209,7 +209,8 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   await expect(bed).toContainText('N. Singh, age 72')
   await navigateInApp(page, '/alerts')
   await expect(page.getByRole('heading', { level: 1, name: 'Alerts and escalation' })).toBeVisible()
-  expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 12, 20)')
+  expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(7, 30, 125)')
+  expect(await page.locator('.operational-page .ui-page-header').evaluate((element) => getComputedStyle(element).backgroundImage)).not.toBe('none')
 })
 
 test('response acknowledgement remains separate from bedside confirmation', async ({ page }) => {
