@@ -201,7 +201,38 @@ p, li { text-wrap: pretty; }
 }
 
 /* Ward dashboard: retain density, remove the tiny label treatment. */
-.ward-page--concept { padding-top: 42px; }
+.ward-page--concept { padding-top: 24px; }
+.ward-page--concept .ui-page-header {
+  position: relative;
+  isolation: isolate;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 18px;
+  border: 1px solid rgb(151 184 218 / 58%);
+  border-radius: 18px;
+  padding: 18px 22px;
+  background-color: rgb(247 251 255 / 76%);
+  background-image:
+    linear-gradient(rgb(66 123 181 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(66 123 181 / 5%) 1px, transparent 1px),
+    linear-gradient(100deg, rgb(255 255 255 / 86%), rgb(222 237 252 / 58%));
+  background-size: 28px 28px, 28px 28px, auto;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 82%), 0 10px 30px rgb(48 93 139 / 7%);
+}
+.ward-page--concept .ui-page-header::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 2%;
+  width: min(48%, 650px);
+  height: 86px;
+  background: center / 100% 100% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 100'%3E%3Cpath d='M0 55h155l10-8 12 22 13-50 15 36h42l11-7 12 18 13-37 14 26h74l10-6 12 13 12-26 14 19h218' fill='none' stroke='%23376fae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  content: '';
+  opacity: .11;
+  transform: translateY(-50%);
+}
+.ward-page--concept .ui-page-header__copy,
+.ward-page--concept .ui-page-header__actions { position: relative; z-index: 1; }
 .ward-page--concept .ui-page-header__description { font-size: 14px; }
 .ward-console { border-radius: 22px; padding: 24px; box-shadow: 0 24px 64px rgb(40 79 119 / 13%); }
 .ward-console__header { margin-bottom: 20px; }
@@ -319,6 +350,10 @@ p, li { text-wrap: pretty; }
   .topbar { row-gap: 4px; padding-block: 8px; }
   .primary-nav { padding: 0; }
   .primary-nav a { min-height: 40px; }
+  .ward-page--concept { padding-top: 16px; }
+  .ward-page--concept .ui-page-header { align-items: stretch; padding: 18px; }
+  .ward-page--concept .ui-page-header__actions { justify-content: flex-start; }
+  .ward-page--concept .ui-page-header::before { right: -12%; width: 82%; opacity: .075; }
   .simple-page { padding-top: 42px; }
   .ui-page-header h1 { font-size: clamp(31px, 8vw, 42px); }
 }

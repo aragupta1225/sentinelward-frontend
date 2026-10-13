@@ -170,6 +170,12 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(7, 30, 125)')
   expect(await page.locator('.global-high-alert').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(16, 25, 54)')
   expect(await page.locator('.global-high-alert strong').evaluate((element) => getComputedStyle(element).color)).toBe('rgb(255, 194, 196)')
+  const wardIntro = page.locator('.ward-page--concept .ui-page-header')
+  expect(await wardIntro.evaluate((element) => getComputedStyle(element).backgroundImage)).not.toBe('none')
+  expect(await page.locator('.ward-console').evaluate((consoleElement) => {
+    const intro = document.querySelector('.ward-page--concept .ui-page-header')
+    return intro ? Math.round(consoleElement.getBoundingClientRect().top - intro.getBoundingClientRect().bottom) : Number.POSITIVE_INFINITY
+  })).toBeLessThanOrEqual(20)
   await expect(page.getByText(/high-priority alarms/)).toBeVisible()
   await expect(page.getByText('Alarms stopped today')).toBeVisible()
   await expect(page.getByText('37', { exact: true })).toBeVisible()
@@ -202,6 +208,7 @@ test('Ward privacy, stopped-alarm summary, and global high-alert strip follow S2
   await page.getByLabel('Hide names').uncheck()
   await expect(bed).toContainText('N. Singh, age 72')
   await navigateInApp(page, '/alerts')
+  await expect(page.getByRole('heading', { level: 1, name: 'Alerts and escalation' })).toBeVisible()
   expect(await page.locator('.topbar').evaluate((element) => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 12, 20)')
 })
 
