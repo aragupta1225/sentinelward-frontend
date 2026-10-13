@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { loadWardPreview } from '../../adapters/publicGateway'
-import { SpotlightCard } from '../../components/landing/SpotlightCard'
+import { TiltedCard } from '../../components/landing/TiltedCard'
 import { ActionButton } from '../../components/ui'
 import { ROLE_HOME, type Role } from '../../domain/access'
 import type { Bed } from '../../domain/ward'
@@ -72,16 +72,16 @@ export function LandingPage() {
       </section>
 
       <section id="how-it-works" className="landing-explain" aria-labelledby="how-title">
-        <header className="landing-section-heading"><div><p className="eyebrow">One reading. Three possible truths.</p><h2 id="how-title">SentinelWard separates what looks the same.</h2></div><p>A spike on a monitor can mean a patient emergency, a failing sensor, or a compromised device. The interface keeps those explanations visible without letting one erase another.</p></header>
+        <header className="landing-section-heading"><div><p className="eyebrow">One reading. Three possible truths.</p><h2 id="how-title">SentinelWard separates what looks the same.</h2></div><p>A spike can be a patient emergency, a sensor fault, or a compromised device. SentinelWard keeps all three possibilities visible.</p></header>
         <div className="landing-card-grid">
-          <SpotlightCard className="landing-cause-card landing-cause-card--emergency" spotlightColor="rgba(255, 77, 79, 0.18)"><span className="landing-cause-card__number">01</span><div className="landing-cause-card__icon" aria-hidden="true">♥</div><h3>Real emergency</h3><p>Keep the clinical alarm visible and move the response ladder forward.</p><footer><span>Patient first</span><i aria-hidden="true" /></footer></SpotlightCard>
-          <SpotlightCard className="landing-cause-card landing-cause-card--sensor" spotlightColor="rgba(34, 211, 238, 0.18)"><span className="landing-cause-card__number">02</span><div className="landing-cause-card__icon" aria-hidden="true">⌁</div><h3>Loose / drifting sensor</h3><p>Flag the technical problem and ask for a bedside check without inventing a patient crisis.</p><footer><span>Verify by hand</span><i aria-hidden="true" /></footer></SpotlightCard>
-          <SpotlightCard className="landing-cause-card landing-cause-card--security" spotlightColor="rgba(139, 188, 255, 0.2)"><span className="landing-cause-card__number">03</span><div className="landing-cause-card__icon" aria-hidden="true">◇</div><h3>Hacker</h3><p>Freeze last-trusted readings, preserve emergency alarms, and isolate only the compromised device.</p><footer><span>Contain the device</span><i aria-hidden="true" /></footer></SpotlightCard>
+          <TiltedCard className="landing-cause-card landing-cause-card--emergency" glareColor="rgba(255, 77, 79, 0.2)"><span className="landing-cause-card__number">01</span><div className="landing-cause-card__icon" aria-hidden="true">♥</div><h3>Real emergency</h3><p>Keep the alarm visible and escalate the response.</p><footer><span>Patient first</span><i aria-hidden="true" /></footer></TiltedCard>
+          <TiltedCard className="landing-cause-card landing-cause-card--sensor" glareColor="rgba(34, 211, 238, 0.2)"><span className="landing-cause-card__number">02</span><div className="landing-cause-card__icon" aria-hidden="true">⌁</div><h3>Loose or drifting sensor</h3><p>Request a bedside check. Never invent a crisis.</p><footer><span>Verify by hand</span><i aria-hidden="true" /></footer></TiltedCard>
+          <TiltedCard className="landing-cause-card landing-cause-card--security" glareColor="rgba(139, 188, 255, 0.24)"><span className="landing-cause-card__number">03</span><div className="landing-cause-card__icon" aria-hidden="true">◇</div><h3>Compromised device</h3><p>Freeze trusted values and isolate the device—not the patient.</p><footer><span>Contain the device</span><i aria-hidden="true" /></footer></TiltedCard>
         </div>
       </section>
 
       <section className="landing-safety" aria-labelledby="safety-title">
-        <div className="landing-safety__copy"><p className="eyebrow">Designed for the dangerous ambiguity</p><h2 id="safety-title">When data becomes doubtful, the ward does not go dark.</h2><p>SentinelWard keeps the last trusted values on screen, labels incoming telemetry honestly, preserves emergency escalation, and leaves treatment decisions with people.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
+        <div className="landing-safety__copy"><p className="eyebrow">Designed for dangerous ambiguity</p><h2 id="safety-title">Doubtful data never makes the ward go dark.</h2><p>Last-trusted values stay visible, emergencies keep escalating, and treatment stays human.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
         <ol className="landing-safety__steps">
           <li><span>01</span><div><strong>See the patient</strong><p>Clinical urgency stays separate from device confidence.</p></div></li>
           <li><span>02</span><div><strong>Question the signal</strong><p>Trust, freshness, and witness evidence remain explicit.</p></div></li>
@@ -91,11 +91,34 @@ export function LandingPage() {
       </section>
 
       <section className="landing-roles" aria-labelledby="roles-title">
-        <header className="landing-section-heading"><div><p className="eyebrow">One command surface · five viewpoints</p><h2 id="roles-title">Everyone sees the same event through the right lens.</h2></div><p>Nurses, doctors, biomedical engineers, IT security, and demo operators receive role-specific screens without fragmenting the source of truth.</p></header>
-        <div className="landing-role-map" aria-label="SentinelWard demo roles"><span>Nurse</span><span>Doctor / tele-ICU</span><span>Biomedical</span><span>IT security</span><span>Demo operator</span><strong aria-hidden="true">SW</strong></div>
+        <header className="landing-section-heading landing-section-heading--compact"><div><p className="eyebrow">One shared source of truth</p><h2 id="roles-title">One event. Five role views.</h2></div><p>Each team sees the action they own—without losing the shared clinical context.</p></header>
+        <div className="landing-role-network" aria-label="One Bed 08 high alarm shared across five SentinelWard roles">
+          <svg className="landing-role-network__lines" viewBox="0 0 1200 440" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M592 232C470 193 346 132 207 124" />
+            <path d="M568 254C470 285 393 342 308 365" />
+            <path d="M615 210C615 163 619 116 635 76" />
+            <path d="M650 226C770 185 858 134 979 132" />
+            <path d="M650 261C768 292 862 349 1016 360" />
+          </svg>
+          <span className="landing-network-dot landing-network-dot--one" aria-hidden="true" />
+          <span className="landing-network-dot landing-network-dot--two" aria-hidden="true" />
+          <span className="landing-network-dot landing-network-dot--three" aria-hidden="true" />
+          <div className="landing-network-event">
+            <span><i aria-hidden="true" /> Shared event · 09:42</span>
+            <strong>Bed 08 · High alarm</strong>
+            <small>HR 142 · signal trusted</small>
+          </div>
+          <ul className="landing-network-roles">
+            <li className="landing-network-role landing-network-role--nurse"><b aria-hidden="true">N</b><span><strong>Central nurse</strong><small>Respond now</small></span></li>
+            <li className="landing-network-role landing-network-role--doctor"><b aria-hidden="true">D</b><span><strong>Doctor / tele-ICU</strong><small>Review patient</small></span></li>
+            <li className="landing-network-role landing-network-role--biomed"><b aria-hidden="true">B</b><span><strong>Biomedical</strong><small>Check device</small></span></li>
+            <li className="landing-network-role landing-network-role--it"><b aria-hidden="true">IT</b><span><strong>IT security</strong><small>Verify integrity</small></span></li>
+            <li className="landing-network-role landing-network-role--operator"><b aria-hidden="true">O</b><span><strong>Demo operator</strong><small>Observe scenario</small></span></li>
+          </ul>
+        </div>
       </section>
 
-      <section className="landing-final-cta" aria-labelledby="final-cta-title"><div><p className="eyebrow">The ward is already waiting.</p><h2 id="final-cta-title">See the signal.<br />Question the source.</h2></div><div><p>Open the mock ward as Central Nurse and follow one urgent reading from bedside telemetry to a human response.</p><Link to="/login?role=nurse">Open SentinelWard <span aria-hidden="true">↗</span></Link></div></section>
+      <section className="landing-final-cta" aria-labelledby="final-cta-title"><div><p className="eyebrow">The ward is waiting.</p><h2 id="final-cta-title">See the signal.<br />Question the source.</h2></div><div><p>Follow one urgent reading from telemetry to a human response.</p><Link to="/login?role=nurse">Open SentinelWard <span aria-hidden="true">↗</span></Link></div></section>
 
       <footer className="landing-footer"><Link className="landing-footer__brand" to="/" aria-label="SentinelWard home"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></Link><span>Team TessNova · IBM Z Datathon 2026</span><a href="https://github.com/aragupta1225/sentinelward-frontend">GitHub</a><span>Decision support only. Treatment is never automatic.</span></footer>
     </main>

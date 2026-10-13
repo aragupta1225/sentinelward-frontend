@@ -17,8 +17,11 @@ describe('S0 and S1 public workflows', () => {
     expect(await screen.findByText('Live demo offline')).toBeInTheDocument()
     expect(container.querySelectorAll('.landing-bed')).toHaveLength(4)
     expect(container.querySelectorAll('.landing-bed--high')).toHaveLength(1)
+    expect(container.querySelectorAll('.tilted-card')).toHaveLength(3)
     expect(screen.getByRole('heading', { name: 'SentinelWard separates what looks the same.' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'When data becomes doubtful, the ward does not go dark.' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Doubtful data never makes the ward go dark.' })).toBeInTheDocument()
+    expect(screen.getByLabelText('One Bed 08 high alarm shared across five SentinelWard roles')).toHaveTextContent('Bed 08 · High alarm')
+    expect(screen.getByLabelText('One Bed 08 high alarm shared across five SentinelWard roles').querySelectorAll('.landing-network-role')).toHaveLength(5)
   })
 
   it('shows an inline failure and retries the same chosen role', async () => {
