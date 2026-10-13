@@ -20,6 +20,8 @@ test('public landing and development session follow S0-S1', async ({ page }) => 
   await expect(page.locator('.landing-bed')).toHaveCount(4)
   await expect(page.locator('.landing-bed--high')).toHaveCount(1)
   for (const label of ['Real emergency', 'Loose / drifting sensor', 'Hacker']) await expect(page.getByText(label, { exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'When data becomes doubtful, the ward does not go dark.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Everyone sees the same event through the right lens.' })).toBeVisible()
   await expect(page.getByText(/Team TessNova · IBM Z Datathon 2026/)).toBeVisible()
   await page.getByRole('link', { name: 'Open the live ward' }).click()
   await expect(page).toHaveURL(/\/login\?role=nurse$/)

@@ -1,6 +1,6 @@
 # SentinelWard Frontend Progress
 
-Last verified: 2026-10-13
+Last verified: 2026-10-14
 
 Owner: Antara Gupta
 
@@ -63,6 +63,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - The external Google Fonts request has been removed in favor of resilient system sans and monospace stacks.
 - UI-R4 refines the shared header from the supplied `headerInspo.png`: a compact SentinelWard wordmark, open inline navigation, and a separated account area replace the enclosed dock while retaining the restrained macOS-style hover lift/magnification and reduced-motion fallback.
 - Typography, casing, spacing, radii, and shadows are normalized across public, Ward, Bed Detail, and operational routes so clinical copy remains readable and the hierarchy feels authored rather than templated.
+- UI-R7 turns the public landing route into a complete product narrative with a floating live ward mockup, React Bits-inspired spotlight cards, explicit safety principles, role mapping, and repeated nurse-entry calls to action while preserving the locked S0 content and fallback behavior.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
 
@@ -85,9 +86,17 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 ## Active Milestone
 
-**UI-R6 - Cross-screen Ward visual system.**
+**UI-R7 - Product-led SentinelWard landing page.**
 
-The live R8 Part H functional checklist remains complete. UI-R6 extends the approved Ward direction to every public and authenticated route while preserving every verified workflow, exact clinical copy, role boundary, mock label, and safety invariant.
+The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as a high-impact public explanation of the product while preserving the exact five-second promise, four-bed live/offline mock boundary, Nurse-preselected entry, clinical semantics, and all authenticated workflows.
+
+### UI-R7 Verified Result - Product-led Landing Experience
+
+- The unchanged SentinelWard header wordmark now opens into a split hero with the exact `Patient, Sensor, or Hacker?` message, a live four-bed mock command surface, restrained floating trust/human-decision cards, and a clear primary ward action.
+- The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
+- The three cause cards use an adapted React Bits `SpotlightCard` pointer-light pattern without adding a runtime dependency. Motion is decorative, has a reduced-motion fallback, and never carries status meaning.
+- The four-bed preview still loads through the typed public adapter, retains deterministic fixtures on failure, labels the mock/offline state, preserves one high clinical alarm, and never implies real backend availability.
+- Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R6 Verified Result - Cross-screen Ward Visual System
 
@@ -345,10 +354,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 187 modules; CSS 96.77 kB (19.50 kB gzip); initial JavaScript 365.79 kB (120.98 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 189 modules; CSS 111.95 kB (22.88 kB gzip); initial JavaScript 373.26 kB (122.61 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the unified deep-blue header, compact page intros, and dark/blue control hierarchy across representative routes.
+1. Review the new public landing story, floating command view, and interactive cause cards for final visual approval.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.

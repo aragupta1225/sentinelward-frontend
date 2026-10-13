@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { loadWardPreview } from '../../adapters/publicGateway'
-import { ActionButton, Panel } from '../../components/ui'
+import { SpotlightCard } from '../../components/landing/SpotlightCard'
+import { ActionButton } from '../../components/ui'
 import { ROLE_HOME, type Role } from '../../domain/access'
 import type { Bed } from '../../domain/ward'
 import { BED_FIXTURES } from '../../mocks/fixtures'
@@ -15,13 +16,14 @@ const roleCards: Array<{ role: Role; label: string; description: string }> = [
   { role: 'operator', label: 'Demo operator', description: 'Run and reset the scripted ward scenarios.' },
 ]
 
-function MiniBed({ bed }: { bed: Bed }) {
+function MiniBed({ bed, index }: { bed: Bed; index: number }) {
   const high = bed.priority === 'high'
   return (
-    <article className={`landing-bed${high ? ' landing-bed--high' : ''}`} aria-label={`${bed.label}: ${bed.reason}`}>
-      <header><strong>{bed.label}</strong><span>{high ? 'HIGH ALARM' : bed.verdict.replaceAll('_', ' ')}</span></header>
-      <div><b>{bed.readings.heartRate ?? '—'}</b><small>HR</small><b>{bed.readings.spo2 ?? '—'}</b><small>SpO₂</small></div>
-      <footer>Trust {bed.trust}%</footer>
+    <article className={`landing-bed landing-bed--slot-${index + 1}${high ? ' landing-bed--high' : ''}`} aria-label={`${bed.label}: ${bed.reason}`}>
+      <header><span>{bed.label}</span><strong>{high ? 'HIGH ALARM' : bed.verdict.replaceAll('_', ' ')}</strong></header>
+      <div className="landing-bed__signal" aria-hidden="true"><svg viewBox="0 0 180 36" preserveAspectRatio="none"><path d="M0 22h28l7-3 5 8 7-22 8 17h22l6-4 6 9 7-18 8 13h32l6-4 7 8 8-15 9 11h24" /></svg></div>
+      <div className="landing-bed__vitals"><div><small>HR</small><b>{bed.readings.heartRate ?? '—'}</b></div><div><small>SpO₂</small><b>{bed.readings.spo2 ?? '—'}</b></div></div>
+      <footer><span>Signal trust</span><strong>{bed.trust}%</strong></footer>
     </article>
   )
 }
@@ -40,28 +42,62 @@ export function LandingPage() {
 
   return (
     <main id="main-content" className="landing-page">
-      <section className="landing-hero">
-        <p className="eyebrow">Clinical monitoring · device integrity</p>
-        <h1>Patient, Sensor, or Hacker?</h1>
-        <p>Real-time AI on IBM LinuxONE that tells, for every hospital bed, whether a scary reading is real.</p>
-        <div className="page-actions"><Link className="landing-primary-action" to="/login?role=nurse">Open the live ward</Link><a href="#how-it-works">How it works ↓</a></div>
-      </section>
+      <section className="landing-hero" aria-labelledby="landing-title">
+        <div className="landing-hero__copy">
+          <p className="landing-kicker"><span aria-hidden="true" /> Clinical monitoring · device integrity</p>
+          <h1 id="landing-title">Patient, Sensor, <span>or Hacker?</span></h1>
+          <p className="landing-hero__lead">Real-time AI on IBM LinuxONE that tells, for every hospital bed, whether a scary reading is real.</p>
+          <div className="page-actions landing-hero__actions"><Link className="landing-primary-action" to="/login?role=nurse">Open the live ward <span aria-hidden="true">↗</span></Link><a href="#how-it-works">See how it decides <span aria-hidden="true">↓</span></a></div>
+          <ul className="landing-proof-list" aria-label="Product boundaries">
+            <li><strong>12</strong><span>beds in the demo ward</span></li>
+            <li><strong>8</strong><span>explicit verdicts</span></li>
+            <li><strong>0</strong><span>automatic treatments</span></li>
+          </ul>
+        </div>
 
-      <section className="landing-preview" aria-labelledby="preview-title">
-        <header><div><p className="eyebrow">Read-only ward preview</p><h2 id="preview-title">Four beds, one urgent signal</h2></div><span className={`preview-state preview-state--${previewState}`} role="status">{previewState === 'offline' ? 'Live demo offline' : previewState === 'loading' ? 'Connecting…' : 'Live mock preview'}</span></header>
-        <div className="landing-mini-ward" aria-label={previewState === 'offline' ? 'Still ward preview' : 'Live ward preview'}>{preview.map((bed) => <MiniBed bed={bed} key={bed.id} />)}</div>
-      </section>
-
-      <section id="how-it-works" className="landing-explain" aria-labelledby="how-title">
-        <div><p className="eyebrow">What SentinelWard separates</p><h2 id="how-title">Three causes. Three safe responses.</h2></div>
-        <div className="landing-card-grid">
-          <Panel as="article"><strong>Real emergency</strong><p>Keep the clinical alarm visible and move the response ladder forward.</p></Panel>
-          <Panel as="article"><strong>Loose / drifting sensor</strong><p>Flag the technical problem and ask for a bedside check without inventing a patient crisis.</p></Panel>
-          <Panel as="article"><strong>Hacker</strong><p>Freeze last-trusted readings, preserve emergency alarms, and isolate only the compromised device.</p></Panel>
+        <div className="landing-hero__visual" aria-labelledby="preview-title">
+          <div className="landing-orbit landing-orbit--one" aria-hidden="true" />
+          <div className="landing-orbit landing-orbit--two" aria-hidden="true" />
+          <div className="landing-float-chip landing-float-chip--top" aria-hidden="true"><i /> Last trusted snapshot</div>
+          <div className="landing-float-chip landing-float-chip--bottom" aria-hidden="true"><i /> Human decision required</div>
+          <section className="landing-preview">
+            <header><div><p className="eyebrow">Ward 6 · Critical care</p><h2 id="preview-title">Signal command view</h2></div><span className={`preview-state preview-state--${previewState}`} role="status">{previewState === 'offline' ? 'Live demo offline' : previewState === 'loading' ? 'Connecting…' : 'Live mock preview'}</span></header>
+            <div className="landing-mini-ward" aria-label={previewState === 'offline' ? 'Still ward preview' : 'Live ward preview'}>{preview.map((bed, index) => <MiniBed bed={bed} index={index} key={bed.id} />)}</div>
+          </section>
         </div>
       </section>
 
-      <footer className="landing-footer"><span>Team TessNova · IBM Z Datathon 2026</span><a href="https://github.com/aragupta1225/sentinelward-frontend">GitHub</a><span>Decision support only. Treatment is never automatic.</span></footer>
+      <section className="landing-signal-strip" aria-label="SentinelWard signal model">
+        <span>Patient state</span><i aria-hidden="true" /><span>Signal trust</span><i aria-hidden="true" /><span>Device integrity</span><i aria-hidden="true" /><strong>One safe decision surface</strong>
+      </section>
+
+      <section id="how-it-works" className="landing-explain" aria-labelledby="how-title">
+        <header className="landing-section-heading"><div><p className="eyebrow">One reading. Three possible truths.</p><h2 id="how-title">SentinelWard separates what looks the same.</h2></div><p>A spike on a monitor can mean a patient emergency, a failing sensor, or a compromised device. The interface keeps those explanations visible without letting one erase another.</p></header>
+        <div className="landing-card-grid">
+          <SpotlightCard className="landing-cause-card landing-cause-card--emergency" spotlightColor="rgba(255, 77, 79, 0.18)"><span className="landing-cause-card__number">01</span><div className="landing-cause-card__icon" aria-hidden="true">♥</div><h3>Real emergency</h3><p>Keep the clinical alarm visible and move the response ladder forward.</p><footer><span>Patient first</span><i aria-hidden="true" /></footer></SpotlightCard>
+          <SpotlightCard className="landing-cause-card landing-cause-card--sensor" spotlightColor="rgba(34, 211, 238, 0.18)"><span className="landing-cause-card__number">02</span><div className="landing-cause-card__icon" aria-hidden="true">⌁</div><h3>Loose / drifting sensor</h3><p>Flag the technical problem and ask for a bedside check without inventing a patient crisis.</p><footer><span>Verify by hand</span><i aria-hidden="true" /></footer></SpotlightCard>
+          <SpotlightCard className="landing-cause-card landing-cause-card--security" spotlightColor="rgba(139, 188, 255, 0.2)"><span className="landing-cause-card__number">03</span><div className="landing-cause-card__icon" aria-hidden="true">◇</div><h3>Hacker</h3><p>Freeze last-trusted readings, preserve emergency alarms, and isolate only the compromised device.</p><footer><span>Contain the device</span><i aria-hidden="true" /></footer></SpotlightCard>
+        </div>
+      </section>
+
+      <section className="landing-safety" aria-labelledby="safety-title">
+        <div className="landing-safety__copy"><p className="eyebrow">Designed for the dangerous ambiguity</p><h2 id="safety-title">When data becomes doubtful, the ward does not go dark.</h2><p>SentinelWard keeps the last trusted values on screen, labels incoming telemetry honestly, preserves emergency escalation, and leaves treatment decisions with people.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
+        <ol className="landing-safety__steps">
+          <li><span>01</span><div><strong>See the patient</strong><p>Clinical urgency stays separate from device confidence.</p></div></li>
+          <li><span>02</span><div><strong>Question the signal</strong><p>Trust, freshness, and witness evidence remain explicit.</p></div></li>
+          <li><span>03</span><div><strong>Preserve the alarm</strong><p>Tampering can never silence a real emergency.</p></div></li>
+          <li><span>04</span><div><strong>Keep care human</strong><p>The interface supports decisions; it never changes treatment.</p></div></li>
+        </ol>
+      </section>
+
+      <section className="landing-roles" aria-labelledby="roles-title">
+        <header className="landing-section-heading"><div><p className="eyebrow">One command surface · five viewpoints</p><h2 id="roles-title">Everyone sees the same event through the right lens.</h2></div><p>Nurses, doctors, biomedical engineers, IT security, and demo operators receive role-specific screens without fragmenting the source of truth.</p></header>
+        <div className="landing-role-map" aria-label="SentinelWard demo roles"><span>Nurse</span><span>Doctor / tele-ICU</span><span>Biomedical</span><span>IT security</span><span>Demo operator</span><strong aria-hidden="true">SW</strong></div>
+      </section>
+
+      <section className="landing-final-cta" aria-labelledby="final-cta-title"><div><p className="eyebrow">The ward is already waiting.</p><h2 id="final-cta-title">See the signal.<br />Question the source.</h2></div><div><p>Open the mock ward as Central Nurse and follow one urgent reading from bedside telemetry to a human response.</p><Link to="/login?role=nurse">Open SentinelWard <span aria-hidden="true">↗</span></Link></div></section>
+
+      <footer className="landing-footer"><Link className="landing-footer__brand" to="/" aria-label="SentinelWard home"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></Link><span>Team TessNova · IBM Z Datathon 2026</span><a href="https://github.com/aragupta1225/sentinelward-frontend">GitHub</a><span>Decision support only. Treatment is never automatic.</span></footer>
     </main>
   )
 }
