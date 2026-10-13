@@ -259,6 +259,7 @@
   --glare-x: 50%;
   --glare-y: 50%;
   --glare-color: rgb(139 188 255 / 24%);
+  --border-glow-color: rgb(139 188 255 / 92%);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -270,47 +271,96 @@
   position: absolute;
   z-index: 0;
   inset: 0;
-  background: radial-gradient(330px circle at var(--glare-x) var(--glare-y), var(--glare-color), transparent 68%);
+  background: radial-gradient(390px circle at var(--glare-x) var(--glare-y), var(--glare-color), transparent 64%);
   content: '';
-  opacity: .28;
+  opacity: .34;
   pointer-events: none;
   transition: opacity 240ms ease;
 }
 .tilted-card::after {
   position: absolute;
-  z-index: 0;
+  z-index: 2;
   inset: 0;
-  border: 1px solid rgb(255 255 255 / 72%);
   border-radius: inherit;
-  background: linear-gradient(122deg, rgb(255 255 255 / 24%), transparent 34%, transparent 68%, rgb(111 163 217 / 9%));
+  padding: 1.5px;
+  background:
+    radial-gradient(170px circle at var(--glare-x) var(--glare-y), var(--border-glow-color), transparent 72%),
+    linear-gradient(135deg, rgb(255 255 255 / 42%), rgb(139 188 255 / 10%) 38%, rgb(139 188 255 / 24%));
   content: '';
+  opacity: .72;
   pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition: opacity 180ms ease;
 }
 .tilted-card:hover::before { opacity: .85; }
+.tilted-card:hover::after { opacity: 1; }
 .tilted-card:hover { transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-7px) scale(1.015); }
 .tilted-card > * { position: relative; z-index: 1; transform: translateZ(26px); }
 .landing-card-grid .landing-cause-card {
   min-height: 326px;
   display: flex;
   flex-direction: column;
-  border: 1px solid #c0d2e3;
+  border: 1px solid #294866;
   border-radius: 24px;
   padding: 25px;
   background:
-    radial-gradient(circle at 86% 13%, rgb(139 188 255 / 16%), transparent 25%),
-    linear-gradient(145deg, rgb(255 255 255 / 96%), rgb(240 247 254 / 90%));
-  box-shadow: 0 20px 50px rgb(37 69 101 / 11%);
+    radial-gradient(circle at 84% 8%, rgb(88 149 213 / 18%), transparent 28%),
+    linear-gradient(145deg, rgb(11 34 66 / 98%), rgb(4 18 39 / 99%));
+  box-shadow: 0 24px 55px rgb(10 34 67 / 24%), inset 0 1px 0 rgb(255 255 255 / 7%);
+  backdrop-filter: blur(14px);
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 110ms ease-out;
 }
-.landing-cause-card:hover { border-color: #8fb4d5; box-shadow: 0 32px 70px rgb(37 69 101 / 19%); }
-.landing-cause-card__number { align-self: flex-end; color: #7189a1; font: 650 11px var(--font-mono); }
-.landing-cause-card__icon { width: 62px; height: 62px; display: grid; place-items: center; margin: 13px 0 30px; border: 1px solid #bcd0e4; border-radius: 19px; color: #245f9f; background: #e8f2fc; box-shadow: 0 12px 24px rgb(30 76 119 / 12%); font: 500 26px Georgia, serif; }
-.landing-cause-card--emergency .landing-cause-card__icon { border-color: #edb2b6; color: #a82d36; background: #fdebed; }
-.landing-cause-card--sensor .landing-cause-card__icon { border-color: #9dd7df; color: #0b6572; background: #e2f6f8; }
-.landing-cause-card h3 { margin: 0; color: #13233a; font-size: 24px; letter-spacing: -.035em; }
-.landing-cause-card p { margin: 11px 0 24px; color: #526b83; font-size: 14px; line-height: 1.58; }
-.landing-cause-card footer { display: flex; align-items: center; gap: 9px; margin-top: auto; color: #315f8c; font-size: 10px; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
-.landing-cause-card footer i { flex: 1; border-top: 1px solid #cad9e7; }
+.landing-cause-card:hover { border-color: #4e7daa; box-shadow: 0 34px 72px rgb(7 30 64 / 32%); }
+.landing-cause-card__number { align-self: flex-end; color: #87a8ca; font: 650 11px var(--font-mono); }
+.landing-cause-card__icon {
+  position: relative;
+  isolation: isolate;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin: 10px 0 29px;
+  border: 1px solid rgb(177 215 248 / 35%);
+  border-radius: 21px;
+  color: #a9d4ff;
+  background: linear-gradient(145deg, rgb(196 225 255 / 22%), rgb(88 146 206 / 7%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 50%),
+    inset 0 -12px 24px rgb(15 48 82 / 22%),
+    0 16px 28px rgb(0 8 26 / 30%);
+  backdrop-filter: blur(14px) saturate(145%);
+}
+.landing-cause-card__icon::before {
+  position: absolute;
+  inset: 3px 5px 45%;
+  border-radius: 17px 17px 50% 50%;
+  background: linear-gradient(180deg, rgb(255 255 255 / 42%), transparent);
+  content: '';
+  filter: blur(.4px);
+}
+.landing-cause-card__icon::after {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  left: 10px;
+  height: 12px;
+  border-radius: 50%;
+  background: currentColor;
+  content: '';
+  filter: blur(12px);
+  opacity: .22;
+}
+.landing-cause-card__icon svg { position: relative; z-index: 1; width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; filter: drop-shadow(0 3px 7px rgb(0 0 0 / 22%)); }
+.landing-cause-card--emergency .landing-cause-card__icon { border-color: rgb(255 169 176 / 42%); color: #ff9ca5; background: linear-gradient(145deg, rgb(255 190 196 / 25%), rgb(255 77 79 / 7%)); }
+.landing-cause-card--sensor .landing-cause-card__icon { border-color: rgb(132 232 242 / 42%); color: #7ee3ed; background: linear-gradient(145deg, rgb(147 239 247 / 24%), rgb(34 211 238 / 6%)); }
+.landing-cause-card h3 { margin: 0; color: #f4f8ff; font-size: 24px; letter-spacing: -.035em; }
+.landing-cause-card p { margin: 11px 0 24px; color: #b7c9dc; font-size: 14px; line-height: 1.58; }
+.landing-cause-card footer { display: flex; align-items: center; gap: 9px; margin-top: auto; color: #9bc8f3; font-size: 10px; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
+.landing-cause-card footer i { flex: 1; border-top: 1px solid #365777; }
 
 .landing-safety {
   position: relative;
@@ -490,5 +540,6 @@
   .landing-cause-card,
   .landing-bed,
   .tilted-card,
-  .tilted-card::before { transition: none; transform: none; }
+  .tilted-card::before,
+  .tilted-card::after { transition: none; transform: none; }
 }

@@ -94,7 +94,7 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 
 - The unchanged SentinelWard header wordmark now opens into a split hero with the exact `Patient, Sensor, or Hacker?` message, a live four-bed mock command surface, restrained floating trust/human-decision cards, and a clear primary ward action.
 - The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
-- The three cause cards now use an adapted React Bits `TiltedCard` pattern with pointer-following 3D depth and glare, without adding a runtime dependency. Motion is decorative, has a static reduced-motion fallback, and never carries status meaning.
+- The three cause cards now combine adapted React Bits `TiltedCard`, `SpotlightCard`, and `BorderGlow` patterns on dark navy glass surfaces, with custom layered glass heart, sensor, and shield icons and no added runtime dependency. Motion is decorative, has a static reduced-motion fallback, and never carries status meaning.
 - The five-role section now translates the supplied `Connectivity.png` composition into a responsive shared-event network: one Bed 08 high alarm connects to concise nurse, doctor, biomedical, IT, and operator actions while mobile collapses to a readable role list.
 - Landing-section gaps are tighter and repeated explanatory copy is shortened while the locked five-second promise, safety boundaries, and required product facts remain intact.
 - The four-bed preview still loads through the typed public adapter, retains deterministic fixtures on failure, labels the mock/offline state, preserves one high clinical alarm, and never implies real backend availability.
@@ -357,10 +357,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 189 modules; CSS 114.64 kB (23.54 kB gzip); initial JavaScript 375.66 kB (123.09 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 189 modules; CSS 116.37 kB (23.93 kB gzip); initial JavaScript 376.49 kB (123.40 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the refined public landing story, 3D cause cards, and shared-event role network for final visual approval.
+1. Review the refined public landing story, dark glass cause cards, and shared-event role network for final visual approval.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.
