@@ -407,7 +407,7 @@
     linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(245 250 255 / 82%));
   box-shadow: inset 0 1px 0 #fff, 0 24px 60px rgb(37 69 101 / 9%);
 }
-.landing-role-network__lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.landing-role-network__lines { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 50% 53%; animation: landing-role-orbit 12s ease-in-out infinite; }
 .landing-role-network__lines path { fill: none; stroke: #adc4d9; stroke-width: 1.3; stroke-dasharray: 4 7; vector-effect: non-scaling-stroke; }
 .landing-network-event {
   position: absolute;
@@ -429,10 +429,13 @@
 .landing-network-event span i { width: 7px; height: 7px; border-radius: 50%; background: var(--alarm-high); box-shadow: 0 0 0 4px rgb(255 77 79 / 14%); }
 .landing-network-event strong { color: #fff; font-size: 18px; letter-spacing: -.025em; }
 .landing-network-event small { color: #c2d7ee; font: 600 11px var(--font-mono); }
-.landing-network-roles { margin: 0; padding: 0; list-style: none; }
+.landing-network-roles { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; transform-origin: 50% 53%; animation: landing-role-orbit 12s ease-in-out infinite; }
 .landing-network-role {
   position: absolute;
   z-index: 2;
+  min-width: 172px;
+}
+.landing-network-role__content {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -442,9 +445,10 @@
   padding: 7px 15px 7px 7px;
   background: rgb(255 255 255 / 94%);
   box-shadow: 0 14px 32px rgb(37 69 101 / 12%);
+  animation: landing-role-counter-orbit 12s ease-in-out infinite;
 }
-.landing-network-role > b { width: 40px; height: 40px; display: grid; flex: 0 0 40px; place-items: center; border: 1px solid rgb(255 255 255 / 48%); border-radius: 50%; color: #fff; font-size: 11px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 36%), 0 7px 16px rgb(32 55 94 / 22%); }
-.landing-network-role > span { display: grid; gap: 2px; }
+.landing-network-role__content > b { width: 40px; height: 40px; display: grid; flex: 0 0 40px; place-items: center; border: 1px solid rgb(255 255 255 / 48%); border-radius: 50%; color: #fff; font-size: 11px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 36%), 0 7px 16px rgb(32 55 94 / 22%); }
+.landing-network-role__content > span { display: grid; gap: 2px; }
 .landing-network-role strong { color: #183c61; font-size: 11px; }
 .landing-network-role small { color: #6a8198; font-size: 9px; }
 .landing-network-role--nurse { top: 22%; left: 7%; }
@@ -452,11 +456,14 @@
 .landing-network-role--biomed { top: 7%; left: 50%; transform: translateX(-50%); }
 .landing-network-role--it { top: 23%; right: 6%; }
 .landing-network-role--operator { right: 9%; bottom: 10%; }
-.landing-network-role--nurse > b { background: linear-gradient(145deg, #698cff, #2d4fba); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(50 79 184 / 28%); }
-.landing-network-role--doctor > b { background: linear-gradient(145deg, #a980eb, #6a43aa); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(106 67 170 / 25%); }
-.landing-network-role--biomed > b { background: linear-gradient(145deg, #f5a367, #be5a2f); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(190 90 47 / 24%); }
-.landing-network-role--it > b { background: linear-gradient(145deg, #55a1a8, #26636d); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(38 99 109 / 25%); }
-.landing-network-role--operator > b { background: linear-gradient(145deg, #d979a7, #97476e); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(151 71 110 / 24%); }
+.landing-network-role--nurse .landing-network-role__content > b { background: linear-gradient(145deg, #698cff, #2d4fba); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(50 79 184 / 28%); }
+.landing-network-role--doctor .landing-network-role__content > b { background: linear-gradient(145deg, #a980eb, #6a43aa); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(106 67 170 / 25%); }
+.landing-network-role--biomed .landing-network-role__content > b { background: linear-gradient(145deg, #f5a367, #be5a2f); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(190 90 47 / 24%); }
+.landing-network-role--it .landing-network-role__content > b { background: linear-gradient(145deg, #55a1a8, #26636d); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(38 99 109 / 25%); }
+.landing-network-role--operator .landing-network-role__content > b { background: linear-gradient(145deg, #d979a7, #97476e); box-shadow: inset 0 1px 0 rgb(255 255 255 / 38%), 0 8px 18px rgb(151 71 110 / 24%); }
+.landing-role-network:hover .landing-role-network__lines,
+.landing-role-network:hover .landing-network-roles,
+.landing-role-network:hover .landing-network-role__content { animation-play-state: paused; }
 .landing-network-dot { position: absolute; width: 10px; height: 10px; border: 3px solid #f7fbff; border-radius: 50%; background: #173f70; box-shadow: 0 4px 12px rgb(23 63 112 / 22%); }
 .landing-network-dot--one { top: 19%; left: 33%; }
 .landing-network-dot--two { right: 27%; bottom: 18%; width: 14px; height: 14px; }
@@ -494,6 +501,8 @@
 @keyframes landing-panel-float { 0%, 100% { transform: rotateY(-5deg) rotateX(2deg) translateY(0); } 50% { transform: rotateY(-3deg) rotateX(1deg) translateY(-10px); } }
 @keyframes landing-chip-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
 @keyframes landing-spin { to { transform: rotate(360deg); } }
+@keyframes landing-role-orbit { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+@keyframes landing-role-counter-orbit { 0%, 100% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } }
 
 @media (max-width: 1050px) {
   .landing-hero { grid-template-columns: 1fr; min-height: auto; padding-top: 46px; }
@@ -530,8 +539,9 @@
   .landing-role-network__lines,
   .landing-network-dot { display: none; }
   .landing-network-event { position: relative; top: auto; left: auto; width: 100%; transform: none; }
-  .landing-network-roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  .landing-network-roles { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; animation: none; transform: none; }
   .landing-network-role { position: static; min-width: 0; transform: none; }
+  .landing-network-role__content { min-width: 0; animation: none; }
   .landing-final-cta { grid-template-columns: 1fr; padding: 72px 0; }
 }
 
@@ -554,7 +564,10 @@
 @media (prefers-reduced-motion: reduce) {
   .landing-orbit--two,
   .landing-preview,
-  .landing-float-chip { animation: none; }
+  .landing-float-chip,
+  .landing-role-network__lines,
+  .landing-network-roles,
+  .landing-network-role__content { animation: none; }
   .landing-cause-card,
   .landing-bed,
   .tilted-card,

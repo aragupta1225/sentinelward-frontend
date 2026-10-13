@@ -109,11 +109,11 @@ export function LandingPage() {
             <small>HR 142 · signal trusted</small>
           </div>
           <ul className="landing-network-roles">
-            <li className="landing-network-role landing-network-role--nurse"><b aria-hidden="true">N</b><span><strong>Central nurse</strong><small>Respond now</small></span></li>
-            <li className="landing-network-role landing-network-role--doctor"><b aria-hidden="true">D</b><span><strong>Doctor / tele-ICU</strong><small>Review patient</small></span></li>
-            <li className="landing-network-role landing-network-role--biomed"><b aria-hidden="true">B</b><span><strong>Biomedical</strong><small>Check device</small></span></li>
-            <li className="landing-network-role landing-network-role--it"><b aria-hidden="true">IT</b><span><strong>IT security</strong><small>Verify integrity</small></span></li>
-            <li className="landing-network-role landing-network-role--operator"><b aria-hidden="true">O</b><span><strong>Demo operator</strong><small>Observe scenario</small></span></li>
+            <li className="landing-network-role landing-network-role--nurse"><span className="landing-network-role__content"><b aria-hidden="true">N</b><span><strong>Central nurse</strong><small>Respond now</small></span></span></li>
+            <li className="landing-network-role landing-network-role--doctor"><span className="landing-network-role__content"><b aria-hidden="true">D</b><span><strong>Doctor / tele-ICU</strong><small>Review patient</small></span></span></li>
+            <li className="landing-network-role landing-network-role--biomed"><span className="landing-network-role__content"><b aria-hidden="true">B</b><span><strong>Biomedical</strong><small>Check device</small></span></span></li>
+            <li className="landing-network-role landing-network-role--it"><span className="landing-network-role__content"><b aria-hidden="true">IT</b><span><strong>IT security</strong><small>Verify integrity</small></span></span></li>
+            <li className="landing-network-role landing-network-role--operator"><span className="landing-network-role__content"><b aria-hidden="true">O</b><span><strong>Demo operator</strong><small>Observe scenario</small></span></span></li>
           </ul>
         </div>
       </section>
