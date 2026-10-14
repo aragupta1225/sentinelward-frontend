@@ -99,6 +99,7 @@ The live R8 Part H functional checklist remains complete. UI-R8 reproduces the s
 - Cards enlarge by a restrained 2.5% on hover or keyboard focus. A pressed card receives the same temporary enlargement, and clicking the surrounding background clears it; reduced-motion mode removes all scaling.
 - The existing typed sign-in adapter, pending label, inline failure, Retry action, session persistence, and role-specific navigation remain intact.
 - Browser QA at the reference's 1674 by 940 viewport verified a five-card row with approximately 272 by 350 px cards and matching vertical placement. A 390 by 844 mobile check verified a clean single-column layout with no horizontal overflow.
+- The approved composition is compacted for real laptop use: the full header, introduction, five-card row, and responsibility note now fit without scrolling at both 1366 by 768 and 1024 by 768. Cards are 270 px high with proportionally reduced icons and text while keeping five readable columns at landscape widths.
 - The full quality gate passes with 118 unit/component tests, 33 Playwright tests, all 14 material-route axe scans with colour contrast, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R7 Verified Result - Product-led Landing Experience
@@ -378,7 +379,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 191 modules; CSS 129.41 kB (26.43 kB gzip); initial JavaScript 384.36 kB (126.08 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 129.40 kB (26.43 kB gzip); initial JavaScript 384.36 kB (126.08 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
