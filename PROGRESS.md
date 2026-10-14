@@ -64,6 +64,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - UI-R4 refines the shared header from the supplied `headerInspo.png`: a compact SentinelWard wordmark, open inline navigation, and a separated account area replace the enclosed dock while retaining the restrained macOS-style hover lift/magnification and reduced-motion fallback.
 - Typography, casing, spacing, radii, and shadows are normalized across public, Ward, Bed Detail, and operational routes so clinical copy remains readable and the hierarchy feels authored rather than templated.
 - UI-R7 turns the public landing route into a complete product narrative with a floating live ward mockup, React Bits-inspired spotlight cards, explicit safety principles, role mapping, and repeated nurse-entry calls to action while preserving the locked S0 content and fallback behavior.
+- UI-R8 rebuilds the Login route from the supplied `SentinelWard Workspace Selection Dashboard.png`: the blue header, medical grid/ECG background, five equal icon cards, selected workspace treatment, and responsibility note now match the approved reference while role routing and mock session behavior remain unchanged.
 
 All listed behavior is frontend or mock behavior unless explicitly stated otherwise.
 
@@ -82,13 +83,23 @@ All listed behavior is frontend or mock behavior unless explicitly stated otherw
 
 - No failing product bug was found during this inspection.
 - Application state is memory-only and resets on refresh; this is acceptable for mocks but must remain clearly presented as simulated.
-- The initial production JavaScript chunk is 365.80 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
+- The initial production JavaScript chunk is 384.36 kB before gzip; charting and the safety-critical Ward/Bed path still account for most of it.
 
 ## Active Milestone
 
-**UI-R7 - Product-led SentinelWard landing page.**
+**UI-R8 - Drive-matched workspace selection.**
 
-The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as a high-impact public explanation of the product while preserving the exact five-second promise, four-bed live/offline mock boundary, Nurse-preselected entry, clinical semantics, and all authenticated workflows.
+The live R8 Part H functional checklist remains complete. UI-R8 reproduces the supplied workspace-selection reference on S1 while preserving accessible role choice, typed mock/backend session boundaries, failure recovery, and role-home routing.
+
+### UI-R8 Verified Result - Drive-matched Workspace Selection
+
+- `SentinelWard Workspace Selection Dashboard.png` was fetched from Antara Gupta's supplied Drive folder and used as the direct visual reference for `/login`.
+- The Login route now uses the reference's 86 px deep-blue header, pale 28 px medical grid, faint ECG and connection-line background, spacious hierarchy, five equal role cards, and compact responsibility note instead of a floating generic panel.
+- Central nurse, Doctor / tele-ICU, Biomed, IT security, and System operator now have distinct custom line icons in large circular blue surfaces. The selected workspace uses the same pale-blue fill and blue border as the reference; a supplied query preset remains announced accessibly without adding visible copy to the design.
+- Cards enlarge by a restrained 2.5% on hover or keyboard focus. A pressed card receives the same temporary enlargement, and clicking the surrounding background clears it; reduced-motion mode removes all scaling.
+- The existing typed sign-in adapter, pending label, inline failure, Retry action, session persistence, and role-specific navigation remain intact.
+- Browser QA at the reference's 1674 by 940 viewport verified a five-card row with approximately 272 by 350 px cards and matching vertical placement. A 390 by 844 mobile check verified a clean single-column layout with no horizontal overflow.
+- The full quality gate passes with 118 unit/component tests, 33 Playwright tests, all 14 material-route axe scans with colour contrast, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R7 Verified Result - Product-led Landing Experience
 
@@ -367,10 +378,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 191 modules; CSS 124.77 kB (25.49 kB gzip); initial JavaScript 381.16 kB (124.93 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 129.41 kB (26.43 kB gzip); initial JavaScript 384.36 kB (126.08 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the refined public landing story, interactive safety-card fan, dark glass cause cards, and shared-event role network for final visual approval.
+1. Review the Drive-matched workspace selection screen and its hover/background-reset interaction for final visual approval.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.

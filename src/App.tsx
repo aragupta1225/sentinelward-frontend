@@ -60,6 +60,7 @@ export default function App() {
   const navigate = useNavigate()
   const location = useLocation()
   const isPublicLanding = !authenticated && location.pathname === '/'
+  const isPublicLogin = !authenticated && location.pathname === '/login'
   const scrollToLandingSection = (event: MouseEvent<HTMLAnchorElement>) => {
     const target = document.querySelector<HTMLElement>(event.currentTarget.hash)
     if (!target) return
@@ -78,7 +79,7 @@ export default function App() {
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <DockMotion />
       <CommandFailureAnnouncer />
-      <header className={isPublicLanding ? 'topbar topbar--landing' : 'topbar'}>
+      <header className={isPublicLanding ? 'topbar topbar--landing' : isPublicLogin ? 'topbar topbar--login' : 'topbar'}>
         <Link className="brand" to={authenticated ? '/ward' : '/'} aria-label={authenticated ? 'SentinelWard ward view' : 'SentinelWard home'}><span className="brand__wordmark" aria-hidden="true"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></span></Link>
         {authenticated && <nav className="primary-nav" aria-label="Primary">{navigation.filter(([, , screen]) => canViewScreen(role, screen as ScreenId)).map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>}
         {isPublicLanding && <nav className="primary-nav landing-nav" aria-label="Landing sections">

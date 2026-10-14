@@ -16,6 +16,46 @@ const roleCards: Array<{ role: Role; label: string; description: string }> = [
   { role: 'operator', label: 'System operator', description: 'Monitor system behaviour and coordinate controlled scenarios.' },
 ]
 
+function WorkspaceIcon({ role }: { role: Role }) {
+  const commonProps = {
+    viewBox: '0 0 64 64',
+    'aria-hidden': true,
+    focusable: false,
+  } as const
+
+  if (role === 'nurse') return (
+    <svg {...commonProps}>
+      <path d="M9 48V24m0 16h38v8M13 33h17a7 7 0 0 1 7 7H9m27-21h17v15H36z" />
+      <path d="M40 27h3l2-5 3 10 2-5h3" />
+    </svg>
+  )
+  if (role === 'doctor') return (
+    <svg {...commonProps}>
+      <path d="M18 13v13a13 13 0 0 0 26 0V13M14 13a4 4 0 1 0 8 0m18 0a4 4 0 1 0 8 0" />
+      <path d="M31 39v5a10 10 0 0 0 20 0v-3" />
+      <circle cx="51" cy="36" r="5" />
+    </svg>
+  )
+  if (role === 'biomedical') return (
+    <svg {...commonProps}>
+      <path d="M50 14a14 14 0 0 1-18 17L15 48a5 5 0 0 1-7-7l17-17A14 14 0 0 1 42 6l-8 8 2 8 8 2z" />
+    </svg>
+  )
+  if (role === 'it') return (
+    <svg {...commonProps}>
+      <path d="M32 6 51 14v14c0 13-8 23-19 29C21 51 13 41 13 28V14z" />
+      <rect x="24" y="29" width="16" height="14" rx="2" />
+      <path d="M28 29v-4a4 4 0 0 1 8 0v4m-4 6v3" />
+    </svg>
+  )
+  return (
+    <svg {...commonProps}>
+      <circle cx="32" cy="32" r="9" />
+      <path d="M28 5h8l2 8a20 20 0 0 1 5 2l7-4 5 5-4 7a20 20 0 0 1 2 5l8 2v8l-8 2a20 20 0 0 1-2 5l4 7-5 5-7-4a20 20 0 0 1-5 2l-2 8h-8l-2-8a20 20 0 0 1-5-2l-7 4-5-5 4-7a20 20 0 0 1-2-5l-8-2v-8l8-2a20 20 0 0 1 2-5l-4-7 5-5 7 4a20 20 0 0 1 5-2z" />
+    </svg>
+  )
+}
+
 const safetyPrinciples = [
   { number: '01', title: 'See the patient', description: 'Clinical urgency stays separate from device confidence.' },
   { number: '02', title: 'Question the signal', description: 'Trust, freshness, and witness evidence remain explicit.' },
@@ -188,28 +228,73 @@ export function LandingPage() {
 export function LoginPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const preset = searchParams.get('role') as Role | null
+  const requestedRole = searchParams.get('role')
+  const preset = roleCards.find((card) => card.role === requestedRole)?.role ?? null
+  const [activeRole, setActiveRole] = useState<Role | null>(() => preset ?? 'biomedical')
+  const [expandedRole, setExpandedRole] = useState<Role | null>(null)
   const signIn = useSessionStore((state) => state.signIn)
   const pendingRole = useSessionStore((state) => state.pendingRole)
   const lastAttemptRole = useSessionStore((state) => state.lastAttemptRole)
   const error = useSessionStore((state) => state.error)
 
   const chooseRole = async (role: Role) => {
+    setActiveRole(role)
+    setExpandedRole(role)
     if (await signIn(role)) navigate(ROLE_HOME[role])
   }
 
+  const clearRoleSelection = (event: MouseEvent<HTMLElement>) => {
+    const target = event.target
+    if (target instanceof Element && target.closest('.login-role')) return
+    setExpandedRole(null)
+  }
+
   return (
-    <main id="main-content" className="login-page">
+    <main id="main-content" className="login-page" onClick={clearRoleSelection}>
+      <svg className="login-backdrop" viewBox="0 0 1600 860" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <pattern id="login-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0v28" /></pattern>
+        </defs>
+        <rect width="1600" height="860" fill="url(#login-grid)" />
+        <g className="login-backdrop__paths">
+          <path d="M-10 122C68 92 62 8 137-20S265 59 366 40" />
+          <path d="M-16 166C72 137 72 37 150 9s119 73 214 56" />
+          <path d="M1608 76c-76-20-108 30-161 68s-130 10-199 44" />
+          <path d="M1610 568c-77 29-74 123-154 151s-142-58-230-17-92 111-173 130" />
+          <path d="M-14 580c70 30 52 133 135 166s145-44 222 0" />
+        </g>
+        <g className="login-backdrop__dots">
+          <circle cx="36" cy="112" r="5" /><circle cx="365" cy="40" r="5" /><circle cx="1538" cy="41" r="5" />
+          <circle cx="1414" cy="189" r="5" /><circle cx="1510" cy="706" r="5" /><circle cx="1258" cy="772" r="5" />
+          <circle cx="101" cy="769" r="5" /><circle cx="264" cy="799" r="5" />
+        </g>
+        <path className="login-backdrop__ecg" d="M770 111h114l7-11 9 33 9-74 12 52h82l9-11 9 30 9-70 12 51h87l9-12 10 31 12-81 13 62h85l9-12 11 32 10-67 13 47h85" />
+      </svg>
       <section className="login-card" aria-labelledby="login-title">
         <Link className="login-back-link" to="/" aria-label="Back to SentinelWard home"><span aria-hidden="true">←</span> Back to home</Link>
         <p className="eyebrow">Role-based access</p>
         <h1 id="login-title">Choose your workspace</h1>
         <p>Select a role to open the workspace and actions relevant to that team.</p>
         <div className="login-role-grid">
-          {roleCards.map((card) => <button type="button" key={card.role} className={preset === card.role ? 'login-role login-role--preset' : 'login-role'} disabled={pendingRole !== null} onClick={() => chooseRole(card.role)}><strong>{pendingRole === card.role && <i className="login-spinner" aria-hidden="true" />}{pendingRole === card.role ? 'Signing in…' : card.label}</strong><span>{card.description}</span>{preset === card.role && <em>Pre-selected</em>}</button>)}
+          {roleCards.map((card) => (
+            <button
+              type="button"
+              key={card.role}
+              className={`login-role${activeRole === card.role ? ' login-role--active' : ''}${expandedRole === card.role ? ' login-role--expanded' : ''}`}
+              aria-pressed={activeRole === card.role}
+              disabled={pendingRole !== null}
+              onPointerDown={() => { setActiveRole(card.role); setExpandedRole(card.role) }}
+              onClick={() => chooseRole(card.role)}
+            >
+              <span className="login-role__icon"><WorkspaceIcon role={card.role} /></span>
+              <strong>{pendingRole === card.role && <i className="login-spinner" aria-hidden="true" />}{pendingRole === card.role ? 'Signing in…' : card.label}</strong>
+              <span className="login-role__description">{card.description}</span>
+              {preset === card.role && <em className="sr-only">Pre-selected</em>}
+            </button>
+          ))}
         </div>
         {error && <div className="login-error" role="alert"><span>{error}</span><ActionButton onClick={() => chooseRole(lastAttemptRole ?? 'nurse')}>Retry</ActionButton></div>}
-        <p className="scope-note">Each workspace keeps clinical, technical, and operational responsibilities clearly separated.</p>
+        <footer className="login-scope-note"><span aria-hidden="true">i</span><p>Each workspace keeps clinical, technical, and operational responsibilities clearly separated.</p></footer>
       </section>
     </main>
   )
