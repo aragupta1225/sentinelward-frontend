@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Link, NavLink, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { lazy, Suspense, useEffect, useMemo, useState, type MouseEvent, type ReactNode } from 'react'
+import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { BedDetailFunctionalPage } from './pages/BedDetailFunctionalPage'
 import { LandingPage, LoginPage } from './pages/operational/PublicPages'
 import { WardPage } from './pages/WardPage'
@@ -58,14 +58,34 @@ export default function App() {
   const wardBeds = useWardDashboardStore((state) => state.beds)
   const highAlerts = useMemo(() => wardBeds.filter((bed) => bed.priority === 'high'), [wardBeds])
   const navigate = useNavigate()
+  const location = useLocation()
+  const isPublicLanding = !authenticated && location.pathname === '/'
+  const scrollToLandingSection = (event: MouseEvent<HTMLAnchorElement>) => {
+    const target = document.querySelector<HTMLElement>(event.currentTarget.hash)
+    if (!target) return
+    event.preventDefault()
+    target.classList.add('is-visible')
+    const headerHeight = event.currentTarget.closest('header')?.getBoundingClientRect().height ?? 0
+    const targetBounds = target.getBoundingClientRect()
+    const availableHeight = window.innerHeight - headerHeight
+    const breathingRoom = Math.max(16, (availableHeight - Math.min(targetBounds.height, availableHeight)) / 2)
+    const top = window.scrollY + targetBounds.top - headerHeight - breathingRoom
+    window.history.replaceState(null, '', event.currentTarget.hash)
+    window.scrollTo({ top: Math.max(0, top), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  }
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <DockMotion />
       <CommandFailureAnnouncer />
-      <header className="topbar">
+      <header className={isPublicLanding ? 'topbar topbar--landing' : 'topbar'}>
         <Link className="brand" to={authenticated ? '/ward' : '/'} aria-label={authenticated ? 'SentinelWard ward view' : 'SentinelWard home'}><span className="brand__wordmark" aria-hidden="true"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></span></Link>
         {authenticated && <nav className="primary-nav" aria-label="Primary">{navigation.filter(([, , screen]) => canViewScreen(role, screen as ScreenId)).map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>}
+        {isPublicLanding && <nav className="primary-nav landing-nav" aria-label="Landing sections">
+          <a href="#how-it-works" onClick={scrollToLandingSection}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 10h3l1.5-4 3 8 2-5 1.5 3h4" /></svg><span>How it works</span></a>
+          <a href="#safety" onClick={scrollToLandingSection}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5 16 5v4.4c0 4-2.5 6.8-6 8.1-3.5-1.3-6-4.1-6-8.1V5l6-2.5Z" /><path d="m7.3 10 1.7 1.7 3.8-4" /></svg><span>Safety</span></a>
+          <a href="#roles" onClick={scrollToLandingSection}><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="6.2" r="2.5" /><circle cx="4.3" cy="9" r="1.8" /><circle cx="15.7" cy="9" r="1.8" /><path d="M5.8 16c.4-2.8 1.8-4.2 4.2-4.2s3.8 1.4 4.2 4.2M1.8 15c.2-1.9 1.1-2.9 2.7-2.9M18.2 15c-.2-1.9-1.1-2.9-2.7-2.9" /></svg><span>Role views</span></a>
+        </nav>}
         {authenticated ? <div className="topbar__context"><WardClock /><span className="topbar__divider" aria-hidden="true" /><span>{ROLE_LABELS[role]} · {displayName}</span><button className="logout-link" type="button" onClick={() => { signOut(); navigate('/login') }}>Logout</button></div> : <Link className="logout-link public-login-link" to="/login">Log in</Link>}
       </header>
       {authenticated && highAlerts.length > 0 && <div className="global-high-alert" role="status"><strong>▲ {highAlerts.length} high-priority {highAlerts.length === 1 ? 'alarm' : 'alarms'}</strong><span>{highAlerts.map((bed) => bed.label).join(' · ')}</span><Link to="/ward">Open ward</Link></div>}

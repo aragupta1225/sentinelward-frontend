@@ -4,7 +4,7 @@ import { navigateInApp, signIn } from './helpers'
 
 const publicRoutes = [
   ['/', 'Patient, Sensor, or Hacker?'],
-  ['/login', 'Pick a demo role'],
+  ['/login', 'Choose your workspace'],
 ] as const
 
 const protectedRoutes = [

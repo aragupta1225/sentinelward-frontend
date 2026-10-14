@@ -17,7 +17,7 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 ## Completed and Verified
 
 - React/Vite/TypeScript application shell with protected routing and five specified demo roles.
-- Landing, development login, Ward, Bed Detail, Alerts, Census, Security, Incident, CERT-In draft, Tickets, Briefing, Action Log, Demo Control, and Telegram template routes.
+- Landing, role login, Ward, Bed Detail, Alerts, Census, Security, Incident, CERT-In draft, Tickets, Briefing, Action Log, Demo Control, and Telegram template routes.
 - S4 Alerts and escalation for nurse and doctor roles: Open/Acknowledged/All views, the specified table fields, a complete three-step detail ladder, response history, simulated Telegram message editing, and an exact calm empty state.
 - Deterministic 30-second demo escalation stops on acknowledgement, repeated events update rather than duplicate, integrity-only incidents never enter the clinical queue, and Ward-rail acknowledgements synchronize with S4.
 - Twelve-bed Ward grid, summary metrics, alert rail, recent activity, responsive column changes, collapsed-alert discoverability, arrow-key navigation, Enter-to-open, and focus return.
@@ -33,8 +33,8 @@ The authoritative scope is the Drive folder supplied by the user, especially Ant
 - S7 Incident provides the six-hour response clock, append-only timeline, downloadable evidence with byte size and SHA-256 fingerprint, affected-bed actions, referencing undo, report drafting, and reason-required closure without restoring device trust automatically.
 - S8 CERT-In Report provides editable human-owned report fields, response countdown, readiness checklist, draft saving, simulated PDF download, and a human-only mark-sent action that remains disabled until facts, evidence, and approver are complete.
 - S5 Census now follows the compact doctor/tele-ICU specification: occupied beds sorted by priority then trust, all required columns, explicit untrusted-data warning, last-trusted values, bedside-check and escalation state, read-only S3 navigation, and a typed mock Telegram ping to the bedside nurse.
-- S0 Landing now provides the specified five-second product message, Nurse-preselected live-ward entry, four-bed read-only preview with one high alarm, explicit offline still state, three cause cards, and TessNova/IBM/GitHub footer.
-- S1 Login now provides five described one-click role cards, chosen-button loading, inline failure and Retry, typed mock/backend session adapters, sessionStorage persistence, role-home routing, and logout cleanup with the required demo-account disclosure.
+- S0 Landing now provides a concise product message, Nurse-preselected live-ward entry, four-bed read-only interface preview with one high alarm, explicit unavailable still state, three cause cards, and a general product/GitHub safety footer.
+- S1 Login now provides five described one-click role cards, chosen-button loading, inline failure and Retry, typed mock/backend session adapters, sessionStorage persistence, role-home routing, logout cleanup, and a general explanation of separated responsibilities.
 - S9 Biomedical Tickets now provides the New/In progress/Done board, device/bed problem cards, suggested fixes, 30-day issue counters, repeat-problem device list, and note-required status updates through the typed PATCH boundary.
 - S10 Briefing and Workload now provides the IBM Granite-labelled handover since 08:00, incident/untrusted-bed/open-ticket totals, per-bed Blind Time, and a two-hour nurse alarm-load chart with a textual threshold warning at 40.
 - S11 Action Log now provides the exact six-column, 200-entry typed view, free-text search, automatic/person/undoable filtering, all-role read access, and IT-only append-only Undo for reversible automatic actions.
@@ -92,9 +92,9 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 
 ### UI-R7 Verified Result - Product-led Landing Experience
 
-- The unchanged SentinelWard header wordmark now opens into a split hero with the exact `Patient, Sensor, or Hacker?` message, a live four-bed mock command surface, restrained floating trust/human-decision cards, and a clear primary ward action.
+- The unchanged SentinelWard header wordmark now opens into a split hero with the exact `Patient, Sensor, or Hacker?` message, a four-bed command-surface preview, restrained floating trust/human-decision cards, and a clear primary ward action. The public copy is generalized for future backend and ML integration rather than naming a demo ward, numbered shared-event bed, event, or infrastructure vendor.
 - The desktop hero now uses the full 1240 px content width and the exact viewport space below the 72 px header at 1366×768, keeping the complete introduction visible without scrolling; its reduced top spacing begins the story closer to navigation. The footer now mirrors the header as a full-width navy bar with the same wordmark colours and high-contrast link treatment.
-- The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
+- The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final ward walkthrough invitation.
 - The three cause cards now combine adapted React Bits `TiltedCard`, `SpotlightCard`, and `BorderGlow` patterns on dark navy glass surfaces, with custom layered glass heart, sensor, and shield icons and no added runtime dependency. Motion is decorative, has a static reduced-motion fallback, and never carries status meaning.
 - The former full-width navy safety block is replaced by a tight, level React Bits Bounce Cards-inspired row for See the patient, Question the signal, Preserve the alarm, and Keep care human. The blue, teal, violet, and amber cards remain still at rest, enlarge on hover, focus, or click, return to their original size after a surrounding-background click, keep stable individual hit areas, and collapse to a close swipe-and-snap row below 1050 px.
 - A shared React Bits Dock-inspired proximity controller now gives every rendered button and action-style link smooth cursor-distance magnification, lift, keyboard-focus feedback, and press response. Large card-buttons receive a restrained scale; touch and reduced-motion environments receive no Dock animation. Browser QA confirmed 5/5 Login buttons, 16/16 Ward buttons, and all sampled action links are covered without changing semantics or permissions.
@@ -104,9 +104,12 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 - Landing-section gaps are tighter, the supporting copy for both `SentinelWard separates what looks the same.` and `One event. Five role views.` now sits directly below its heading, and repeated explanatory copy is shortened while the locked five-second promise, safety boundaries, and required product facts remain intact.
 - The five post-hero landing blocks now reveal once as complete section-level groups when they enter the viewport, rather than animating their child elements separately. Desktop section padding is reduced to 60-72 px, mobile spacing is reduced to 48-56 px, and reduced-motion users receive the complete static page immediately.
 - The patient-state, signal-trust, and device-integrity summary is now an intentional italic serif bridge matching the hero's `or Hacker?` voice, with lightweight directional connectors and a navy highlighted `One safe decision surface` conclusion.
+- The signal bridge's rounded shadow is no longer clipped by the section reveal. Landing blocks now enter through an IntersectionObserver-driven lift-and-focus transition as they reach the viewport, while preserving full text contrast throughout the animation and showing immediately for reduced-motion users.
+- The sticky public header now provides only three distinct destinations—How it works, Safety, and Role views—with matching single-colour icons. Each link smoothly centres its complete section when the viewport can contain it, and hover uses the approved Dock-style magnification without an underline, background block, or shadow.
+- The four command-view waveforms now move continuously across their monitor surfaces with a static reduced-motion fallback. The shared event is generalized to `Bed · High alarm`, and its central card uses a lighter blue while retaining the existing alarm semantics.
 - The four-bed preview still loads through the typed public adapter, retains deterministic fixtures on failure, labels the mock/offline state, preserves one high clinical alarm, and never implies real backend availability.
 - Login now includes a visible, keyboard-accessible `Back to home` arrow link that returns to the public landing route; browser coverage verifies the complete landing-to-login-to-Ward-to-login-to-landing path.
-- Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. The full quality gate passes with 117 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
+- Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. Desktop link targets fit completely between the 72 px sticky header and 1000 px viewport, while the mobile header wraps its three destinations into a compact second row. The full quality gate passes with 118 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R6 Verified Result - Cross-screen Ward Visual System
 
@@ -257,9 +260,9 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 
 ### R8-F6 Verified Result — S0 Landing and S1 Development Login
 
-- The public landing page uses the exact headline and IBM LinuxONE product message, opens Login with Nurse preselected, explains the three safe response classes, and includes the required team/event/GitHub footer.
-- A typed public adapter supplies the four-bed read-only preview from `/api/ward/preview` in backend mode and deterministic fixtures in mock mode; failure retains four non-updating beds and clearly says “Live demo offline.”
-- Login exposes five described one-click role cards, a chosen-button spinner, inline failure with Retry, and the required demo-account disclosure.
+- The public landing page retains the exact headline, opens Login with Nurse preselected, explains the three safe response classes, and now uses generalized product, role, preview, and footer language suitable for later backend and ML integration.
+- A typed public adapter supplies the four-bed read-only preview from `/api/ward/preview` in backend mode and deterministic fixtures in mock mode; failure retains four non-updating beds and clearly says “Preview unavailable.”
+- Login exposes five described one-click role cards, a chosen-button spinner, inline failure with Retry, and a concise explanation of role-separated responsibilities.
 - Session creation uses the locked `/api/session` boundary, persists the returned token/role/name in sessionStorage, restores after reload, routes each role home, and clears on Logout.
 - Mock mode remains the safe default; no real authentication or backend availability is implied.
 - The full quality gate passes with 97 unit/component tests and 28 Playwright tests, including all-route axe scans and desktop/tablet workflows.
@@ -360,11 +363,11 @@ The locked Drive contracts guide frontend mocks, but these external integrations
 Command: `npm run check`
 
 - Lint: passed.
-- Tests: 32 files passed; 117 tests passed.
+- Tests: 32 files passed; 118 tests passed.
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 191 modules; CSS 123.64 kB (25.26 kB gzip); initial JavaScript 379.34 kB (124.37 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 124.77 kB (25.49 kB gzip); initial JavaScript 381.16 kB (124.93 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 

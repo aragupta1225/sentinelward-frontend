@@ -25,7 +25,7 @@ async function expectNoAxeViolations(container: HTMLElement) {
 describe('accessibility foundations', () => {
   it.each([
     ['/', 'Patient, Sensor, or Hacker?'],
-    ['/login', 'Pick a demo role'],
+    ['/login', 'Choose your workspace'],
     ['/security', 'Security operations'],
     ['/incident/B08/report', 'CERT-In report draft'],
   ])('has no detectable structural axe violations on the %s route', async (path, heading) => {

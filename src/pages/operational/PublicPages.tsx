@@ -13,7 +13,7 @@ const roleCards: Array<{ role: Role; label: string; description: string }> = [
   { role: 'doctor', label: 'Doctor / tele-ICU', description: 'Review the remote census and the beds that need a doctor.' },
   { role: 'biomedical', label: 'Biomed', description: 'Track bedside equipment faults and repair tickets.' },
   { role: 'it', label: 'IT security', description: 'Investigate device threats, evidence, and incident reports.' },
-  { role: 'operator', label: 'Demo operator', description: 'Run and reset the scripted ward scenarios.' },
+  { role: 'operator', label: 'System operator', description: 'Monitor system behaviour and coordinate controlled scenarios.' },
 ]
 
 const safetyPrinciples = [
@@ -28,7 +28,7 @@ function MiniBed({ bed, index }: { bed: Bed; index: number }) {
   return (
     <article className={`landing-bed landing-bed--slot-${index + 1}${high ? ' landing-bed--high' : ''}`} aria-label={`${bed.label}: ${bed.reason}`}>
       <header><span>{bed.label}</span><strong>{high ? 'HIGH ALARM' : bed.verdict.replaceAll('_', ' ')}</strong></header>
-      <div className="landing-bed__signal" aria-hidden="true"><svg viewBox="0 0 180 36" preserveAspectRatio="none"><path d="M0 22h28l7-3 5 8 7-22 8 17h22l6-4 6 9 7-18 8 13h32l6-4 7 8 8-15 9 11h24" /></svg></div>
+      <div className="landing-bed__signal" aria-hidden="true"><svg viewBox="0 0 180 36" preserveAspectRatio="none"><g><path d="M0 22h28l7-3 5 8 7-22 8 17h22l6-4 6 9 7-18 8 13h32l6-4 7 8 8-15 9 11h24" /><path d="M180 22h28l7-3 5 8 7-22 8 17h22l6-4 6 9 7-18 8 13h32l6-4 7 8 8-15 9 11h24" /></g></svg></div>
       <div className="landing-bed__vitals"><div><small>HR</small><b>{bed.readings.heartRate ?? '—'}</b></div><div><small>SpO₂</small><b>{bed.readings.spo2 ?? '—'}</b></div></div>
       <footer><span>Signal trust</span><strong>{bed.trust}%</strong></footer>
     </article>
@@ -56,39 +56,35 @@ export function LandingPage() {
 
     const showAll = () => sections.forEach((section) => section.classList.add('is-visible'))
     page.classList.add('landing-page--reveal-ready')
+    document.documentElement.classList.add('landing-smooth-scroll')
+
+    const cleanUpPageClasses = () => {
+      page.classList.remove('landing-page--reveal-ready')
+      document.documentElement.classList.remove('landing-smooth-scroll')
+    }
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       showAll()
-      return () => page.classList.remove('landing-page--reveal-ready')
+      return cleanUpPageClasses
     }
 
-    const remaining = new Set(sections)
-    let pendingFrame = 0
-    const removeListeners = () => {
-      window.removeEventListener('scroll', scheduleReveal)
-      window.removeEventListener('resize', scheduleReveal)
+    if (!('IntersectionObserver' in window)) {
+      showAll()
+      return cleanUpPageClasses
     }
-    const revealVisible = () => {
-      pendingFrame = 0
-      for (const section of remaining) {
-        const bounds = section.getBoundingClientRect()
-        if (bounds.top > window.innerHeight * 0.9 || bounds.bottom < 0) continue
-        section.classList.add('is-visible')
-        remaining.delete(section)
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.add('is-visible')
+        observer.unobserve(entry.target)
       }
-      if (remaining.size === 0) removeListeners()
-    }
-    function scheduleReveal() {
-      if (pendingFrame) return
-      pendingFrame = window.requestAnimationFrame(revealVisible)
-    }
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 })
 
-    window.addEventListener('scroll', scheduleReveal, { passive: true })
-    window.addEventListener('resize', scheduleReveal)
-    revealVisible()
+    sections.forEach((section) => observer.observe(section))
     return () => {
-      window.cancelAnimationFrame(pendingFrame)
-      removeListeners()
+      observer.disconnect()
+      cleanUpPageClasses()
     }
   }, [])
 
@@ -104,12 +100,12 @@ export function LandingPage() {
         <div className="landing-hero__copy">
           <p className="landing-kicker"><span aria-hidden="true" /> Clinical monitoring · device integrity</p>
           <h1 id="landing-title">Patient, Sensor, <span>or Hacker?</span></h1>
-          <p className="landing-hero__lead">Real-time AI on IBM LinuxONE that tells, for every hospital bed, whether a scary reading is real.</p>
+          <p className="landing-hero__lead">Real-time intelligence that helps care teams distinguish a patient event from a sensor issue or compromised device.</p>
           <div className="page-actions landing-hero__actions"><Link className="landing-primary-action" to="/login?role=nurse">Open the live ward <span aria-hidden="true">↗</span></Link><a href="#how-it-works">See how it decides <span aria-hidden="true">↓</span></a></div>
           <ul className="landing-proof-list" aria-label="Product boundaries">
-            <li><strong>12</strong><span>beds in the demo ward</span></li>
-            <li><strong>8</strong><span>explicit verdicts</span></li>
-            <li><strong>0</strong><span>automatic treatments</span></li>
+            <li><strong>Patient</strong><span>clinical context first</span></li>
+            <li><strong>Signal</strong><span>trust stays visible</span></li>
+            <li><strong>Human</strong><span>treatment decisions</span></li>
           </ul>
         </div>
 
@@ -119,13 +115,13 @@ export function LandingPage() {
           <div className="landing-float-chip landing-float-chip--top" aria-hidden="true"><i /> Last trusted snapshot</div>
           <div className="landing-float-chip landing-float-chip--bottom" aria-hidden="true"><i /> Human decision required</div>
           <section className="landing-preview">
-            <header><div><p className="eyebrow">Ward 6 · Critical care</p><h2 id="preview-title">Signal command view</h2></div><span className={`preview-state preview-state--${previewState}`} role="status">{previewState === 'offline' ? 'Live demo offline' : previewState === 'loading' ? 'Connecting…' : 'Live mock preview'}</span></header>
+            <header><div><p className="eyebrow">Critical care monitoring</p><h2 id="preview-title">Signal command view</h2></div><span className={`preview-state preview-state--${previewState}`} role="status">{previewState === 'offline' ? 'Preview unavailable' : previewState === 'loading' ? 'Preparing preview…' : 'Interface preview'}</span></header>
             <div className="landing-mini-ward" aria-label={previewState === 'offline' ? 'Still ward preview' : 'Live ward preview'}>{preview.map((bed, index) => <MiniBed bed={bed} index={index} key={bed.id} />)}</div>
           </section>
         </div>
       </section>
 
-      <section className="landing-signal-strip" data-scroll-reveal aria-label="SentinelWard signal model">
+      <section id="signal-model" className="landing-signal-strip" data-scroll-reveal aria-label="SentinelWard signal model">
         <span>Patient state</span><i aria-hidden="true" /><span>Signal trust</span><i aria-hidden="true" /><span>Device integrity</span><i aria-hidden="true" /><strong>One safe decision surface</strong>
       </section>
 
@@ -138,7 +134,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-safety" data-scroll-reveal aria-labelledby="safety-title">
+      <section id="safety" className="landing-safety" data-scroll-reveal aria-labelledby="safety-title">
         <div className="landing-safety__copy"><p className="eyebrow">Designed for dangerous ambiguity</p><h2 id="safety-title">Doubtful data never makes the ward go dark.</h2><p>Last-trusted values stay visible, emergencies keep escalating, and treatment stays human.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
         <ol className="landing-safety__steps" aria-label="SentinelWard safety principles">
           {safetyPrinciples.map((principle, index) => (
@@ -160,16 +156,16 @@ export function LandingPage() {
         </ol>
       </section>
 
-      <section className="landing-roles" data-scroll-reveal aria-labelledby="roles-title">
+      <section id="roles" className="landing-roles" data-scroll-reveal aria-labelledby="roles-title">
         <header className="landing-section-heading landing-section-heading--compact"><div><p className="eyebrow">One shared source of truth</p><h2 id="roles-title">One event. Five role views.</h2></div><p>Each team sees the action they own—without losing the shared clinical context.</p></header>
-        <div className="landing-role-network" aria-label="One Bed 08 high alarm shared across five SentinelWard roles">
+        <div className="landing-role-network" aria-label="One bed high alarm shared across five SentinelWard roles">
           <svg className="landing-role-network__lines" viewBox="0 0 1200 440" preserveAspectRatio="none" aria-hidden="true">
             <ellipse cx="600" cy="233" rx="476" ry="151" />
             <ellipse className="landing-role-network__halo" cx="600" cy="233" rx="404" ry="119" />
           </svg>
           <div className="landing-network-event">
             <span><i aria-hidden="true" /> Shared event · 09:42</span>
-            <strong>Bed 08 · High alarm</strong>
+            <strong>Bed · High alarm</strong>
             <small>HR 142 · signal trusted</small>
           </div>
           <ul className="landing-network-roles">
@@ -177,14 +173,14 @@ export function LandingPage() {
             <li className="landing-network-role landing-network-role--doctor"><span className="landing-network-role__content"><b aria-hidden="true">D</b><span><strong>Doctor / tele-ICU</strong><small>Review patient</small></span></span></li>
             <li className="landing-network-role landing-network-role--biomed"><span className="landing-network-role__content"><b aria-hidden="true">B</b><span><strong>Biomedical</strong><small>Check device</small></span></span></li>
             <li className="landing-network-role landing-network-role--it"><span className="landing-network-role__content"><b aria-hidden="true">IT</b><span><strong>IT security</strong><small>Verify integrity</small></span></span></li>
-            <li className="landing-network-role landing-network-role--operator"><span className="landing-network-role__content"><b aria-hidden="true">O</b><span><strong>Demo operator</strong><small>Observe scenario</small></span></span></li>
+            <li className="landing-network-role landing-network-role--operator"><span className="landing-network-role__content"><b aria-hidden="true">O</b><span><strong>System operator</strong><small>Monitor flow</small></span></span></li>
           </ul>
         </div>
       </section>
 
       <section className="landing-final-cta" data-scroll-reveal aria-labelledby="final-cta-title"><div><p className="eyebrow">The ward is waiting.</p><h2 id="final-cta-title">See the signal.<br />Question the source.</h2></div><div><p>Follow one urgent reading from telemetry to a human response.</p><Link to="/login?role=nurse">Open SentinelWard <span aria-hidden="true">↗</span></Link></div></section>
 
-      <footer className="landing-footer"><Link className="landing-footer__brand" to="/" aria-label="SentinelWard home"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></Link><span>Team TessNova · IBM Z Datathon 2026</span><a href="https://github.com/aragupta1225/sentinelward-frontend">GitHub</a><span>Decision support only. Treatment is never automatic.</span></footer>
+      <footer className="landing-footer"><Link className="landing-footer__brand" to="/" aria-label="SentinelWard home"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></Link><span>Clinical clarity across every monitored bed.</span><a href="https://github.com/aragupta1225/sentinelward-frontend">GitHub</a><span>Decision support only. Treatment is never automatic.</span></footer>
     </main>
   )
 }
@@ -206,14 +202,14 @@ export function LoginPage() {
     <main id="main-content" className="login-page">
       <section className="login-card" aria-labelledby="login-title">
         <Link className="login-back-link" to="/" aria-label="Back to SentinelWard home"><span aria-hidden="true">←</span> Back to home</Link>
-        <p className="eyebrow">Development authentication</p>
-        <h1 id="login-title">Pick a demo role</h1>
-        <p>Choose one role to open its home screen. Permissions in this demo follow the frontend specification.</p>
+        <p className="eyebrow">Role-based access</p>
+        <h1 id="login-title">Choose your workspace</h1>
+        <p>Select a role to open the workspace and actions relevant to that team.</p>
         <div className="login-role-grid">
           {roleCards.map((card) => <button type="button" key={card.role} className={preset === card.role ? 'login-role login-role--preset' : 'login-role'} disabled={pendingRole !== null} onClick={() => chooseRole(card.role)}><strong>{pendingRole === card.role && <i className="login-spinner" aria-hidden="true" />}{pendingRole === card.role ? 'Signing in…' : card.label}</strong><span>{card.description}</span>{preset === card.role && <em>Pre-selected</em>}</button>)}
         </div>
         {error && <div className="login-error" role="alert"><span>{error}</span><ActionButton onClick={() => chooseRole(lastAttemptRole ?? 'nurse')}>Retry</ActionButton></div>}
-        <p className="scope-note">Demo accounts. A hospital would connect its own sign-in.</p>
+        <p className="scope-note">Each workspace keeps clinical, technical, and operational responsibilities clearly separated.</p>
       </section>
     </main>
   )
