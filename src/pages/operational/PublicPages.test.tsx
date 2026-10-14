@@ -19,6 +19,8 @@ describe('S0 and S1 public workflows', () => {
     expect(container.querySelectorAll('.landing-bed')).toHaveLength(4)
     expect(container.querySelectorAll('.landing-bed--high')).toHaveLength(1)
     expect(container.querySelectorAll('.tilted-card')).toHaveLength(3)
+    expect(container.querySelectorAll('[data-scroll-reveal]')).toHaveLength(5)
+    expect(container.querySelectorAll('[data-scroll-reveal].is-visible')).toHaveLength(5)
     expect(screen.getByRole('heading', { name: 'SentinelWard separates what looks the same.' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Doubtful data never makes the ward go dark.' })).toBeInTheDocument()
     expect(container.querySelectorAll('.landing-safety-card')).toHaveLength(4)

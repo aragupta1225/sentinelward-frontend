@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { loadWardPreview } from '../../adapters/publicGateway'
 import { TiltedCard } from '../../components/landing/TiltedCard'
@@ -36,6 +36,7 @@ function MiniBed({ bed, index }: { bed: Bed; index: number }) {
 }
 
 export function LandingPage() {
+  const landingPageRef = useRef<HTMLElement>(null)
   const [preview, setPreview] = useState<Bed[]>(() => structuredClone(BED_FIXTURES.slice(0, 4)))
   const [previewState, setPreviewState] = useState<'loading' | 'live' | 'offline'>('loading')
   const [activeSafetyCard, setActiveSafetyCard] = useState(0)
@@ -48,8 +49,51 @@ export function LandingPage() {
     return () => controller.abort()
   }, [])
 
+  useEffect(() => {
+    const page = landingPageRef.current
+    const sections = Array.from(page?.querySelectorAll<HTMLElement>('[data-scroll-reveal]') ?? [])
+    if (!page || sections.length === 0) return
+
+    const showAll = () => sections.forEach((section) => section.classList.add('is-visible'))
+    page.classList.add('landing-page--reveal-ready')
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      showAll()
+      return () => page.classList.remove('landing-page--reveal-ready')
+    }
+
+    const remaining = new Set(sections)
+    let pendingFrame = 0
+    const removeListeners = () => {
+      window.removeEventListener('scroll', scheduleReveal)
+      window.removeEventListener('resize', scheduleReveal)
+    }
+    const revealVisible = () => {
+      pendingFrame = 0
+      for (const section of remaining) {
+        const bounds = section.getBoundingClientRect()
+        if (bounds.top > window.innerHeight * 0.9 || bounds.bottom < 0) continue
+        section.classList.add('is-visible')
+        remaining.delete(section)
+      }
+      if (remaining.size === 0) removeListeners()
+    }
+    function scheduleReveal() {
+      if (pendingFrame) return
+      pendingFrame = window.requestAnimationFrame(revealVisible)
+    }
+
+    window.addEventListener('scroll', scheduleReveal, { passive: true })
+    window.addEventListener('resize', scheduleReveal)
+    revealVisible()
+    return () => {
+      window.cancelAnimationFrame(pendingFrame)
+      removeListeners()
+    }
+  }, [])
+
   return (
-    <main id="main-content" className="landing-page">
+    <main ref={landingPageRef} id="main-content" className="landing-page">
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-hero__copy">
           <p className="landing-kicker"><span aria-hidden="true" /> Clinical monitoring · device integrity</p>
@@ -75,11 +119,11 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-signal-strip" aria-label="SentinelWard signal model">
+      <section className="landing-signal-strip" data-scroll-reveal aria-label="SentinelWard signal model">
         <span>Patient state</span><i aria-hidden="true" /><span>Signal trust</span><i aria-hidden="true" /><span>Device integrity</span><i aria-hidden="true" /><strong>One safe decision surface</strong>
       </section>
 
-      <section id="how-it-works" className="landing-explain" aria-labelledby="how-title">
+      <section id="how-it-works" className="landing-explain" data-scroll-reveal aria-labelledby="how-title">
         <header className="landing-section-heading"><div><p className="eyebrow">One reading. Three possible truths.</p><h2 id="how-title">SentinelWard separates what looks the same.</h2></div><p>A spike can be a patient emergency, a sensor fault, or a compromised device. SentinelWard keeps all three possibilities visible.</p></header>
         <div className="landing-card-grid">
           <TiltedCard className="landing-cause-card landing-cause-card--emergency" glareColor="rgba(255, 77, 79, 0.24)" borderGlowColor="rgba(255, 127, 137, 0.95)"><span className="landing-cause-card__number">01</span><div className="landing-cause-card__icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 26S5 20 5 11.8C5 7.9 9.8 5.8 13 9l3 3 3-3c3.2-3.2 8-1.1 8 2.8C27 20 16 26 16 26Z" /><path d="M9 16h4l1.8-3.5 2.5 7 1.8-3.5H23" /></svg></div><h3>Real emergency</h3><p>Keep the alarm visible and escalate the response.</p><footer><span>Patient first</span><i aria-hidden="true" /></footer></TiltedCard>
@@ -88,7 +132,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-safety" aria-labelledby="safety-title">
+      <section className="landing-safety" data-scroll-reveal aria-labelledby="safety-title">
         <div className="landing-safety__copy"><p className="eyebrow">Designed for dangerous ambiguity</p><h2 id="safety-title">Doubtful data never makes the ward go dark.</h2><p>Last-trusted values stay visible, emergencies keep escalating, and treatment stays human.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
         <ol className="landing-safety__steps" aria-label="SentinelWard safety principles">
           {safetyPrinciples.map((principle, index) => (
@@ -110,7 +154,7 @@ export function LandingPage() {
         </ol>
       </section>
 
-      <section className="landing-roles" aria-labelledby="roles-title">
+      <section className="landing-roles" data-scroll-reveal aria-labelledby="roles-title">
         <header className="landing-section-heading landing-section-heading--compact"><div><p className="eyebrow">One shared source of truth</p><h2 id="roles-title">One event. Five role views.</h2></div><p>Each team sees the action they own—without losing the shared clinical context.</p></header>
         <div className="landing-role-network" aria-label="One Bed 08 high alarm shared across five SentinelWard roles">
           <svg className="landing-role-network__lines" viewBox="0 0 1200 440" preserveAspectRatio="none" aria-hidden="true">
@@ -135,7 +179,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-final-cta" aria-labelledby="final-cta-title"><div><p className="eyebrow">The ward is waiting.</p><h2 id="final-cta-title">See the signal.<br />Question the source.</h2></div><div><p>Follow one urgent reading from telemetry to a human response.</p><Link to="/login?role=nurse">Open SentinelWard <span aria-hidden="true">↗</span></Link></div></section>
+      <section className="landing-final-cta" data-scroll-reveal aria-labelledby="final-cta-title"><div><p className="eyebrow">The ward is waiting.</p><h2 id="final-cta-title">See the signal.<br />Question the source.</h2></div><div><p>Follow one urgent reading from telemetry to a human response.</p><Link to="/login?role=nurse">Open SentinelWard <span aria-hidden="true">↗</span></Link></div></section>
 
       <footer className="landing-footer"><Link className="landing-footer__brand" to="/" aria-label="SentinelWard home"><span className="brand__sentinel">Sentinel</span><span className="brand__ward">Ward</span></Link><span>Team TessNova · IBM Z Datathon 2026</span><a href="https://github.com/aragupta1225/sentinelward-frontend">GitHub</a><span>Decision support only. Treatment is never automatic.</span></footer>
     </main>

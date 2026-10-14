@@ -102,6 +102,7 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 - On desktop, the five role cards and their connectors follow a synchronized 12-second orbital drift around the fixed Bed 08 event while each card counter-rotates to remain level. The motion pauses on hover, stays within the diagram at both extremes, and is removed on mobile and whenever reduced motion is requested.
 - The shared-event network now sits directly on the landing-page background; the former rounded grid panel, border, shadow, and decorative blue dots were removed while preserving the role cards, connectors, and central event.
 - Landing-section gaps are tighter, the supporting copy for both `SentinelWard separates what looks the same.` and `One event. Five role views.` now sits directly below its heading, and repeated explanatory copy is shortened while the locked five-second promise, safety boundaries, and required product facts remain intact.
+- The five post-hero landing blocks now reveal once as complete section-level groups when they enter the viewport, rather than animating their child elements separately. Desktop section padding is reduced to 60-72 px, mobile spacing is reduced to 48-56 px, and reduced-motion users receive the complete static page immediately.
 - The four-bed preview still loads through the typed public adapter, retains deterministic fixtures on failure, labels the mock/offline state, preserves one high clinical alarm, and never implies real backend availability.
 - Login now includes a visible, keyboard-accessible `Back to home` arrow link that returns to the public landing route; browser coverage verifies the complete landing-to-login-to-Ward-to-login-to-landing path.
 - Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. The full quality gate passes with 117 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
@@ -362,7 +363,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 191 modules; CSS 122.50 kB (24.96 kB gzip); initial JavaScript 378.41 kB (124.12 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 123.03 kB (25.06 kB gzip); initial JavaScript 379.37 kB (124.42 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
