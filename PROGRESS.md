@@ -100,6 +100,7 @@ The live R8 Part H functional checklist remains complete. UI-R8 reproduces the s
 - The existing typed sign-in adapter, pending label, inline failure, Retry action, session persistence, and role-specific navigation remain intact.
 - Browser QA at the reference's 1674 by 940 viewport verified a five-card row with approximately 272 by 350 px cards and matching vertical placement. A 390 by 844 mobile check verified a clean single-column layout with no horizontal overflow.
 - The approved composition is compacted for real laptop use: the full header, introduction, five-card row, and responsibility note now fit without scrolling at both 1366 by 768 and 1024 by 768. Cards are 270 px high with proportionally reduced icons and text while keeping five readable columns at landscape widths.
+- Plain Login now begins with five visually equal cards; only an intentional landing-page role preset or a user's current selection receives the blue selected treatment. Successful sign-in uses a short 220 ms Login exit followed by a 280 ms workspace entrance, while failed sign-in remains in place and reduced-motion users navigate without animation.
 - The full quality gate passes with 118 unit/component tests, 33 Playwright tests, all 14 material-route axe scans with colour contrast, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R7 Verified Result - Product-led Landing Experience
@@ -379,7 +380,7 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 191 modules; CSS 129.40 kB (26.43 kB gzip); initial JavaScript 384.36 kB (126.08 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 129.97 kB (26.58 kB gzip); initial JavaScript 384.56 kB (126.15 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 

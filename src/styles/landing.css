@@ -742,6 +742,14 @@
   padding: 36px max(28px, calc((100% - 1280px) / 2)) 28px;
   color: #061a43;
   background: #fbfdff;
+  transform-origin: center top;
+  transition: opacity 180ms ease, transform 220ms cubic-bezier(.4, 0, .2, 1), filter 220ms ease;
+}
+
+.login-page--leaving {
+  opacity: 0;
+  filter: blur(2px);
+  transform: translateY(-8px) scale(.995);
 }
 
 .login-backdrop {
@@ -986,6 +994,8 @@ button.login-role.login-role--expanded {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .login-page { transition: none; }
+  .login-page--leaving { opacity: 1; filter: none; transform: none; }
   button.login-role:hover:not(:disabled),
   button.login-role:focus-visible,
   button.login-role.login-role--expanded { transform: none !important; }

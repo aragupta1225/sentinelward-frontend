@@ -230,8 +230,9 @@ export function LoginPage() {
   const [searchParams] = useSearchParams()
   const requestedRole = searchParams.get('role')
   const preset = roleCards.find((card) => card.role === requestedRole)?.role ?? null
-  const [activeRole, setActiveRole] = useState<Role | null>(() => preset ?? 'biomedical')
+  const [activeRole, setActiveRole] = useState<Role | null>(() => preset)
   const [expandedRole, setExpandedRole] = useState<Role | null>(null)
+  const [isLeaving, setIsLeaving] = useState(false)
   const signIn = useSessionStore((state) => state.signIn)
   const pendingRole = useSessionStore((state) => state.pendingRole)
   const lastAttemptRole = useSessionStore((state) => state.lastAttemptRole)
@@ -240,7 +241,12 @@ export function LoginPage() {
   const chooseRole = async (role: Role) => {
     setActiveRole(role)
     setExpandedRole(role)
-    if (await signIn(role)) navigate(ROLE_HOME[role])
+    if (!await signIn(role)) return
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setIsLeaving(true)
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 220))
+    }
+    navigate(ROLE_HOME[role])
   }
 
   const clearRoleSelection = (event: MouseEvent<HTMLElement>) => {
@@ -250,7 +256,7 @@ export function LoginPage() {
   }
 
   return (
-    <main id="main-content" className="login-page" onClick={clearRoleSelection}>
+    <main id="main-content" className={isLeaving ? 'login-page login-page--leaving' : 'login-page'} aria-busy={pendingRole !== null || isLeaving} onClick={clearRoleSelection}>
       <svg className="login-backdrop" viewBox="0 0 1600 860" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <pattern id="login-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0v28" /></pattern>
@@ -282,7 +288,7 @@ export function LoginPage() {
               key={card.role}
               className={`login-role${activeRole === card.role ? ' login-role--active' : ''}${expandedRole === card.role ? ' login-role--expanded' : ''}`}
               aria-pressed={activeRole === card.role}
-              disabled={pendingRole !== null}
+              disabled={pendingRole !== null || isLeaving}
               onPointerDown={() => { setActiveRole(card.role); setExpandedRole(card.role) }}
               onClick={() => chooseRole(card.role)}
             >
