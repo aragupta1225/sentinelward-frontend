@@ -16,6 +16,13 @@ const roleCards: Array<{ role: Role; label: string; description: string }> = [
   { role: 'operator', label: 'Demo operator', description: 'Run and reset the scripted ward scenarios.' },
 ]
 
+const safetyPrinciples = [
+  { number: '01', title: 'See the patient', description: 'Clinical urgency stays separate from device confidence.' },
+  { number: '02', title: 'Question the signal', description: 'Trust, freshness, and witness evidence remain explicit.' },
+  { number: '03', title: 'Preserve the alarm', description: 'Tampering can never silence a real emergency.' },
+  { number: '04', title: 'Keep care human', description: 'The interface supports decisions; it never changes treatment.' },
+]
+
 function MiniBed({ bed, index }: { bed: Bed; index: number }) {
   const high = bed.priority === 'high'
   return (
@@ -31,6 +38,7 @@ function MiniBed({ bed, index }: { bed: Bed; index: number }) {
 export function LandingPage() {
   const [preview, setPreview] = useState<Bed[]>(() => structuredClone(BED_FIXTURES.slice(0, 4)))
   const [previewState, setPreviewState] = useState<'loading' | 'live' | 'offline'>('loading')
+  const [activeSafetyCard, setActiveSafetyCard] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -82,11 +90,23 @@ export function LandingPage() {
 
       <section className="landing-safety" aria-labelledby="safety-title">
         <div className="landing-safety__copy"><p className="eyebrow">Designed for dangerous ambiguity</p><h2 id="safety-title">Doubtful data never makes the ward go dark.</h2><p>Last-trusted values stay visible, emergencies keep escalating, and treatment stays human.</p><Link to="/login?role=nurse">Enter the nurse view <span aria-hidden="true">→</span></Link></div>
-        <ol className="landing-safety__steps">
-          <li className="landing-safety-card"><span>01</span><div><strong>See the patient</strong><p>Clinical urgency stays separate from device confidence.</p></div></li>
-          <li className="landing-safety-card"><span>02</span><div><strong>Question the signal</strong><p>Trust, freshness, and witness evidence remain explicit.</p></div></li>
-          <li className="landing-safety-card"><span>03</span><div><strong>Preserve the alarm</strong><p>Tampering can never silence a real emergency.</p></div></li>
-          <li className="landing-safety-card"><span>04</span><div><strong>Keep care human</strong><p>The interface supports decisions; it never changes treatment.</p></div></li>
+        <ol className="landing-safety__steps" aria-label="SentinelWard safety principles">
+          {safetyPrinciples.map((principle, index) => (
+            <li key={principle.number} data-active={activeSafetyCard === index}>
+              <button
+                type="button"
+                className="landing-safety-card"
+                aria-pressed={activeSafetyCard === index}
+                onPointerDown={() => setActiveSafetyCard(index)}
+                onClick={() => setActiveSafetyCard(index)}
+              >
+                <span className="landing-safety-card__surface">
+                  <span className="landing-safety-card__number">{principle.number}</span>
+                  <span className="landing-safety-card__copy"><strong>{principle.title}</strong><span>{principle.description}</span></span>
+                </span>
+              </button>
+            </li>
+          ))}
         </ol>
       </section>
 

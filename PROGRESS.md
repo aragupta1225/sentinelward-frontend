@@ -96,15 +96,15 @@ The live R8 Part H functional checklist remains complete. UI-R7 redesigns S0 as 
 - The desktop hero now uses the full 1240 px content width and the exact viewport space below the 72 px header at 1366×768, keeping the complete introduction visible without scrolling; its reduced top spacing begins the story closer to navigation. The footer now mirrors the header as a full-width navy bar with the same wordmark colours and high-contrast link treatment.
 - The landing page now explains the product as a narrative: patient state, signal trust, and device integrity; three possible causes; four safety commitments; five role-specific viewpoints; and a final mock-ward walkthrough invitation.
 - The three cause cards now combine adapted React Bits `TiltedCard`, `SpotlightCard`, and `BorderGlow` patterns on dark navy glass surfaces, with custom layered glass heart, sensor, and shield icons and no added runtime dependency. Motion is decorative, has a static reduced-motion fallback, and never carries status meaning.
-- The former full-width navy safety block is replaced by a lightweight statement plus four individual floating glass cards for See the patient, Question the signal, Preserve the alarm, and Keep care human. Their restrained blue, teal, violet, and amber accents are decorative, and motion is removed when reduced motion is requested.
+- The former full-width navy safety block is replaced by a React Bits Bounce Cards-inspired horizontal 3D fan for See the patient, Question the signal, Preserve the alarm, and Keep care human. The blue, teal, violet, and amber cards remain still at rest, enlarge and straighten only on hover, focus, or selection, keep stable individual hit areas, and collapse to a swipe-and-snap row below 1050 px.
 - A shared React Bits Dock-inspired proximity controller now gives every rendered button and action-style link smooth cursor-distance magnification, lift, keyboard-focus feedback, and press response. Large card-buttons receive a restrained scale; touch and reduced-motion environments receive no Dock animation. Browser QA confirmed 5/5 Login buttons, 16/16 Ward buttons, and all sampled action links are covered without changing semantics or permissions.
 - The five-role section now translates the supplied `Connectivity.png` composition into a responsive shared-event network: one Bed 08 high alarm connects to concise nurse, doctor, biomedical, IT, and operator actions while mobile collapses to a readable role list. Each role icon now has a distinct restrained colour identity—blue, violet, orange, teal, and rose—while the text labels retain meaning independently of colour.
 - On desktop, the five role cards and their connectors follow a synchronized 12-second orbital drift around the fixed Bed 08 event while each card counter-rotates to remain level. The motion pauses on hover, stays within the diagram at both extremes, and is removed on mobile and whenever reduced motion is requested.
 - The shared-event network now sits directly on the landing-page background; the former rounded grid panel, border, shadow, and decorative blue dots were removed while preserving the role cards, connectors, and central event.
-- Landing-section gaps are tighter and repeated explanatory copy is shortened while the locked five-second promise, safety boundaries, and required product facts remain intact.
+- Landing-section gaps are tighter, the supporting copy for both `SentinelWard separates what looks the same.` and `One event. Five role views.` now sits directly below its heading, and repeated explanatory copy is shortened while the locked five-second promise, safety boundaries, and required product facts remain intact.
 - The four-bed preview still loads through the typed public adapter, retains deterministic fixtures on failure, labels the mock/offline state, preserves one high clinical alarm, and never implies real backend availability.
 - Login now includes a visible, keyboard-accessible `Back to home` arrow link that returns to the public landing route; browser coverage verifies the complete landing-to-login-to-Ward-to-login-to-landing path.
-- Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. The full quality gate passes with 116 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
+- Visual QA covered 1440×1000 desktop and 390×844 mobile layouts with no horizontal overflow. The full quality gate passes with 117 unit/component tests, 33 Playwright tests, all 14 route axe scans, responsive desktop/tablet coverage, TypeScript compilation, and the production build.
 
 ### UI-R6 Verified Result - Cross-screen Ward Visual System
 
@@ -362,10 +362,10 @@ Command: `npm run check`
 - Browser regression: 33 Playwright tests passed across desktop Chromium, landscape tablet, and portrait tablet projects.
 - Accessibility: 14 material routes passed automated axe checks with color contrast enabled.
 - TypeScript and production build: passed.
-- Build output: 191 modules; CSS 119.78 kB (24.51 kB gzip); initial JavaScript 378.43 kB (124.03 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
+- Build output: 191 modules; CSS 122.50 kB (24.96 kB gzip); initial JavaScript 378.41 kB (124.12 kB gzip), plus the Ward store, five lazy route-family chunks, and shared utility chunks.
 
 ## Next Recommended Actions
 
-1. Review the refined public landing story, dark glass cause cards, and shared-event role network for final visual approval.
+1. Review the refined public landing story, interactive safety-card fan, dark glass cause cards, and shared-event role network for final visual approval.
 2. Preserve the complete verified functional baseline and keep real backend, Telegram delivery, deployment, and team-repository integration outside this visual milestone.
 3. Re-run all route axe scans, workflows, responsive checks, and the production build after any cohesive refinement milestone.
