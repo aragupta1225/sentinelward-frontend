@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { loadWardPreview } from '../../adapters/publicGateway'
 import { TiltedCard } from '../../components/landing/TiltedCard'
@@ -39,7 +39,7 @@ export function LandingPage() {
   const landingPageRef = useRef<HTMLElement>(null)
   const [preview, setPreview] = useState<Bed[]>(() => structuredClone(BED_FIXTURES.slice(0, 4)))
   const [previewState, setPreviewState] = useState<'loading' | 'live' | 'offline'>('loading')
-  const [activeSafetyCard, setActiveSafetyCard] = useState(0)
+  const [activeSafetyCard, setActiveSafetyCard] = useState<number | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -92,8 +92,14 @@ export function LandingPage() {
     }
   }, [])
 
+  const clearSafetySelection = (event: MouseEvent<HTMLElement>) => {
+    const target = event.target
+    if (target instanceof Element && target.closest('.landing-safety-card')) return
+    setActiveSafetyCard(null)
+  }
+
   return (
-    <main ref={landingPageRef} id="main-content" className="landing-page">
+    <main ref={landingPageRef} id="main-content" className="landing-page" onClick={clearSafetySelection}>
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-hero__copy">
           <p className="landing-kicker"><span aria-hidden="true" /> Clinical monitoring · device integrity</p>
@@ -158,11 +164,8 @@ export function LandingPage() {
         <header className="landing-section-heading landing-section-heading--compact"><div><p className="eyebrow">One shared source of truth</p><h2 id="roles-title">One event. Five role views.</h2></div><p>Each team sees the action they own—without losing the shared clinical context.</p></header>
         <div className="landing-role-network" aria-label="One Bed 08 high alarm shared across five SentinelWard roles">
           <svg className="landing-role-network__lines" viewBox="0 0 1200 440" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M592 232C470 193 346 132 207 124" />
-            <path d="M568 254C470 285 393 342 308 365" />
-            <path d="M615 210C615 163 619 116 635 76" />
-            <path d="M650 226C770 185 858 134 979 132" />
-            <path d="M650 261C768 292 862 349 1016 360" />
+            <ellipse cx="600" cy="233" rx="476" ry="151" />
+            <ellipse className="landing-role-network__halo" cx="600" cy="233" rx="404" ry="119" />
           </svg>
           <div className="landing-network-event">
             <span><i aria-hidden="true" /> Shared event · 09:42</span>
